@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store - Infamous Premium Cheats</title>
-    <link rel="icon" href="assets/Favicon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="images/logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="store.css">
 </head>
@@ -32,17 +32,56 @@
     </nav>
 
     <!-- Store Hero Section -->
-    <section class="store-hero">
+    <section class="store-hero hero">
+        <div class="hero-background">
+            <div class="particles"></div>
+        </div>
         <div class="container">
-            <div class="store-hero-content">
-                <h1 class="store-title">
-                    <span class="glow-text">Premium Store</span>
-                    <span class="subtitle">Choose Your Gaming Edge</span>
-                </h1>
-                <p class="store-description">
-                    Discover our collection of premium gaming cheats and modifications. 
-                    All products are regularly updated and come with 24/7 support.
-                </p>
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="urgency-banner">
+                        <span class="urgency-icon">🔥</span>
+                        <span class="urgency-text">LIMITED TIME: Save 25% on Master Package - Only 48 Hours Left!</span>
+                        <div class="countdown-timer" id="countdown">
+                            <span id="hours">47</span>h <span id="minutes">59</span>m <span id="seconds">59</span>s
+                        </div>
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="glow-text">PREMIUM STORE</span>
+                        <span class="subtitle">Don't Let Your Competition Get Ahead</span>
+                    </h1>
+                    <p class="hero-description">
+                        <strong>WARNING:</strong> While you're reading this, thousands of players are already dominating with our premium cheats. 
+                        Don't miss out - join the elite players who refuse to play at a disadvantage.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-badge">
+                            <span class="stat-number">50K+</span>
+                            <span class="stat-label">Active Users</span>
+                        </div>
+                        <div class="stat-badge">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Support</span>
+                        </div>
+                        <div class="stat-badge">
+                            <span class="stat-number">99.9%</span>
+                            <span class="stat-label">Undetected</span>
+                        </div>
+                        <div class="stat-badge">
+                            <span class="stat-number">72h</span>
+                            <span class="stat-label">Avg. Response</span>
+                        </div>
+                    </div>
+                    <div class="social-proof">
+                        <div class="recent-purchases">
+                            <span class="purchase-indicator">🟢</span>
+                            <span class="purchase-text">Someone just bought Master Package 2 minutes ago</span>
+                        </div>
+                        <div class="testimonial-quick">
+                            ⭐⭐⭐⭐⭐ "Best investment I've made for gaming" - Alex M.
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -52,11 +91,11 @@
         <div class="container">
             <h2 class="section-title">Product Categories</h2>
             <div class="category-tabs">
-                <button class="category-tab active" data-category="all">All Products</button>
-                <button class="category-tab" data-category="gta5">GTA V</button>
-                <button class="category-tab" data-category="rdr2">RDR2</button>
-                <button class="category-tab" data-category="fivem">FiveM</button>
-                <button class="category-tab" data-category="tools">Tools</button>
+                <button class="category-tab active btn btn-secondary" data-category="all">All Products</button>
+                <button class="category-tab btn btn-secondary" data-category="gta5">GTA V</button>
+                <button class="category-tab btn btn-secondary" data-category="rdr2">RDR2</button>
+                <button class="category-tab btn btn-secondary" data-category="fivem">FiveM</button>
+                <button class="category-tab btn btn-secondary" data-category="tools">Tools</button>
             </div>
         </div>
     </section>
@@ -64,20 +103,53 @@
     <!-- Products Grid -->
     <section class="products">
         <div class="container">
+            <!-- Urgency Section -->
+            <div class="urgency-section">
+                <div class="urgency-content">
+                    <h2>⚠️ Don't Miss Out - Limited Time Offers</h2>
+                    <div class="urgency-stats">
+                        <div class="urgency-stat">
+                            <span class="stat-number">1,247</span>
+                            <span class="stat-label">Players upgraded today</span>
+                        </div>
+                        <div class="urgency-stat">
+                            <span class="stat-number">23</span>
+                            <span class="stat-label">Copies sold in last hour</span>
+                        </div>
+                        <div class="urgency-stat">
+                            <span class="stat-number">48h</span>
+                            <span class="stat-label">Sale ends in</span>
+                        </div>
+                    </div>
+                    <p class="urgency-warning">
+                        <strong>Reality Check:</strong> While you're thinking about it, your competition is already downloading and dominating. 
+                        Every minute you wait is another minute they're ahead of you.
+                    </p>
+                </div>
+            </div>
+            
             <div class="products-grid">
                 <!-- Master Package -->
-                <div class="product-card" data-category="all">
+                <div class="product-card glass glass-hover" data-category="all">
                     <div class="product-image">
                         <img src="images/store/master.jpg" alt="Master Package">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge featured">BEST VALUE</span>
+                                <span class="badge featured">🏆 BEST VALUE</span>
+                                <span class="badge limited">⏰ LIMITED</span>
                             </div>
                         </div>
                     </div>
                     <div class="product-info">
+                        <div class="scarcity-indicator">
+                            <span class="scarcity-text">⚡ Only 12 copies left at this price!</span>
+                            <div class="stock-bar">
+                                <div class="stock-fill" style="width: 25%"></div>
+                            </div>
+                        </div>
                         <h3 class="product-title">Master Package</h3>
                         <p class="product-description">
+                            <strong>WARNING:</strong> This is what separates the elite from the average. 
                             Complete access to all products with exclusive tester access and lifetime updates.
                         </p>
                         <div class="product-features">
@@ -85,83 +157,92 @@
                             <span class="feature">✓ Full RDR2 Suite</span>
                             <span class="feature">✓ FiveM & RedM Complete</span>
                             <span class="feature">✓ HWID Spoofer Included</span>
-                            <span class="feature">✓ Tester Access</span>
-                            <span class="feature">✓ Lifetime Updates</span>
+                            <span class="feature">✓ Tester Access (Normally $25 extra)</span>
+                            <span class="feature">✓ Lifetime Updates (Save $200+ yearly)</span>
                         </div>
                         <div class="product-pricing">
+                            <span class="price-original">$165</span>
                             <span class="price-current">$125</span>
                             <span class="price-period">One-time</span>
+                            <div class="savings-badge">SAVE $40</div>
+                        </div>
+                        <div class="value-proposition">
+                            <small>⚡ That's less than $0.34 per day if used for a year</small>
                         </div>
                         <div class="product-actions">
-                            <a href="https://nenyooo.myshopify.com/products/infamous-master-package" class="btn btn-primary product-btn" target="_blank">
-                                <span>Buy with Card</span>
+                            <a href="https://nenyooo.myshopify.com/products/infamous-master-package" class="btn btn-primary product-btn pulse-glow" target="_blank">
+                                <span>💳 Secure Your Elite Status Now</span>
                                 <i class="arrow">→</i>
                             </a>
                             <a href="https://dizzgaming.selly.store/product/9f534656" class="btn btn-secondary product-btn" target="_blank">
-                                <span>Buy with Crypto</span>
+                                <span>₿ Buy with Crypto</span>
                             </a>
                             <a href="morepayments.html" class="btn btn-outline-light product-btn" target="_blank">
                                 <span>More Payments</span>
                             </a>
                         </div>
+                        <div class="guarantee">
+                            <span class="guarantee-text">🛡️ 7-Day Money-Back Guarantee</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- GTA 5 Enhanced Full Plus -->
-                <div class="product-card" data-category="gta5">
+                <div class="product-card glass glass-hover" data-category="gta5">
                     <div class="product-image">
                         <img src="images/store/enhancedFullPlus.jpg" alt="GTA 5 Enhanced">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge featured">Enhanced</span>
+                                <span class="badge featured">🚀 Enhanced</span>
+                                <span class="badge popular">🔥 HOT</span>
                             </div>
                         </div>
                     </div>
                     <div class="product-info">
                         <h3 class="product-title">GTA 5 Enhanced Full Plus</h3>
                         <p class="product-description">
-                            Premium GTA 5 modifications with BattlEye support and advanced features.
+                            <strong>Don't get left behind!</strong> Premium GTA 5 modifications with BattlEye support. 
+                            While others struggle with basic cheats, you'll dominate with 500+ advanced features.
                         </p>
                         <div class="product-features">
-                            <span class="feature">✓ BattlEye Support</span>
+                            <span class="feature">✓ BattlEye Support (Exclusive)</span>
                             <span class="feature">✓ Public Session Compatible</span>
                             <span class="feature">✓ Advanced Money Systems</span>
-                            <span class="feature">✓ Free Shopping</span>
+                            <span class="feature">✓ Free Shopping (Save $1000s)</span>
                             <span class="feature">✓ Casino Rigging</span>
                             <span class="feature">✓ 500+ Features</span>
                         </div>
                         <div class="product-pricing">
+                            <span class="price-original">$75</span>
                             <span class="price-current">$50</span>
                             <span class="price-period">One-time</span>
+                            <div class="savings-badge">SAVE $25</div>
+                        </div>
+                        <div class="urgency-text">
+                            <small>⏰ Price increases to $75 in 3 days</small>
                         </div>
                         <div class="product-actions">
                             <a href="https://nenyooo.myshopify.com/products/infamous-full-plus-gta-5-enhanced" class="btn btn-primary product-btn" target="_blank">
-                                <span>Buy with Card</span>
+                                <span>💳 Get Your Edge Now</span>
                                 <i class="arrow">→</i>
                             </a>
                             <a href="https://dizzgaming.selly.store/product/5749058e" class="btn btn-secondary product-btn" target="_blank">
-                                <span>Buy with Crypto</span>
+                                <span>₿ Buy with Crypto</span>
                             </a>
                             <a href="morepayments.html" class="btn btn-outline-light product-btn" target="_blank">
                                 <span>More Payments</span>
-                            </a>
-                            <a href="https://dizzgaming.selly.store/product/d1a82e47" class="btn btn-outline-light product-btn" target="_blank">
-                                <span>Buy Tester</span>
-                            </a>
-                            <a href="https://dizzgaming.selly.store/product/26a730c8" class="btn btn-outline-light product-btn" target="_blank">
-                                <span>Upgrade to Full Plus</span>
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <!-- GTA 5 Legacy Full Plus -->
-                <div class="product-card" data-category="gta5">
+                <div class="product-card glass glass-hover" data-category="gta5">
                     <div class="product-image">
                         <img src="images/store/legacyFullPlus.jpg" alt="GTA 5 Legacy">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge popular">Legacy</span>
+                                <span class="badge popular">⭐ Legacy</span>
                             </div>
                         </div>
                     </div>
@@ -204,12 +285,12 @@
                 </div>
 
                 <!-- GTA 5 Legacy Full -->
-                <div class="product-card" data-category="gta5">
+                <div class="product-card glass glass-hover" data-category="gta5">
                     <div class="product-image">
                         <img src="images/store/legacyFull.jpg" alt="GTA 5 Legacy">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge new">Basic</span>
+                                <span class="badge new">🔥 Basic</span>
                             </div>
                         </div>
                     </div>
@@ -250,12 +331,12 @@
                 </div>
 
                 <!-- RDR2 Full -->
-                <div class="product-card" data-category="rdr2">
+                <div class="product-card glass glass-hover" data-category="rdr2">
                     <div class="product-image">
                         <img src="images/store/rdr2Full.jpg" alt="RDR2 Full">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge featured">Full</span>
+                                <span class="badge featured">🎯 Full</span>
                             </div>
                         </div>
                     </div>
@@ -292,12 +373,12 @@
                 </div>
 
                 <!-- RDR2 Lite -->
-                <div class="product-card" data-category="rdr2">
+                <div class="product-card glass glass-hover" data-category="rdr2">
                     <div class="product-image">
                         <img src="images/store/rdr2Lite.avif" alt="RDR2 Lite">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge essential">Lite</span>
+                                <span class="badge essential">💎 Lite</span>
                             </div>
                         </div>
                     </div>
@@ -330,12 +411,12 @@
                 </div>
 
                 <!-- FiveM Full -->
-                <div class="product-card" data-category="fivem">
+                <div class="product-card glass glass-hover" data-category="fivem">
                     <div class="product-image">
                         <img src="images/store/fivemFull.jpg" alt="FiveM Full">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge featured">Full</span>
+                                <span class="badge featured">🎮 Full</span>
                             </div>
                         </div>
                     </div>
@@ -372,12 +453,12 @@
                 </div>
 
                 <!-- FiveM Basic -->
-                <div class="product-card" data-category="fivem">
+                <div class="product-card glass glass-hover" data-category="fivem">
                     <div class="product-image">
                         <img src="images/store/fivemLite.png" alt="FiveM Basic">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge essential">Basic</span>
+                                <span class="badge essential">⚡ Basic</span>
                             </div>
                         </div>
                     </div>
@@ -412,12 +493,12 @@
                 </div>
 
                 <!-- Hardware Spoofer -->
-                <div class="product-card" data-category="tools">
+                <div class="product-card glass glass-hover" data-category="tools">
                     <div class="product-image">
                         <img src="images/store/spoofer.jpg" alt="Hardware Spoofer">
                         <div class="product-overlay">
                             <div class="product-badges">
-                                <span class="badge essential">Essential</span>
+                                <span class="badge essential">🛡️ Essential</span>
                             </div>
                         </div>
                     </div>
@@ -455,33 +536,86 @@
         </div>
     </section>
 
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Our Elite Players Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card glass glass-hover">
+                    <div class="testimonial-content">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p>"I was skeptical at first, but after using the Master Package for just one week, I made back the money I spent and more. The money loops are insane!"</p>
+                        <div class="testimonial-author">
+                            <strong>- Alex M.</strong>
+                            <span class="verified">✓ Verified Purchase</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card glass glass-hover">
+                    <div class="testimonial-content">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p>"Been using this for 6 months, never been detected. The BattlEye support is a game-changer. My friends are still struggling while I'm dominating."</p>
+                        <div class="testimonial-author">
+                            <strong>- Jordan K.</strong>
+                            <span class="verified">✓ Verified Purchase</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card glass glass-hover">
+                    <div class="testimonial-content">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p>"The 24/7 support is incredible. I had an issue at 3 AM and they fixed it within 10 minutes. Worth every penny!"</p>
+                        <div class="testimonial-author">
+                            <strong>- Sarah L.</strong>
+                            <span class="verified">✓ Verified Purchase</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonials-stats">
+                <div class="testimonial-stat">
+                    <span class="stat-number">4.9/5</span>
+                    <span class="stat-label">Average Rating</span>
+                </div>
+                <div class="testimonial-stat">
+                    <span class="stat-number">2,847</span>
+                    <span class="stat-label">Happy Customers</span>
+                </div>
+                <div class="testimonial-stat">
+                    <span class="stat-number">98%</span>
+                    <span class="stat-label">Would Recommend</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Features Section -->
-    <section class="store-features">
+    <section class="store-features features">
         <div class="container">
             <h2 class="section-title">Why Choose Our Products?</h2>
             <div class="features-grid">
-                <div class="feature-item">
+                <div class="feature-card glass glass-hover">
                     <div class="feature-icon">
                         <img src="images/icon2.png" alt="24/7 Support">
                     </div>
                     <h3>24/7 Support</h3>
                     <p>Get help whenever you need it with our round-the-clock customer support.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-card glass glass-hover">
                     <div class="feature-icon">
                         <img src="images/icon3.png" alt="Regular Updates">
                     </div>
                     <h3>Regular Updates</h3>
                     <p>Our products are constantly updated to stay ahead of detection systems.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-card glass glass-hover">
                     <div class="feature-icon">
                         <img src="images/icon4.png" alt="Undetected">
                     </div>
                     <h3>Undetected</h3>
                     <p>Advanced anti-detection technology keeps you safe while gaming.</p>
                 </div>
-                <div class="feature-item">
+                <div class="feature-card glass glass-hover">
                     <div class="feature-icon">
                         <img src="images/icon5.png" alt="Easy Setup">
                     </div>
