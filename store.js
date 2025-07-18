@@ -1,5 +1,156 @@
 // Store-specific JavaScript functionality
 
+// Countdown Timer
+function startCountdown() {
+    const countdownElement = document.getElementById('countdown');
+    if (!countdownElement) return;
+    
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    
+    let totalSeconds = 47 * 3600 + 59 * 60 + 59; // 47h 59m 59s
+    
+    const timer = setInterval(() => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        
+        hoursEl.textContent = hours.toString().padStart(2, '0');
+        minutesEl.textContent = minutes.toString().padStart(2, '0');
+        secondsEl.textContent = seconds.toString().padStart(2, '0');
+        
+        if (totalSeconds <= 0) {
+            clearInterval(timer);
+            // Reset or handle countdown end
+            totalSeconds = 47 * 3600 + 59 * 60 + 59;
+        }
+        
+        totalSeconds--;
+    }, 1000);
+}
+
+// Real-time Purchase Notifications
+function showPurchaseNotifications() {
+    const notifications = [
+        { name: "Alex M.", product: "Master Package", time: "2 minutes ago" },
+        { name: "Jordan K.", product: "GTA 5 Enhanced", time: "5 minutes ago" },
+        { name: "Sarah L.", product: "RDR2 Full", time: "8 minutes ago" },
+        { name: "Mike T.", product: "FiveM Full", time: "12 minutes ago" },
+        { name: "Emma R.", product: "Master Package", time: "15 minutes ago" },
+        { name: "Chris D.", product: "HWID Spoofer", time: "18 minutes ago" }
+    ];
+    
+    const purchaseElement = document.querySelector('.recent-purchases .purchase-text');
+    if (!purchaseElement) return;
+    
+    let currentIndex = 0;
+    
+    setInterval(() => {
+        const notification = notifications[currentIndex];
+        purchaseElement.textContent = `${notification.name} just bought ${notification.product} ${notification.time}`;
+        
+        currentIndex = (currentIndex + 1) % notifications.length;
+    }, 4000);
+}
+
+// Animate stats on scroll
+function animateStats() {
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const statNumbers = entry.target.querySelectorAll('.stat-number');
+                statNumbers.forEach(statNumber => {
+                    const finalValue = statNumber.textContent;
+                    const numericValue = parseInt(finalValue.replace(/[^0-9]/g, ''));
+                    
+                    if (numericValue > 0) {
+                        animateNumber(statNumber, numericValue, finalValue);
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+    
+    const statSections = document.querySelectorAll('.urgency-stats, .testimonials-stats');
+    statSections.forEach(section => observer.observe(section));
+}
+
+function animateNumber(element, targetValue, originalText) {
+    let currentValue = 0;
+    const increment = targetValue / 50;
+    const timer = setInterval(() => {
+        currentValue += increment;
+        if (currentValue >= targetValue) {
+            currentValue = targetValue;
+            clearInterval(timer);
+        }
+        
+        let displayValue = Math.floor(currentValue);
+        if (originalText.includes('K')) {
+            displayValue = (displayValue / 1000).toFixed(1) + 'K';
+        } else if (originalText.includes('.')) {
+            displayValue = (displayValue / 10).toFixed(1);
+        }
+        
+        element.textContent = displayValue + originalText.replace(/[0-9.K]/g, '');
+    }, 50);
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    startCountdown();
+    showPurchaseNotifications();
+    animateStats();
+    initFloatingActionButton();
+});
+
+// Floating Action Button
+function initFloatingActionButton() {
+    const floatingBtn = document.getElementById('floatingBtn');
+    if (!floatingBtn) return;
+    
+    // Hide initially
+    floatingBtn.style.display = 'none';
+    
+    // Show after user scrolls down
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 500) {
+            floatingBtn.style.display = 'block';
+        } else {
+            floatingBtn.style.display = 'none';
+        }
+    });
+    
+    // Click handler
+    floatingBtn.addEventListener('click', () => {
+        // Scroll to Master Package or open purchase link
+        const masterPackage = document.querySelector('[data-category="all"]');
+        if (masterPackage) {
+            masterPackage.scrollIntoView({ behavior: 'smooth' });
+            // Add highlight effect
+            masterPackage.style.animation = 'none';
+            masterPackage.offsetHeight; // Trigger reflow
+            masterPackage.style.animation = 'highlight 2s ease-in-out';
+        }
+    });
+}
+
+// Add highlight animation to CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes highlight {
+        0%, 100% { transform: scale(1); box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1); }
+        50% { transform: scale(1.02); box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3); }
+    }
+`;
+document.head.appendChild(style);
+
 // Category filtering
 const categoryTabs = document.querySelectorAll('.category-tab');
 const productCards = document.querySelectorAll('.product-card');
