@@ -1,33 +1,123 @@
 // Store-specific JavaScript functionality
 
-// Countdown Timer
+// Urgency Toast Management
+function initUrgencyToast() {
+    const toast = document.getElementById('urgency-toast');
+    const closeBtn = document.getElementById('toast-close');
+    
+    if (!toast || !closeBtn) return;
+    
+    // Check if toast was dismissed today
+    const today = new Date().toDateString();
+    const dismissed = localStorage.getItem('urgency-toast-dismissed');
+    
+    if (dismissed === today) {
+        return; // Don't show if dismissed today
+    }
+    
+    // Show toast after 3 seconds
+    setTimeout(() => {
+        toast.style.display = 'block';
+        
+        // Auto-hide after 12 seconds
+        setTimeout(() => {
+            hideToast();
+        }, 12000);
+    }, 3000);
+    
+    // Close toast functionality
+    closeBtn.addEventListener('click', () => {
+        dismissToast();
+    });
+    
+    // Hide toast when clicking the action button
+    const actionBtn = toast.querySelector('.toast-btn');
+    if (actionBtn) {
+        actionBtn.addEventListener('click', () => {
+            dismissToast();
+        });
+    }
+}
+
+function hideToast() {
+    const toast = document.getElementById('urgency-toast');
+    if (toast) {
+        toast.classList.add('hide');
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 300);
+    }
+}
+
+function dismissToast() {
+    const today = new Date().toDateString();
+    localStorage.setItem('urgency-toast-dismissed', today);
+    hideToast();
+}
+}
+
+// Countdown Timer with Toast Integration
 function startCountdown() {
     const countdownElement = document.getElementById('countdown');
-    if (!countdownElement) return;
+    const toastTimerElement = document.getElementById('toast-timer');
     
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
-    
-    let totalSeconds = 47 * 3600 + 59 * 60 + 59; // 47h 59m 59s
-    
-    const timer = setInterval(() => {
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
+    // For main countdown
+    if (countdownElement) {
+        const hoursEl = document.getElementById('hours');
+        const minutesEl = document.getElementById('minutes');
+        const secondsEl = document.getElementById('seconds');
         
-        hoursEl.textContent = hours.toString().padStart(2, '0');
-        minutesEl.textContent = minutes.toString().padStart(2, '0');
-        secondsEl.textContent = seconds.toString().padStart(2, '0');
+        let totalSeconds = 47 * 3600 + 59 * 60 + 59; // 47h 59m 59s
         
-        if (totalSeconds <= 0) {
-            clearInterval(timer);
-            // Reset or handle countdown end
-            totalSeconds = 47 * 3600 + 59 * 60 + 59;
+        const timer = setInterval(() => {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            hoursEl.textContent = hours.toString().padStart(2, '0');
+            minutesEl.textContent = minutes.toString().padStart(2, '0');
+            secondsEl.textContent = seconds.toString().padStart(2, '0');
+            
+            if (totalSeconds <= 0) {
+                clearInterval(timer);
+                // Reset or handle countdown end
+                totalSeconds = 47 * 3600 + 59 * 60 + 59;
+            }
+            
+            totalSeconds--;
+        }, 1000);
+    }
+    
+    // For toast timer
+    if (toastTimerElement) {
+        // Set target time (48 hours from now)
+        let targetTime = localStorage.getItem('deal-target-time');
+        if (!targetTime) {
+            targetTime = Date.now() + (48 * 60 * 60 * 1000);
+            localStorage.setItem('deal-target-time', targetTime);
         }
         
-        totalSeconds--;
-    }, 1000);
+        function updateToastTimer() {
+            const now = Date.now();
+            const remaining = targetTime - now;
+            
+            if (remaining <= 0) {
+                // Reset timer for next 48 hours
+                targetTime = Date.now() + (48 * 60 * 60 * 1000);
+                localStorage.setItem('deal-target-time', targetTime);
+                return;
+            }
+            
+            const hours = Math.floor(remaining / (1000 * 60 * 60));
+            const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+            
+            toastTimerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        updateToastTimer();
+        setInterval(updateToastTimer, 1000);
+    }
 }
 
 // Real-time Purchase Notifications
@@ -104,6 +194,7 @@ function animateNumber(element, targetValue, originalText) {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    initUrgencyToast();
     startCountdown();
     showPurchaseNotifications();
     animateStats();
