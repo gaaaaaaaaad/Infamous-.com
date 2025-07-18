@@ -1,0 +1,581 @@
+/* Reseller-specific styles */
+.reseller-hero {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    background: var(--gradient-secondary);
+    position: relative;
+    overflow: hidden;
+    margin-top: 80px;
+}
+
+.reseller-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 70% 30%, rgba(255, 0, 0, 0.2) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.reseller-hero-content {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+    z-index: 2;
+    position: relative;
+}
+
+.reseller-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.reseller-description {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.reseller-stats {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    margin-top: 3rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Reseller Search */
+.reseller-search {
+    padding: 3rem 0;
+    background: var(--bg-primary);
+}
+
+.search-bar {
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    position: relative;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+}
+
+.search-bar input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.search-icon {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.region-filters {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.region-filter {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.region-filter:hover,
+.region-filter.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(255, 0, 0, 0.1);
+}
+
+/* Resellers Grid */
+.resellers {
+    padding: 4rem 0;
+    background: var(--bg-secondary);
+}
+
+.resellers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.reseller-card {
+    background: var(--bg-tertiary);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.reseller-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(255, 0, 0, 0.2);
+    border-color: var(--primary-color);
+}
+
+.reseller-card.premium {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--bg-tertiary), rgba(255, 0, 0, 0.05));
+}
+
+.reseller-card.premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--gradient-primary);
+}
+
+.reseller-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--gradient-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 2;
+}
+
+.reseller-logo {
+    text-align: center;
+    padding: 2rem;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.reseller-logo img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.reseller-card:hover .reseller-logo img {
+    transform: scale(1.1);
+}
+
+.reseller-info {
+    padding: 2rem;
+}
+
+.reseller-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.reseller-region {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.reseller-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.stars {
+    color: #ffd700;
+    font-size: 1.1rem;
+}
+
+.rating-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.reseller-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.reseller-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.reseller-actions .btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+}
+
+/* Become a Reseller */
+.become-reseller {
+    padding: 5rem 0;
+    background: var(--bg-primary);
+}
+
+.become-reseller-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.become-reseller-info {
+    padding-right: 2rem;
+}
+
+.become-reseller-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+}
+
+.reseller-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.benefit {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.benefit-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    background: var(--bg-tertiary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-color);
+}
+
+.benefit-text h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.benefit-text p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.become-reseller-form {
+    background: var(--bg-tertiary);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.reseller-application h3 {
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.reseller-application .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.reseller-application input,
+.reseller-application select,
+.reseller-application textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.reseller-application input:focus,
+.reseller-application select:focus,
+.reseller-application textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.reseller-application textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.reseller-application button {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Search and Filter States */
+.reseller-card.hidden {
+    display: none;
+}
+
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    grid-column: 1 / -1;
+}
+
+.no-results h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+/* Loading Animation */
+.resellers-loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    grid-column: 1 / -1;
+}
+
+.resellers-loading::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .reseller-stats {
+        gap: 2rem;
+    }
+    
+    .become-reseller-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .become-reseller-info {
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .reseller-title {
+        font-size: 2.5rem;
+    }
+    
+    .reseller-description {
+        font-size: 1rem;
+    }
+    
+    .reseller-stats {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .region-filters {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .region-filter {
+        width: 80%;
+        text-align: center;
+    }
+    
+    .resellers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .reseller-actions {
+        flex-direction: column;
+    }
+    
+    .search-bar {
+        margin: 0 10px 2rem;
+    }
+}
+
+/* Animation for reseller cards */
+.reseller-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effects for premium cards */
+.reseller-card.premium:hover {
+    box-shadow: 0 25px 50px rgba(255, 0, 0, 0.3);
+}
+
+/* Interactive elements */
+.reseller-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.1), transparent);
+    transition: left 0.5s ease;
+    z-index: 1;
+}
+
+.reseller-card:hover::before {
+    left: 100%;
+}
+
+.reseller-info {
+    position: relative;
+    z-index: 2;
+}
+
+/* Form validation styles */
+.reseller-application input:invalid,
+.reseller-application select:invalid,
+.reseller-application textarea:invalid {
+    border-color: #ff4444;
+}
+
+.reseller-application input:valid,
+.reseller-application select:valid,
+.reseller-application textarea:valid {
+    border-color: #00ff00;
+}
+
+/* Success message */
+.success-message {
+    background: rgba(0, 255, 0, 0.1);
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Error message */
+.error-message {
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    text-align: center;
+}

@@ -1,1111 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Infamous Unleashed</title>
-
-    <meta name="description" content="Infamous is the must-buy GTA 5 Online Mod Menu. Supports LUA scripts, fully customizable GUI (click UI or list UI), and the most unique, fun options on the market. Fully session safe, works in GTA 5 Online with friends, Battleye Supported & Bypassed, compatible with GTA 5 Enhanced & Legacy Editions. Free & Paid versions available.">
-    <meta name="keywords" content="Infamous GTA 5 Mod Menu, GTA 5 Online Mod Menu, Best GTA 5 Mod Menu, Must-Buy GTA 5 Online Mods, LUA Scripts GTA 5, Custom GUI GTA 5 Mod Menu, Click UI Mod Menu, List UI Mod Menu, Battleye Bypass GTA 5, Session Safe GTA 5 Mod Menu, Play With Friends GTA 5 Online, GTA 5 Enhanced Mod Menu, GTA 5 Legacy Mod Menu, Unique GTA 5 Online Mod Menu">
-
-    <link rel="shortcut icon" href="images/logo.png">
-    
-    <!-- Modern Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Modern CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --primary: #ff3333;
-            --primary-hover: #ff1a1a;
-            --primary-dark: #cc0000;
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #111111;
-            --bg-tertiary: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --text-muted: #888888;
-            --border-color: rgba(255, 51, 51, 0.2);
-            --shadow-light: rgba(255, 51, 51, 0.1);
-            --shadow-medium: rgba(255, 51, 51, 0.2);
-            --shadow-heavy: rgba(0, 0, 0, 0.5);
-            --radius: 12px;
-            --radius-lg: 20px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-hover);
-        }
-
-        /* Smooth reveal animations */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .reveal.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Navigation */
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 1rem 0;
-            transition: var(--transition);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .nav.scrolled {
-            background: rgba(10, 10, 10, 0.9);
-            border-bottom-color: var(--border-color);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-logo {
-            height: 40px;
-            filter: drop-shadow(0 0 10px var(--shadow-light));
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .nav-link:hover {
-            color: var(--primary);
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: width 0.3s ease;
-        }
-
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-        }
-
-        .hero-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
-        }
-
-        .hero-content {
-            text-align: center;
-            z-index: 2;
-            max-width: 900px;
-            padding: 0 2rem;
-        }
-
-        .hero-logo {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 2rem;
-            filter: drop-shadow(0 0 30px var(--shadow-medium));
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary) 0%, #ff6666 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 20px var(--shadow-light)); }
-            to { filter: drop-shadow(0 0 40px var(--shadow-medium)); }
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 3rem;
-            font-weight: 400;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* Modern Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: var(--radius-lg);
-            font-weight: 600;
-            text-decoration: none;
-            transition: var(--transition);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            box-shadow: 0 8px 32px var(--shadow-light);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px var(--shadow-medium);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        /* Section Styles */
-        .section {
-            padding: 6rem 0;
-            position: relative;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-title {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-
-        .section-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Cards */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .card {
-            background: var(--bg-secondary);
-            border-radius: var(--radius);
-            padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), transparent);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            border-color: var(--border-color);
-            box-shadow: 0 20px 40px var(--shadow-heavy);
-        }
-
-        .card-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .card-text {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Product Cards */
-        .product-card {
-            background: var(--bg-secondary);
-            border-radius: var(--radius);
-            padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: var(--primary);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .product-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .product-icon img {
-            width: 32px;
-            height: 32px;
-            filter: brightness(0) invert(1);
-        }
-
-        .product-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-price {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-        }
-
-        .product-features {
-            list-style: none;
-            margin-bottom: 2rem;
-        }
-
-        .product-features li {
-            padding: 0.5rem 0;
-            position: relative;
-            padding-left: 1.5rem;
-            color: var(--text-secondary);
-        }
-
-        .product-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-            font-weight: bold;
-        }
-
-        .product-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .product-actions .btn {
-            width: 100%;
-            justify-content: center;
-            font-size: 0.875rem;
-            padding: 0.75rem 1.5rem;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-lg);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
-        }
-
-        .tab.active,
-        .tab:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* Video Grid */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .video-item {
-            border-radius: var(--radius);
-            overflow: hidden;
-            position: relative;
-            aspect-ratio: 16/9;
-            background: var(--bg-secondary);
-        }
-
-        .video-item iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--bg-secondary);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem 0 2rem;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .footer-logo {
-            width: 80px;
-            margin-bottom: 2rem;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-link:hover {
-            color: var(--primary);
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .social-link {
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .social-link:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .copyright {
-            color: var(--text-muted);
-            font-size: 0.875rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 2rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .hero-cta {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .tabs {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .product-actions {
-                gap: 0.5rem;
-            }
-
-            .product-actions .btn {
-                font-size: 0.75rem;
-                padding: 0.625rem 1rem;
-            }
-        }
-
-        /* Loading Animation */
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        .loading.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(255, 51, 51, 0.1);
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Background patterns */
-        .bg-pattern {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.03;
-            background-image: radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0);
-            background-size: 40px 40px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infamous - Premium Gaming Cheats</title>
+    <link rel="icon" href="assets/Favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
-    </div>
-
     <!-- Navigation -->
-    <nav class="nav" id="nav">
+    <nav class="navbar">
         <div class="nav-container">
-            <img src="images/logo.png" alt="Infamous" class="nav-logo">
-            <ul class="nav-links">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#showcase" class="nav-link">Showcase</a></li>
-                <li><a href="#products" class="nav-link">Products</a></li>
-                <li><a href="#download" class="nav-link">Download</a></li>
+            <div class="nav-logo">
+                <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                <span class="logo-text">Infamous</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="store.html" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="reseller.html" class="nav-link">Resellers</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero" id="hero">
-        <div class="hero-bg">
-            <div class="bg-pattern"></div>
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="particles"></div>
         </div>
-        <div class="hero-particles" id="particles"></div>
-        
         <div class="hero-content">
-            <img src="images/logo.png" alt="Infamous Unleashed" class="hero-logo reveal">
-            <h1 class="hero-title reveal">Infamous Unleashed</h1>
-            <p class="hero-subtitle reveal">Premium gaming enhancement suite for GTA 5, RDR2, FiveM, RedM & beyond</p>
-            <div class="hero-cta reveal">
-                <a href="https://discord.gg/2KYUvZkD5q" class="btn btn-primary" target="_blank">
-                    <i class="fab fa-discord"></i>
-                    Join Discord
+            <h1 class="hero-title">
+                <span class="glow-text">Infamous</span>
+                <span class="subtitle">Premium Gaming Cheats</span>
+            </h1>
+            <p class="hero-description">
+                Unlock your gaming potential with our premium cheats for GTA V, RDR2, FiveM, and HWID Spoofer.
+                Experience gaming like never before with our undetected, high-quality modifications.
+            </p>
+            <div class="hero-buttons">
+                <a href="store.html" class="btn btn-primary">
+                    <span>Shop Now</span>
+                    <i class="arrow">→</i>
                 </a>
-                <a href="#products" class="btn btn-secondary">
-                    <i class="fas fa-shopping-cart"></i>
-                    View Products
+                <a href="#features" class="btn btn-secondary">
+                    <span>Learn More</span>
                 </a>
             </div>
         </div>
+        <div class="hero-image">
+            <img src="images/home/gta5.png" alt="GTA V" class="floating-image">
+            <img src="images/home/rdr2.png" alt="RDR2" class="floating-image delay-1">
+        </div>
     </section>
 
-    <!-- About Section -->
-    <section class="section" id="about">
+    <!-- Features Section -->
+    <section id="features" class="features">
         <div class="container">
-            <div class="section-header reveal">
-                <h2 class="section-title">Why Choose Infamous?</h2>
-                <p class="section-subtitle">
-                    Born in 2021 as a free GTA 5 mod menu, Infamous has evolved into the premier gaming enhancement platform, delivering cutting-edge features and unmatched quality.
-                </p>
-            </div>
-
-            <div class="card-grid">
-                <div class="card reveal">
-                    <div class="card-icon">
-                        <i class="fas fa-brain"></i>
+            <h2 class="section-title">Why Choose Infamous?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="images/log/gta5.png" alt="GTA V">
                     </div>
-                    <h3 class="card-title">Innovative Features</h3>
-                    <p class="card-text">
-                        Unique options and cutting-edge functionality that keeps our products ahead of the competition.
-                    </p>
+                    <h3>GTA V Cheats</h3>
+                    <p>Advanced modifications for Grand Theft Auto V with full online support and regular updates.</p>
                 </div>
-
-                <div class="card reveal">
-                    <div class="card-icon">
-                        <i class="fas fa-palette"></i>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="images/log/RDR22.png" alt="RDR2">
                     </div>
-                    <h3 class="card-title">Customizable Interface</h3>
-                    <p class="card-text">
-                        Fully adaptable UI with comprehensive theming system and configuration saving capabilities.
-                    </p>
+                    <h3>RDR2 Mods</h3>
+                    <p>Premium Red Dead Redemption 2 cheats with story mode and online compatibility.</p>
                 </div>
-
-                <div class="card reveal">
-                    <div class="card-icon">
-                        <i class="fas fa-shield-alt"></i>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="images/log/Fivem.png" alt="FiveM">
                     </div>
-                    <h3 class="card-title">Secure & Reliable</h3>
-                    <p class="card-text">
-                        Battle-tested security, 24/7 support, and transparent operations for complete peace of mind.
-                    </p>
+                    <h3>FiveM Support</h3>
+                    <p>Specialized cheats designed for FiveM servers with anti-detection technology.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="images/log/hwid.png" alt="HWID Spoofer">
+                    </div>
+                    <h3>HWID Spoofer</h3>
+                    <p>Professional hardware ID spoofing to keep your system safe and undetected.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Showcase Section -->
-    <section class="section" id="showcase" style="background: var(--bg-secondary);">
+    <!-- Stats Section -->
+    <section class="stats">
         <div class="container">
-            <div class="section-header reveal">
-                <h2 class="section-title">See It In Action</h2>
-                <p class="section-subtitle">
-                    Watch our showcase videos to see the power and versatility of Infamous in action.
-                </p>
-            </div>
-
-            <div class="video-grid reveal">
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/acI1ljkM3vI?si=yuh-O-mE6epIcyQ-" allowfullscreen></iframe>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="10000">0</div>
+                    <div class="stat-label">Happy Customers</div>
                 </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/ipKKGPy7i8M?si=jfcfl92FGj-fPYFc" allowfullscreen></iframe>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="99">0</div>
+                    <div class="stat-label">% Undetected</div>
                 </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/j_qQUeyxzl8?si=TIzepbXnDhxUPjvI" allowfullscreen></iframe>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="24">0</div>
+                    <div class="stat-label">7 Support</div>
                 </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/XG6DXSDhRmk?si=E-B_j4RzmZqo2iI1" allowfullscreen></iframe>
-                </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/8aKjjz3jssU?si=b95jkuKwt13HdNdn" allowfullscreen></iframe>
-                </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/CdNU0lRZ5uY?si=ftBj2nVzq1QBKRP3" allowfullscreen></iframe>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="50">0</div>
+                    <div class="stat-label">+ Resellers</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Products Section -->
-    <section class="section" id="products">
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
         <div class="container">
-            <div class="section-header reveal">
-                <h2 class="section-title">Our Products</h2>
-                <p class="section-subtitle">
-                    Choose from our range of premium gaming enhancement tools. Purchase directly or through our trusted resellers.
-                </p>
-            </div>
-
-            <div class="tabs reveal">
-                <div class="tab active" onclick="filterProducts('all')">All Products</div>
-                <div class="tab" onclick="filterProducts('gta')">GTA 5</div>
-                <div class="tab" onclick="filterProducts('rdr2')">RDR2</div>
-                <div class="tab" onclick="filterProducts('fivem')">FiveM</div>
-                <div class="tab" onclick="filterProducts('other')">Other</div>
-            </div>
-
-            <div class="card-grid" id="product-grid">
-                <!-- Master Package -->
-                <div class="product-card reveal" data-category="all">
-                    <div class="product-badge">Best Value</div>
-                    <div class="product-icon">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <h3 class="product-title">Master Package</h3>
-                    <div class="product-price">$125</div>
-                    <ul class="product-features">
-                        <li>Complete access to all products</li>
-                        <li>GTA 5 Legacy & Enhanced</li>
-                        <li>RDR2 Full Version</li>
-                        <li>FiveM & RedM</li>
-                        <li>HWID Spoofer included</li>
-                        <li>Tester access included</li>
-                        <li>Lifetime updates</li>
-                    </ul>
-                    <div class="product-actions">
-                        <a href="https://nenyooo.myshopify.com/products/infamous-master-package" class="btn btn-primary" target="_blank">Buy with Card</a>
-                        <a href="https://dizzgaming.selly.store/product/9f534656" class="btn btn-primary" target="_blank">Buy with Crypto</a>
-                        <a href="morepayments.html" class="btn btn-secondary" target="_blank">More Payment Options</a>
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Connect with us</h3>
+                    <p>Join our community and stay updated with the latest releases and updates.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <img src="assets/discord.png" alt="Discord">
+                            <span>Discord</span>
+                        </a>
+                        <a href="#" class="social-link">
+                            <img src="assets/telegram.png" alt="Telegram">
+                            <span>Telegram</span>
+                        </a>
+                        <a href="#" class="social-link">
+                            <img src="assets/twitter.png" alt="Twitter">
+                            <span>Twitter</span>
+                        </a>
                     </div>
                 </div>
-
-                <!-- GTA 5 Enhanced -->
-                <div class="product-card reveal" data-category="gta">
-                    <div class="product-icon">
-                        <img src="gta5enh48.png" alt="GTA Enhanced">
-                    </div>
-                    <h3 class="product-title">GTA 5 Enhanced Full Plus</h3>
-                    <div class="product-price">$50</div>
-                    <ul class="product-features">
-                        <li>BattlEye enabled & disabled support</li>
-                        <li>Public session compatible</li>
-                        <li>No host required</li>
-                        <li>Free shopping & unlocks</li>
-                        <li>Casino rigging</li>
-                        <li>Business manager</li>
-                        <li>500+ unique features</li>
-                    </ul>
-                    <div class="product-actions">
-                        <a href="https://nenyooo.myshopify.com/products/infamous-full-plus-gta-5-enhanced" class="btn btn-primary" target="_blank">Buy with Card</a>
-                        <a href="https://dizzgaming.selly.store/product/5749058e" class="btn btn-primary" target="_blank">Buy with Crypto</a>
-                        <a href="https://dizzgaming.selly.store/product/d1a82e47" class="btn btn-secondary" target="_blank">Buy Tester</a>
-                    </div>
+                <div class="contact-form">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
                 </div>
-
-                <!-- GTA 5 Legacy -->
-                <div class="product-card reveal" data-category="gta">
-                    <div class="product-icon">
-                        <img src="gta5leg48.png" alt="GTA Legacy">
-                    </div>
-                    <h3 class="product-title">GTA 5 Legacy Full Plus</h3>
-                    <div class="product-price">$40</div>
-                    <ul class="product-features">
-                        <li>BattlEye enabled support</li>
-                        <li>Public session compatible</li>
-                        <li>Free shopping & unlocks</li>
-                        <li>Casino rigging</li>
-                        <li>Business manager</li>
-                        <li>500+ unique features</li>
-                    </ul>
-                    <div class="product-actions">
-                        <a href="https://nenyooo.myshopify.com/products/infamous-full-plus-gta-5-legacy" class="btn btn-primary" target="_blank">Buy with Card</a>
-                        <a href="https://dizzgaming.selly.store/product/e2797567" class="btn btn-primary" target="_blank">Buy with Crypto</a>
-                        <a href="https://dizzgaming.selly.store/product/d1a82e47" class="btn btn-secondary" target="_blank">Buy Tester</a>
-                    </div>
-                </div>
-
-                <!-- RDR2 -->
-                <div class="product-card reveal" data-category="rdr2">
-                    <div class="product-icon">
-                        <img src="rdr248.png" alt="RDR2">
-                    </div>
-                    <h3 class="product-title">RDR2 Full Version</h3>
-                    <div class="product-price">$20</div>
-                    <ul class="product-features">
-                        <li>Gold & money loops</li>
-                        <li>XP & roles XP loops</li>
-                        <li>Collections automation</li>
-                        <li>Give money to friends</li>
-                        <li>Advanced VFX engine</li>
-                        <li>Lifetime access</li>
-                    </ul>
-                    <div class="product-actions">
-                        <a href="https://nenyooo.myshopify.com/products/infamous-full-rdr2" class="btn btn-primary" target="_blank">Buy with Card</a>
-                        <a href="https://dizzgaming.selly.store/product/779dae04" class="btn btn-primary" target="_blank">Buy with Crypto</a>
-                        <a href="morepayments.html" class="btn btn-secondary" target="_blank">More Payments</a>
-                    </div>
-                </div>
-
-                <!-- FiveM -->
-                <div class="product-card reveal" data-category="fivem">
-                    <div class="product-icon">
-                        <img src="fivem48.png" alt="FiveM">
-                    </div>
-                    <h3 class="product-title">FiveM Full Version</h3>
-                    <div class="product-price">$30</div>
-                    <ul class="product-features">
-                        <li>Aimbot & silent aim</li>
-                        <li>Magic bullets</li>
-                        <li>Advanced ESP system</li>
-                        <li>Player trolling tools</li>
-                        <li>Vehicle XML spawner</li>
-                        <li>Full VFX engine</li>
-                    </ul>
-                    <div class="product-actions">
-                        <a href="https://nenyooo.myshopify.com/products/infamous-fivem-full-plus" class="btn btn-primary" target="_blank">Buy with Card</a>
-                        <a href="https://dizzgaming.selly.store/product/e9f88f71" class="btn btn-primary" target="_blank">Buy with Crypto</a>
-                        <a href="morepayments.html" class="btn btn-secondary" target="_blank">More Payments</a>
-                    </div>
-                </div>
-
-                <!-- HWID Spoofer -->
-                <div class="product-card reveal" data-category="other">
-                    <div class="product-icon">
-                        <img src="hwid48.png" alt="HWID Spoofer">
-                    </div>
-                    <h3 class="product-title">Hardware Spoofer</h3>
-                    <div class="product-price">$20</div>
-                    <ul class="product-features">
-                        <li>Complete hardware spoofing</li>
-                        <li>Protects main HWID</li>
-                        <li>Bypass HWID bans</li>
-                        <li>Built-in FiveM cleaner</li>
-                        <li>Lifetime access</li>
-                    </ul>
-                    <div class="product-actions">
-                        <a href="https://nenyooo.myshopify.com/products/infamous-hwid-spoofer" class="btn btn-primary" target="_blank">Buy with Card</a>
-                        <a href="https://dizzgaming.selly.store/product/4477abb7" class="btn btn-primary" target="_blank">Buy with Crypto</a>
-                        <a href="morepayments.html" class="btn btn-secondary" target="_blank">More Payments</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Download Section -->
-    <section class="section" id="download" style="background: var(--bg-secondary);">
-        <div class="container">
-            <div class="section-header reveal">
-                <h2 class="section-title">Download Launcher</h2>
-                <p class="section-subtitle">
-                    Get the Infamous launcher to access your purchased products and receive automatic updates.
-                </p>
-            </div>
-
-            <div style="text-align: center;" class="reveal">
-                <a href="Infamous.zip" class="btn btn-primary" style="font-size: 1.125rem; padding: 1.25rem 3rem;">
-                    <i class="fas fa-download"></i>
-                    Download Now
-                </a>
-                <p style="margin-top: 2rem; color: var(--text-muted);">
-                    Having issues? Install <a href="https://www.techpowerup.com/download/visual-c-redistributable-runtime-package-all-in-one/" style="color: var(--primary);">Visual C++ Runtimes</a>
-                </p>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-content">
-            <img src="images/logo.png" alt="Infamous" class="footer-logo">
-            
-            <div class="social-links">
-                <a href="https://discord.gg/2KYUvZkD5q" class="social-link" target="_blank">
-                    <i class="fab fa-discord"></i>
-                </a>
-                <a href="https://t.me/InfamousMenu" class="social-link" target="_blank">
-                    <i class="fab fa-telegram"></i>
-                </a>
-                <a href="https://x.com/InfamousUL" class="social-link" target="_blank">
-                    <i class="fab fa-twitter"></i>
-                </a>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                        <span class="logo-text">Infamous</span>
+                    </div>
+                    <p>Premium gaming cheats for the ultimate gaming experience.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="store.html">Store</a></li>
+                        <li><a href="reseller.html">Resellers</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="#">GTA V Cheats</a></li>
+                        <li><a href="#">RDR2 Mods</a></li>
+                        <li><a href="#">FiveM Support</a></li>
+                        <li><a href="#">HWID Spoofer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><img src="assets/discord.png" alt="Discord"></a>
+                        <a href="#"><img src="assets/telegram.png" alt="Telegram"></a>
+                        <a href="#"><img src="assets/twitter.png" alt="Twitter"></a>
+                    </div>
+                </div>
             </div>
-
-            <div class="footer-links">
-                <a href="#about" class="footer-link">About</a>
-                <a href="#showcase" class="footer-link">Showcase</a>
-                <a href="#products" class="footer-link">Products</a>
-                <a href="#download" class="footer-link">Download</a>
-            </div>
-
-            <div class="copyright">
-                <p>&copy; 2024 Infamous Unleashed. All rights reserved.</p>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Infamous. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Loading screen
-        window.addEventListener('load', () => {
-            const loading = document.getElementById('loading');
-            setTimeout(() => {
-                loading.classList.add('fade-out');
-                setTimeout(() => {
-                    loading.style.display = 'none';
-                }, 500);
-            }, 1000);
-        });
-
-        // Smooth scroll reveal animation
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.reveal').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Navigation scroll effect
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('nav');
-            if (window.scrollY > 100) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
-            }
-        });
-
-        // Floating particles
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            const particleCount = 50;
-
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
-                particles.appendChild(particle);
-            }
-        }
-
-        createParticles();
-
-        // Product filtering
-        function filterProducts(category) {
-            const tabs = document.querySelectorAll('.tab');
-            const products = document.querySelectorAll('.product-card');
-
-            tabs.forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-
-            products.forEach(product => {
-                if (category === 'all' || product.dataset.category.includes(category)) {
-                    product.style.display = 'block';
-                    setTimeout(() => {
-                        product.style.opacity = '1';
-                        product.style.transform = 'translateY(0)';
-                    }, 100);
-                } else {
-                    product.style.opacity = '0';
-                    product.style.transform = 'translateY(20px)';
-                    setTimeout(() => {
-                        product.style.display = 'none';
-                    }, 300);
-                }
-            });
-        }
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
-```

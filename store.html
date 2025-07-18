@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store - Infamous Premium Cheats</title>
+    <link rel="icon" href="assets/Favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="store.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                <span class="logo-text">Infamous</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="store.html" class="nav-link active">Store</a></li>
+                <li class="nav-item"><a href="reseller.html" class="nav-link">Resellers</a></li>
+                <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Store Hero Section -->
+    <section class="store-hero">
+        <div class="container">
+            <div class="store-hero-content">
+                <h1 class="store-title">
+                    <span class="glow-text">Premium Store</span>
+                    <span class="subtitle">Choose Your Gaming Edge</span>
+                </h1>
+                <p class="store-description">
+                    Discover our collection of premium gaming cheats and modifications. 
+                    All products are regularly updated and come with 24/7 support.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Categories -->
+    <section class="categories">
+        <div class="container">
+            <h2 class="section-title">Product Categories</h2>
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="all">All Products</button>
+                <button class="category-tab" data-category="gta5">GTA V</button>
+                <button class="category-tab" data-category="rdr2">RDR2</button>
+                <button class="category-tab" data-category="fivem">FiveM</button>
+                <button class="category-tab" data-category="tools">Tools</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products">
+        <div class="container">
+            <div class="products-grid">
+                <!-- GTA V Products -->
+                <div class="product-card" data-category="gta5">
+                    <div class="product-image">
+                        <img src="images/log/gta5.png" alt="GTA V Premium">
+                        <div class="product-overlay">
+                            <div class="product-badges">
+                                <span class="badge featured">Featured</span>
+                                <span class="badge updated">Updated</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">GTA V Premium</h3>
+                        <p class="product-description">
+                            Complete GTA V modification suite with ESP, Aimbot, Vehicle spawning, and more.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature">✓ ESP/Wallhack</span>
+                            <span class="feature">✓ Aimbot</span>
+                            <span class="feature">✓ Vehicle Spawner</span>
+                            <span class="feature">✓ Money Drop</span>
+                        </div>
+                        <div class="product-pricing">
+                            <span class="price-old">$49.99</span>
+                            <span class="price-current">$39.99</span>
+                            <span class="price-period">/ Month</span>
+                        </div>
+                        <button class="btn btn-primary product-btn">
+                            <span>Purchase Now</span>
+                            <i class="arrow">→</i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RDR2 Products -->
+                <div class="product-card" data-category="rdr2">
+                    <div class="product-image">
+                        <img src="images/log/RDR22.png" alt="RDR2 Ultimate">
+                        <div class="product-overlay">
+                            <div class="product-badges">
+                                <span class="badge new">New</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">RDR2 Ultimate</h3>
+                        <p class="product-description">
+                            Advanced Red Dead Redemption 2 cheats for both Story and Online modes.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature">✓ Player ESP</span>
+                            <span class="feature">✓ Animal ESP</span>
+                            <span class="feature">✓ Teleportation</span>
+                            <span class="feature">✓ God Mode</span>
+                        </div>
+                        <div class="product-pricing">
+                            <span class="price-current">$34.99</span>
+                            <span class="price-period">/ Month</span>
+                        </div>
+                        <button class="btn btn-primary product-btn">
+                            <span>Purchase Now</span>
+                            <i class="arrow">→</i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FiveM Products -->
+                <div class="product-card" data-category="fivem">
+                    <div class="product-image">
+                        <img src="images/log/Fivem.png" alt="FiveM Pro">
+                        <div class="product-overlay">
+                            <div class="product-badges">
+                                <span class="badge popular">Popular</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">FiveM Pro</h3>
+                        <p class="product-description">
+                            Specialized cheats designed for FiveM servers with advanced anti-detection.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature">✓ Server-Specific</span>
+                            <span class="feature">✓ Anti-Detection</span>
+                            <span class="feature">✓ Custom Scripts</span>
+                            <span class="feature">✓ Regular Updates</span>
+                        </div>
+                        <div class="product-pricing">
+                            <span class="price-current">$29.99</span>
+                            <span class="price-period">/ Month</span>
+                        </div>
+                        <button class="btn btn-primary product-btn">
+                            <span>Purchase Now</span>
+                            <i class="arrow">→</i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- HWID Spoofer -->
+                <div class="product-card" data-category="tools">
+                    <div class="product-image">
+                        <img src="images/log/hwid.png" alt="HWID Spoofer">
+                        <div class="product-overlay">
+                            <div class="product-badges">
+                                <span class="badge essential">Essential</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">HWID Spoofer Pro</h3>
+                        <p class="product-description">
+                            Professional hardware ID spoofing tool to protect your system from bans.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature">✓ Hardware Spoofing</span>
+                            <span class="feature">✓ Registry Cleaning</span>
+                            <span class="feature">✓ Temp File Cleanup</span>
+                            <span class="feature">✓ One-Click Operation</span>
+                        </div>
+                        <div class="product-pricing">
+                            <span class="price-current">$19.99</span>
+                            <span class="price-period">/ Month</span>
+                        </div>
+                        <button class="btn btn-primary product-btn">
+                            <span>Purchase Now</span>
+                            <i class="arrow">→</i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CS2 Product -->
+                <div class="product-card" data-category="tools">
+                    <div class="product-image">
+                        <img src="images/log/cs2.png" alt="CS2 Cheats">
+                        <div class="product-overlay">
+                            <div class="product-badges">
+                                <span class="badge coming-soon">Coming Soon</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">CS2 Premium</h3>
+                        <p class="product-description">
+                            Advanced Counter-Strike 2 cheats with undetected ESP and precise aimbot.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature">✓ Undetected ESP</span>
+                            <span class="feature">✓ Precise Aimbot</span>
+                            <span class="feature">✓ Skin Changer</span>
+                            <span class="feature">✓ Rank Reveal</span>
+                        </div>
+                        <div class="product-pricing">
+                            <span class="price-current">$24.99</span>
+                            <span class="price-period">/ Month</span>
+                        </div>
+                        <button class="btn btn-secondary product-btn" disabled>
+                            <span>Coming Soon</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fortnite Product -->
+                <div class="product-card" data-category="tools">
+                    <div class="product-image">
+                        <img src="images/log/fortnite.png" alt="Fortnite Cheats">
+                        <div class="product-overlay">
+                            <div class="product-badges">
+                                <span class="badge limited">Limited</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Fortnite Elite</h3>
+                        <p class="product-description">
+                            Elite Fortnite modifications with advanced features and anti-detection.
+                        </p>
+                        <div class="product-features">
+                            <span class="feature">✓ Player ESP</span>
+                            <span class="feature">✓ Item ESP</span>
+                            <span class="feature">✓ Aimbot</span>
+                            <span class="feature">✓ Building ESP</span>
+                        </div>
+                        <div class="product-pricing">
+                            <span class="price-current">$44.99</span>
+                            <span class="price-period">/ Month</span>
+                        </div>
+                        <button class="btn btn-primary product-btn">
+                            <span>Purchase Now</span>
+                            <i class="arrow">→</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="store-features">
+        <div class="container">
+            <h2 class="section-title">Why Choose Our Products?</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <img src="images/icon2.png" alt="24/7 Support">
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Get help whenever you need it with our round-the-clock customer support.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <img src="images/icon3.png" alt="Regular Updates">
+                    </div>
+                    <h3>Regular Updates</h3>
+                    <p>Our products are constantly updated to stay ahead of detection systems.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <img src="images/icon4.png" alt="Undetected">
+                    </div>
+                    <h3>Undetected</h3>
+                    <p>Advanced anti-detection technology keeps you safe while gaming.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <img src="images/icon5.png" alt="Easy Setup">
+                    </div>
+                    <h3>Easy Setup</h3>
+                    <p>Simple installation process with detailed guides and video tutorials.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                        <span class="logo-text">Infamous</span>
+                    </div>
+                    <p>Premium gaming cheats for the ultimate gaming experience.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="store.html">Store</a></li>
+                        <li><a href="reseller.html">Resellers</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="#">GTA V Cheats</a></li>
+                        <li><a href="#">RDR2 Mods</a></li>
+                        <li><a href="#">FiveM Support</a></li>
+                        <li><a href="#">HWID Spoofer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><img src="assets/discord.png" alt="Discord"></a>
+                        <a href="#"><img src="assets/telegram.png" alt="Telegram"></a>
+                        <a href="#"><img src="assets/twitter.png" alt="Twitter"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Infamous. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="store.js"></script>
+</body>
+</html>

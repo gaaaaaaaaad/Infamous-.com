@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resellers - Infamous Premium Cheats</title>
+    <link rel="icon" href="assets/Favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="reseller.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                <span class="logo-text">Infamous</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="store.html" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="reseller.html" class="nav-link active">Resellers</a></li>
+                <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Reseller Hero Section -->
+    <section class="reseller-hero">
+        <div class="container">
+            <div class="reseller-hero-content">
+                <h1 class="reseller-title">
+                    <span class="glow-text">Authorized Resellers</span>
+                    <span class="subtitle">Trusted Partners Worldwide</span>
+                </h1>
+                <p class="reseller-description">
+                    Purchase our premium cheats from our verified resellers around the globe. 
+                    All resellers are authorized and provide genuine products with full support.
+                </p>
+                <div class="reseller-stats">
+                    <div class="stat">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Active Resellers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">Countries</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reseller Search -->
+    <section class="reseller-search">
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" id="resellerSearch" placeholder="Search resellers by name or region...">
+                <button class="search-btn">
+                    <i class="search-icon">🔍</i>
+                </button>
+            </div>
+            <div class="region-filters">
+                <button class="region-filter active" data-region="all">All Regions</button>
+                <button class="region-filter" data-region="europe">Europe</button>
+                <button class="region-filter" data-region="americas">Americas</button>
+                <button class="region-filter" data-region="asia">Asia</button>
+                <button class="region-filter" data-region="oceania">Oceania</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resellers Grid -->
+    <section class="resellers">
+        <div class="container">
+            <div class="resellers-grid">
+                <!-- Premium Resellers -->
+                <div class="reseller-card premium" data-region="europe">
+                    <div class="reseller-badge">Premium Partner</div>
+                    <div class="reseller-logo">
+                        <img src="images/reseller/PremiumCheats.png" alt="Premium Cheats">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">Premium Cheats</h3>
+                        <p class="reseller-region">Europe • English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★★</div>
+                            <span class="rating-text">4.9/5 (1,250 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ Instant delivery</span>
+                            <span class="feature">✓ 24/7 support</span>
+                            <span class="feature">✓ PayPal accepted</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reseller-card premium" data-region="americas">
+                    <div class="reseller-badge">Premium Partner</div>
+                    <div class="reseller-logo">
+                        <img src="images/reseller/PremiumModz.png" alt="Premium Modz">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">Premium Modz</h3>
+                        <p class="reseller-region">North America • English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★★</div>
+                            <span class="rating-text">4.8/5 (980 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ Crypto payments</span>
+                            <span class="feature">✓ Discord support</span>
+                            <span class="feature">✓ Same-day delivery</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Standard Resellers -->
+                <div class="reseller-card" data-region="asia">
+                    <div class="reseller-logo">
+                        <img src="images/reseller/XiGua.jpg" alt="XiGua Mods">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">XiGua Mods</h3>
+                        <p class="reseller-region">Asia • Chinese/English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★☆</div>
+                            <span class="rating-text">4.7/5 (756 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ Local payment methods</span>
+                            <span class="feature">✓ Multilingual support</span>
+                            <span class="feature">✓ Regional pricing</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reseller-card" data-region="europe">
+                    <div class="reseller-logo">
+                        <img src="images/reseller/divinemods.png" alt="Divine Mods">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">Divine Mods</h3>
+                        <p class="reseller-region">Europe • German/English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★★</div>
+                            <span class="rating-text">4.9/5 (1,100 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ SEPA payments</span>
+                            <span class="feature">✓ German support</span>
+                            <span class="feature">✓ EU compliance</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reseller-card" data-region="americas">
+                    <div class="reseller-logo">
+                        <img src="images/reseller/mrcat.png" alt="Mr Cat Mods">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">Mr Cat Mods</h3>
+                        <p class="reseller-region">South America • Spanish/English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★☆</div>
+                            <span class="rating-text">4.6/5 (645 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ Local currencies</span>
+                            <span class="feature">✓ Spanish support</span>
+                            <span class="feature">✓ Regional discounts</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reseller-card" data-region="oceania">
+                    <div class="reseller-logo">
+                        <img src="images/reseller/roystars.png" alt="Roy Stars">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">Roy Stars</h3>
+                        <p class="reseller-region">Oceania • English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★★</div>
+                            <span class="rating-text">4.8/5 (420 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ AUD/NZD accepted</span>
+                            <span class="feature">✓ Fast shipping</span>
+                            <span class="feature">✓ Local timezone support</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reseller-card" data-region="europe">
+                    <div class="reseller-logo">
+                        <img src="images/reseller/hansModz.png" alt="Hans Modz">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">Hans Modz</h3>
+                        <p class="reseller-region">Europe • Dutch/English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★☆</div>
+                            <span class="rating-text">4.7/5 (890 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ iDEAL payments</span>
+                            <span class="feature">✓ Dutch support</span>
+                            <span class="feature">✓ Quick delivery</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reseller-card" data-region="asia">
+                    <div class="reseller-logo">
+                        <img src="images/reseller/Noah.png" alt="Noah Mods">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">Noah Mods</h3>
+                        <p class="reseller-region">Asia • Japanese/English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★★</div>
+                            <span class="rating-text">4.9/5 (1,030 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ JPY accepted</span>
+                            <span class="feature">✓ Japanese support</span>
+                            <span class="feature">✓ Mobile payments</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reseller-card" data-region="americas">
+                    <div class="reseller-logo">
+                        <img src="images/reseller/Modmarket.png" alt="Mod Market">
+                    </div>
+                    <div class="reseller-info">
+                        <h3 class="reseller-name">Mod Market</h3>
+                        <p class="reseller-region">North America • English</p>
+                        <div class="reseller-rating">
+                            <div class="stars">★★★★☆</div>
+                            <span class="rating-text">4.6/5 (720 reviews)</span>
+                        </div>
+                        <div class="reseller-features">
+                            <span class="feature">✓ Credit cards</span>
+                            <span class="feature">✓ Live chat</span>
+                            <span class="feature">✓ Bulk discounts</span>
+                        </div>
+                        <div class="reseller-actions">
+                            <a href="#" class="btn btn-primary">Visit Store</a>
+                            <a href="#" class="btn btn-secondary">Contact</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Become a Reseller -->
+    <section class="become-reseller">
+        <div class="container">
+            <div class="become-reseller-content">
+                <div class="become-reseller-info">
+                    <h2 class="section-title">Become a Reseller</h2>
+                    <p class="become-reseller-description">
+                        Join our growing network of authorized resellers and start earning with Infamous products. 
+                        We offer competitive commission rates and full marketing support.
+                    </p>
+                    <div class="reseller-benefits">
+                        <div class="benefit">
+                            <div class="benefit-icon">💰</div>
+                            <div class="benefit-text">
+                                <h4>High Commission Rates</h4>
+                                <p>Earn up to 30% commission on every sale</p>
+                            </div>
+                        </div>
+                        <div class="benefit">
+                            <div class="benefit-icon">🎯</div>
+                            <div class="benefit-text">
+                                <h4>Marketing Support</h4>
+                                <p>Get promotional materials and marketing guidance</p>
+                            </div>
+                        </div>
+                        <div class="benefit">
+                            <div class="benefit-icon">🤝</div>
+                            <div class="benefit-text">
+                                <h4>Dedicated Support</h4>
+                                <p>Direct access to our reseller support team</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="become-reseller-form">
+                    <form class="reseller-application">
+                        <h3>Apply Today</h3>
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Company/Store Name" required>
+                        </div>
+                        <div class="form-group">
+                            <select required>
+                                <option value="">Select Region</option>
+                                <option value="europe">Europe</option>
+                                <option value="americas">Americas</option>
+                                <option value="asia">Asia</option>
+                                <option value="oceania">Oceania</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Tell us about your business and experience..." rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <span>Submit Application</span>
+                            <i class="arrow">→</i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                        <span class="logo-text">Infamous</span>
+                    </div>
+                    <p>Premium gaming cheats for the ultimate gaming experience.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="store.html">Store</a></li>
+                        <li><a href="reseller.html">Resellers</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="#">GTA V Cheats</a></li>
+                        <li><a href="#">RDR2 Mods</a></li>
+                        <li><a href="#">FiveM Support</a></li>
+                        <li><a href="#">HWID Spoofer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><img src="assets/discord.png" alt="Discord"></a>
+                        <a href="#"><img src="assets/telegram.png" alt="Telegram"></a>
+                        <a href="#"><img src="assets/twitter.png" alt="Twitter"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Infamous. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="reseller.js"></script>
+</body>
+</html>
