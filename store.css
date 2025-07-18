@@ -246,10 +246,19 @@
     color: var(--text-secondary);
 }
 
+.product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
 .product-btn {
     width: 100%;
     justify-content: center;
-    margin-top: auto;
+    margin-top: 0;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
 }
 
 .product-btn:disabled {
@@ -326,6 +335,33 @@
 
 .nav-link.active::after {
     width: 100%;
+}
+
+/* Button Styles */
+.btn-tester {
+    background: linear-gradient(135deg, #ffa500, #ff8c00);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-tester:hover {
+    background: linear-gradient(135deg, #ff8c00, #ff7700);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 165, 0, 0.3);
+}
+
+.btn-upgrade {
+    background: linear-gradient(135deg, #32cd32, #228b22);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-upgrade:hover {
+    background: linear-gradient(135deg, #228b22, #1e7a1e);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(50, 205, 50, 0.3);
 }
 
 /* Responsive Design */

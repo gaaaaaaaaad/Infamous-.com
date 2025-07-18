@@ -69,222 +69,24 @@ function checkEmptyState(category) {
     }
 }
 
-// Product purchase handling
+// Product purchase handling - Direct link redirect (no modals)
 const productButtons = document.querySelectorAll('.product-btn:not([disabled])');
 
 productButtons.forEach(button => {
+    // Remove the click event listener that prevents default behavior
+    // Let the natural link behavior work (target="_blank" will open in new tab)
     button.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        const productCard = button.closest('.product-card');
-        const productTitle = productCard.querySelector('.product-title').textContent;
-        const productPrice = productCard.querySelector('.price-current').textContent;
-        
-        // Show purchase modal or redirect
-        showPurchaseModal(productTitle, productPrice);
-    });
-});
-
-function showPurchaseModal(title, price) {
-    // Create modal
-    const modal = document.createElement('div');
-    modal.className = 'purchase-modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Purchase ${title}</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="product-summary">
-                    <h3>${title}</h3>
-                    <p class="modal-price">Price: ${price}/month</p>
-                </div>
-                <div class="purchase-form">
-                    <h4>Contact Information</h4>
-                    <form>
-                        <div class="form-group">
-                            <label>Discord Username</label>
-                            <input type="text" placeholder="YourUsername#1234" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email Address</label>
-                            <input type="email" placeholder="your@email.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Payment Method</label>
-                            <select required>
-                                <option value="">Select payment method</option>
-                                <option value="paypal">PayPal</option>
-                                <option value="crypto">Cryptocurrency</option>
-                                <option value="card">Credit Card</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <span>Proceed to Payment</span>
-                            <i class="arrow">→</i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Add modal styles
-    const modalStyles = document.createElement('style');
-    modalStyles.textContent = `
-        .purchase-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            backdrop-filter: blur(5px);
-        }
-        
-        .modal-content {
-            background: var(--bg-tertiary);
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .modal-header h2 {
-            color: var(--text-primary);
-            margin: 0;
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 2rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-        
-        .modal-close:hover {
-            color: var(--primary-color);
-        }
-        
-        .modal-body {
-            padding: 2rem;
-        }
-        
-        .product-summary {
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background: var(--bg-primary);
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .product-summary h3 {
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .modal-price {
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-        
-        .purchase-form h4 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-        
-        .purchase-form .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .purchase-form label {
-            display: block;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .purchase-form input,
-        .purchase-form select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: inherit;
-        }
-        
-        .purchase-form input:focus,
-        .purchase-form select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-        
-        .purchase-form button {
-            width: 100%;
-            margin-top: 1rem;
-        }
-    `;
-    
-    document.head.appendChild(modalStyles);
-    document.body.appendChild(modal);
-    
-    // Close modal functionality
-    const closeModal = () => {
-        modal.remove();
-        modalStyles.remove();
-    };
-    
-    modal.querySelector('.modal-close').addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-    });
-    
-    // Form submission
-    const form = modal.querySelector('form');
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        
-        // Simulate form submission
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
-        submitBtn.innerHTML = '<span>Processing...</span>';
-        submitBtn.disabled = true;
+        // Add a small loading animation
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span>Loading...</span>';
         
         setTimeout(() => {
-            submitBtn.innerHTML = '<span>Redirecting to Payment...</span>';
-            
-            setTimeout(() => {
-                // Here you would typically redirect to payment processor
-                alert('Thank you! You will be redirected to payment processing.');
-                closeModal();
-            }, 1500);
-        }, 2000);
+            button.innerHTML = originalText;
+        }, 1000);
+        
+        // Let the natural link behavior continue (don't prevent default)
     });
-}
+});
 
 // Search functionality
 const searchInput = document.createElement('input');
