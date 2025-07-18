@@ -290,3 +290,54 @@ const initParallax = () => {
 
 // Initialize parallax effect
 initParallax();
+
+// Product filtering functionality
+function initProductFiltering() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const productCards = document.querySelectorAll('.product-card');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const filter = button.getAttribute('data-filter');
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Filter products
+            productCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                
+                if (filter === 'all' || category.includes(filter)) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeInUp 0.5s ease-out';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+}
+
+// Initialize product filtering when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    initProductFiltering();
+    
+    // Add entrance animations to product cards
+    const productCards = document.querySelectorAll('.product-card');
+    productCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+
+// Update observer to include product cards
+document.querySelectorAll('.feature-card, .stat-item, .contact-content, .stats, .product-card').forEach(el => {
+    observer.observe(el);
+});
