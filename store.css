@@ -481,6 +481,26 @@
     50% { opacity: 1; }
 }
 
+/* Value Banner */
+.value-banner {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.value-text {
+    font-weight: 600;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
 .badge.limited {
     background: linear-gradient(135deg, #dc2626, #ef4444);
     animation: badgePulse 2s infinite;

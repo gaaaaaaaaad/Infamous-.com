@@ -1,59 +1,162 @@
 // Store-specific JavaScript functionality
 
-// Urgency Toast Management
-function initUrgencyToast() {
-    const toast = document.getElementById('urgency-toast');
-    const closeBtn = document.getElementById('toast-close');
+// Modern Notification Popup Management
+function initNotificationPopup() {
+    const popup = document.getElementById('notification-popup');
+    const closeBtn = document.getElementById('popup-close');
+    const remindBtn = document.getElementById('popup-remind');
     
-    if (!toast || !closeBtn) return;
+    console.log('Popup element:', popup);
+    console.log('Close button:', closeBtn);
+    console.log('Remind button:', remindBtn);
     
-    // Check if toast was dismissed today
-    const today = new Date().toDateString();
-    const dismissed = localStorage.getItem('urgency-toast-dismissed');
-    
-    if (dismissed === today) {
-        return; // Don't show if dismissed today
+    if (!popup || !closeBtn || !remindBtn) {
+        console.error('Popup elements not found');
+        return;
     }
     
-    // Show toast after 3 seconds
+    // Clear any previous dismissal for testing - REMOVE THIS LINE AFTER TESTING
+    localStorage.removeItem('notification-dismissed');
+    localStorage.removeItem('notification-remind-time');
+    
+    // Force show popup immediately for testing
+    console.log('Force showing popup for testing...');
+    popup.style.display = 'block';
+    popup.style.opacity = '1';
+    popup.style.visibility = 'visible';
+    popup.style.zIndex = '9999';
+    popup.classList.add('show');
+    startPopupCountdown();
+    
+    // Check if popup was dismissed today or reminder is set
+    const today = new Date().toDateString();
+    const dismissed = localStorage.getItem('notification-dismissed');
+    const remindTime = localStorage.getItem('notification-remind-time');
+    
+    console.log('Today:', today);
+    console.log('Dismissed:', dismissed);
+    console.log('Remind time:', remindTime);
+    
+    if (dismissed === today) {
+        console.log('Notification was dismissed today, not showing');
+        return;
+    }
+    
+    if (remindTime && Date.now() < parseInt(remindTime)) {
+        console.log('Reminder time not reached yet, not showing');
+        return;
+    }
+    
+    console.log('Showing notification popup after 3 seconds...');
+    
+    // Show popup after 3 seconds
     setTimeout(() => {
-        toast.style.display = 'block';
+        console.log('Attempting to show popup');
+        popup.style.display = 'block';
+        popup.classList.add('show');
         
-        // Auto-hide after 12 seconds
+        // Start countdown timer
+        startPopupCountdown();
+        
+        // Auto-hide after 30 seconds if no interaction
         setTimeout(() => {
-            hideToast();
-        }, 12000);
+            if (popup.classList.contains('show')) {
+                console.log('Auto-hiding popup');
+                hidePopup();
+            }
+        }, 30000);
     }, 3000);
     
-    // Close toast functionality
+    // Close popup functionality
     closeBtn.addEventListener('click', () => {
-        dismissToast();
+        console.log('Close button clicked');
+        dismissPopup();
     });
     
-    // Hide toast when clicking the action button
-    const actionBtn = toast.querySelector('.toast-btn');
+    // Remind me later functionality
+    remindBtn.addEventListener('click', () => {
+        console.log('Remind later button clicked');
+        // Set reminder for 1 hour later
+        const remindTime = Date.now() + (60 * 60 * 1000);
+        localStorage.setItem('notification-remind-time', remindTime.toString());
+        hidePopup();
+    });
+    
+    // Close popup when clicking outside
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            console.log('Clicked outside popup, closing');
+            hidePopup();
+        }
+    });
+    
+    // Hide popup when clicking the action button
+    const actionBtn = popup.querySelector('.popup-btn.primary');
     if (actionBtn) {
         actionBtn.addEventListener('click', () => {
-            dismissToast();
+            console.log('Action button clicked');
+            dismissPopup();
         });
     }
 }
 
-function hideToast() {
-    const toast = document.getElementById('urgency-toast');
-    if (toast) {
-        toast.classList.add('hide');
+function hidePopup() {
+    const popup = document.getElementById('notification-popup');
+    if (popup) {
+        popup.classList.add('hide');
+        popup.classList.remove('show');
         setTimeout(() => {
-            toast.style.display = 'none';
+            popup.style.display = 'none';
+            popup.classList.remove('hide');
         }, 300);
     }
 }
 
-function dismissToast() {
+function dismissPopup() {
     const today = new Date().toDateString();
-    localStorage.setItem('urgency-toast-dismissed', today);
-    hideToast();
+    localStorage.setItem('notification-dismissed', today);
+    hidePopup();
 }
+
+function startPopupCountdown() {
+    const hoursEl = document.getElementById('popup-hours');
+    const minutesEl = document.getElementById('popup-minutes');
+    const secondsEl = document.getElementById('popup-seconds');
+    
+    if (!hoursEl || !minutesEl || !secondsEl) return;
+    
+    // Set target time (48 hours from now)
+    let targetTime = localStorage.getItem('popup-target-time');
+    if (!targetTime) {
+        targetTime = Date.now() + (48 * 60 * 60 * 1000);
+        localStorage.setItem('popup-target-time', targetTime);
+    }
+    
+    function updateTimer() {
+        const now = Date.now();
+        const remaining = targetTime - now;
+        
+        if (remaining <= 0) {
+            // Reset timer for next 48 hours
+            targetTime = Date.now() + (48 * 60 * 60 * 1000);
+            localStorage.setItem('popup-target-time', targetTime);
+            return;
+        }
+        
+        const hours = Math.floor(remaining / (1000 * 60 * 60));
+        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+        
+        hoursEl.textContent = hours.toString().padStart(2, '0');
+        minutesEl.textContent = minutes.toString().padStart(2, '0');
+        secondsEl.textContent = seconds.toString().padStart(2, '0');
+    }
+    
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
+    
+    // Store timer ID to clear it when popup is closed
+    window.popupTimer = timer;
 }
 
 // Countdown Timer with Toast Integration
@@ -194,12 +297,36 @@ function animateNumber(element, targetValue, originalText) {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    initUrgencyToast();
+    console.log('DOM loaded, initializing store...');
+    initNotificationPopup();
     startCountdown();
     showPurchaseNotifications();
     animateStats();
     initFloatingActionButton();
+    console.log('Store initialization complete');
 });
+
+// Backup initialization in case DOMContentLoaded already fired
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM loaded, initializing store...');
+        initNotificationPopup();
+        startCountdown();
+        showPurchaseNotifications();
+        animateStats();
+        initFloatingActionButton();
+        console.log('Store initialization complete');
+    });
+} else {
+    console.log('DOM already loaded, initializing store immediately...');
+    initNotificationPopup();
+    startCountdown();
+    showPurchaseNotifications();
+    animateStats();
+    initFloatingActionButton();
+    console.log('Store initialization complete');
+}
+}
 
 // Floating Action Button
 function initFloatingActionButton() {
@@ -242,25 +369,68 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Category filtering
-const categoryTabs = document.querySelectorAll('.category-tab');
-const productCards = document.querySelectorAll('.product-card');
-
-categoryTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        const category = tab.getAttribute('data-category');
-        
-        // Update active tab
-        categoryTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        
-        // Filter products
-        filterProducts(category);
+// Category filtering - Initialize immediately and also on window load
+function initCategoryFiltering() {
+    console.log('Initializing category filtering...');
+    const categoryTabs = document.querySelectorAll('.category-tab');
+    
+    if (categoryTabs.length === 0) {
+        console.warn('No category tabs found');
+        return false;
+    }
+    
+    console.log('Found', categoryTabs.length, 'category tabs');
+    
+    categoryTabs.forEach(tab => {
+        // Remove any existing event listeners
+        tab.removeEventListener('click', handleCategoryClick);
+        // Add new event listener
+        tab.addEventListener('click', handleCategoryClick);
     });
+    
+    return true;
+}
+
+function handleCategoryClick(event) {
+    const tab = event.currentTarget;
+    const category = tab.getAttribute('data-category');
+    console.log('Category clicked:', category);
+    
+    // Update active tab
+    const allTabs = document.querySelectorAll('.category-tab');
+    allTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    // Filter products
+    filterProducts(category);
+}
+
+// Try to initialize immediately
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCategoryFiltering);
+} else {
+    initCategoryFiltering();
+}
+
+// Also try on window load as backup
+window.addEventListener('load', function() {
+    if (!initCategoryFiltering()) {
+        // If still failing, try again after a short delay
+        setTimeout(initCategoryFiltering, 1000);
+    }
 });
 
 function filterProducts(category) {
     const productsGrid = document.querySelector('.products-grid');
+    const productCards = document.querySelectorAll('.product-card'); // Query dynamically
+    
+    if (!productsGrid || productCards.length === 0) {
+        console.warn('Products grid or cards not found');
+        return;
+    }
+    
+    console.log('Filtering products for category:', category);
+    console.log('Found', productCards.length, 'product cards');
     
     // Add loading state
     productsGrid.style.opacity = '0.5';
@@ -268,14 +438,15 @@ function filterProducts(category) {
     setTimeout(() => {
         productCards.forEach(card => {
             const cardCategory = card.getAttribute('data-category');
+            console.log('Card category:', cardCategory, 'Target category:', category);
             
-            if (category === 'all' || cardCategory === category) {
+            if (category === 'all' || cardCategory === category || cardCategory.includes(category)) {
                 card.style.display = 'block';
                 card.classList.remove('filtered');
                 // Trigger animation
                 card.style.animation = 'none';
                 card.offsetHeight; // Trigger reflow
-                card.style.animation = 'fadeIn 0.5s ease-in-out';
+                card.style.animation = 'fadeInUp 0.5s ease-in-out';
             } else {
                 card.style.display = 'none';
                 card.classList.add('filtered');
@@ -291,8 +462,18 @@ function filterProducts(category) {
 }
 
 function checkEmptyState(category) {
-    const visibleProducts = document.querySelectorAll('.product-card:not(.filtered)');
+    const productCards = document.querySelectorAll('.product-card');
     const productsGrid = document.querySelector('.products-grid');
+    
+    // Count visible products (not hidden)
+    let visibleCount = 0;
+    productCards.forEach(card => {
+        if (card.style.display !== 'none') {
+            visibleCount++;
+        }
+    });
+    
+    console.log('Visible products count:', visibleCount);
     
     // Remove existing empty state
     const existingEmptyState = document.querySelector('.products-empty');
@@ -300,7 +481,7 @@ function checkEmptyState(category) {
         existingEmptyState.remove();
     }
     
-    if (visibleProducts.length === 0) {
+    if (visibleCount === 0 && category !== 'all') {
         const emptyState = document.createElement('div');
         emptyState.className = 'products-empty';
         emptyState.innerHTML = `
@@ -456,3 +637,102 @@ function addLoadingAnimation() {
 }
 
 addLoadingAnimation();
+
+// Manual function to force show popup (for testing)
+function forceShowPopup() {
+    const popup = document.getElementById('notification-popup');
+    if (popup) {
+        localStorage.removeItem('notification-dismissed');
+        localStorage.removeItem('notification-remind-time');
+        popup.style.display = 'block';
+        popup.style.opacity = '1';
+        popup.style.visibility = 'visible';
+        popup.style.zIndex = '9999';
+        popup.classList.add('show');
+        startPopupCountdown();
+        console.log('Popup forced to show');
+    } else {
+        console.error('Popup element not found!');
+    }
+}
+
+// Make function available globally for testing
+window.forceShowPopup = forceShowPopup;
+
+// Fallback function to ensure popup shows
+function ensurePopupShows() {
+    setTimeout(() => {
+        const popup = document.getElementById('notification-popup');
+        if (popup) {
+            console.log('Fallback: Ensuring popup shows');
+            popup.style.display = 'flex';
+            popup.style.opacity = '1';
+            popup.style.visibility = 'visible';
+            startPopupCountdown();
+        }
+    }, 5000);
+}
+
+// Call the fallback and force show for testing
+ensurePopupShows();
+// forceShowPopup(); // Uncomment to force show immediately
+
+// Countdown Timer for Offer Banner
+function startCountdown() {
+    let timeLeft = 72 * 60 * 60; // 72 hours in seconds
+    const countdownElement = document.getElementById('countdown');
+    
+    if (!countdownElement) return;
+    
+    function updateCountdown() {
+        const hours = Math.floor(timeLeft / 3600);
+        const minutes = Math.floor((timeLeft % 3600) / 60);
+        const seconds = timeLeft % 60;
+        
+        countdownElement.textContent = 
+            `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft > 0) {
+            timeLeft--;
+        } else {
+            timeLeft = 72 * 60 * 60; // Reset to 72 hours
+        }
+    }
+    
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}
+
+// Debug function to test category filtering manually
+window.testCategoryFilter = function() {
+    console.log('=== Testing Category Filter ===');
+    
+    const tabs = document.querySelectorAll('.category-tab');
+    const cards = document.querySelectorAll('.product-card');
+    
+    console.log('Category tabs found:', tabs.length);
+    console.log('Product cards found:', cards.length);
+    
+    tabs.forEach((tab, index) => {
+        console.log(`Tab ${index}:`, tab.getAttribute('data-category'), tab.textContent.trim());
+    });
+    
+    cards.forEach((card, index) => {
+        console.log(`Card ${index}:`, card.getAttribute('data-category'), card.querySelector('.product-title')?.textContent.trim());
+    });
+    
+    // Test clicking GTA V tab
+    const gtaTab = document.querySelector('[data-category="gta5"]');
+    if (gtaTab) {
+        console.log('Simulating click on GTA V tab...');
+        gtaTab.click();
+    }
+};
+
+// Auto-run test after a delay
+setTimeout(() => {
+    console.log('Auto-running category filter test...');
+    if (window.testCategoryFilter) {
+        window.testCategoryFilter();
+    }
+}, 2000);
