@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIPTIDE - Terms of Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #8b5cf6;
+            --secondary-color: #ec4899;
+            --accent-color: #f472b6;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --gradient-main: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
+            --shadow-glow: 0 20px 40px rgba(139, 92, 246, 0.3);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar {
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 15px 30px;
+            margin: 20px 0 40px 0;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            box-shadow: var(--shadow-card);
+        }
+
+        .navbar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .navbar a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-main);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .navbar a:hover {
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .navbar a:hover::before {
+            left: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin: 60px 0;
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            background: var(--gradient-main);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-main);
+        }
+
+        .section h2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section h2 i {
+            background: var(--gradient-main);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+        }
+
+        .section p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .section li {
+            color: var(--text-secondary);
+            margin: 15px 0;
+            padding: 15px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0 12px 12px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .section li:hover {
+            background: rgba(139, 92, 246, 0.15);
+            transform: translateX(5px);
+        }
+
+        .section li::before {
+            content: '•';
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .warning {
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            background: rgba(236, 72, 153, 0.1);
+        }
+
+        .warning::before {
+            background: var(--gradient-accent);
+        }
+
+        .warning h2 {
+            color: var(--accent-color);
+        }
+
+        .faq-section {
+            margin-top: 50px;
+        }
+
+        .faq-item {
+            background: rgba(26, 26, 46, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 15px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .faq-question {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 20px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            width: 100%;
+            text-align: left;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .faq-question:hover {
+            background: rgba(139, 92, 246, 0.15);
+        }
+
+        .faq-question i {
+            background: var(--gradient-main);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.active i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 25px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: rgba(16, 16, 35, 0.8);
+        }
+
+        .faq-answer.active {
+            max-height: 200px;
+            padding: 25px;
+        }
+
+        .faq-answer p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--gradient-main);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-glow);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4);
+        }
+
+        .acknowledgment {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .acknowledgment p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Animation classes */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .section {
+                padding: 25px 20px;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar fade-in-up">
+            <a href="index.html">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+            <a href="guide.html">
+                <i class="fas fa-book-open"></i>
+                Setup Guide
+            </a>
+            <a href="changelogs.html">
+                <i class="fas fa-list-alt"></i>
+                Changelogs
+            </a>
+            <a href="loader.html">
+                <i class="fas fa-download"></i>
+                Download Loader
+            </a>
+        </nav>
+
+        <div class="header fade-in-up delay-1">
+            <h1><i class="fas fa-file-contract"></i> TERMS OF SERVICE</h1>
+            <p>Please read these terms carefully before purchasing or using RIPTIDE</p>
+        </div>
+
+        <section class="section fade-in-up delay-2">
+            <h2><i class="fas fa-key"></i> Product Access and Usage</h2>
+            <p>By purchasing, downloading, or using any products sold through RIPTIDE Store, you fully agree to the following Terms of Service. If you do not agree, you must not purchase, download, or use our products.</p>
+            <ul>
+                <li>We reserve the right to ban, suspend, or permanently terminate your product key and account at any time without prior notice if you are found in violation of our terms.</li>
+                <li>Lifetime access means the lifetime of the product, not your lifetime. Products can be shut down, discontinued, or retired at any time without compensation.</li>
+                <li>Unauthorized distribution, sharing, reselling, or leaking of your product key is strictly prohibited and will result in an instant ban.</li>
+                <li>It is your responsibility to keep your product key safe. Lost, stolen, or shared keys will not be replaced. Sharing your key will result in a ban.</li>
+            </ul>
+        </section>
+
+        <section class="section fade-in-up delay-3">
+            <h2><i class="fas fa-credit-card"></i> Payment and Fraud Protection</h2>
+            <ul>
+                <li>We reserve the right to decline, hold, or cancel any payment flagged as suspicious, fraudulent, or high-risk.</li>
+                <li>If your payment is flagged, you will not receive your product key. The payment may be held or refunded to the card owner.</li>
+                <li>Chargebacks are strictly prohibited. Any chargeback will result in a permanent ban of your product key and blacklisting from future services.</li>
+                <li>Threatening a chargeback will result in an instant ban.</li>
+                <li>All purchases are logged and secured with transaction records, IP address, and device information to be used as evidence against fraudulent chargebacks.</li>
+                <li>Attempting a chargeback after agreeing to these terms is considered a breach of contract and fraudulent activity. We will submit all logs, communications, and user agreements as proof to the payment processor to contest chargebacks.</li>
+                <li>Users who attempt a chargeback agree to forfeit all future access to RIPTIDE Store and its associated services permanently.</li>
+                <li>Providing fake payment information such as a false name, billing address, or contact details will result in the order being placed on hold for manual review. We will require a valid reason for the fake information and proof of card ownership.</li>
+            </ul>
+        </section>
+
+        <section class="section fade-in-up">
+            <h2><i class="fab fa-bitcoin"></i> Cryptocurrency Payments</h2>
+            <ul>
+                <li>Cryptocurrency payments are final and cannot be reversed, refunded, or disputed.</li>
+                <li>It is your responsibility to send the exact payment amount to the correct wallet address.</li>
+                <li>We are not responsible for payments sent to the wrong address, incorrect payment amounts, or network fee issues.</li>
+                <li>Failure to cover transaction fees on the blockchain will result in an incomplete payment, and your product key will not be delivered.</li>
+                <li>If you send less than the required amount or fail to cover network fees, your order will be invalid, and no compensation or product key will be provided.</li>
+            </ul>
+        </section>
+
+        <section class="section fade-in-up">
+            <h2><i class="fas fa-sync-alt"></i> Product Updates and Delays</h2>
+            <ul>
+                <li>Purchasing during updates or maintenance does not guarantee immediate access. There is no ETA for when the product will be fully available.</li>
+                <li>We prioritize security and thorough testing before public releases. Development may be delayed due to personal life commitments.</li>
+                <li>No compensation, refunds, or time extensions will be provided due to update delays.</li>
+            </ul>
+        </section>
+
+        <section class="section fade-in-up">
+            <h2><i class="fas fa-headset"></i> Support Policy</h2>
+            <ul>
+                <li>Support is provided when we are available and is not guaranteed to be instant.</li>
+                <li>Spamming support channels will result in refusal of further assistance.</li>
+                <li>We provide detailed guides to help you set up and troubleshoot common issues. You are expected to follow these guides before requesting support.</li>
+            </ul>
+        </section>
+
+        <section class="section fade-in-up">
+            <h2><i class="fas fa-server"></i> Service Availability</h2>
+            <ul>
+                <li>We do not guarantee continuous product availability. Products may go offline, be updated, or permanently shut down at any time.</li>
+                <li>Game updates can cause our products to temporarily stop working, which may result in crashes on inject/launch, broken features, or other stability issues.</li>
+                <li>We will aim to release an updated version that works with the newest game update as soon as possible. However, these versions may initially be unstable or considered temporary fixes.</li>
+                <li>Users understand that early updates may contain bugs and are intended for testing and user feedback to help identify remaining issues.</li>
+                <li>No refunds or compensation will be provided during periods of downtime, broken features, or while waiting for fixes.</li>
+            </ul>
+        </section>
+
+        <section class="section fade-in-up">
+            <h2><i class="fas fa-shield-alt"></i> Data Collection and Privacy</h2>
+            <ul>
+                <li>We collect and log your PC hardware ID (HWID) and IP address. This data is collected when you create an account or redeem your product key for the first time.</li>
+                <li>No additional personal information is collected unless you choose to link your Discord account. If linked, your Discord User ID will be logged and connected to your product key/account.</li>
+                <li>We do not collect or store any payment information. All payment processing is handled securely by third-party services.</li>
+                <li>Your data is used solely for security, verification, and fraud prevention purposes.</li>
+            </ul>
+        </section>
+
+        <section class="section warning fade-in-up">
+            <h2><i class="fas fa-ban"></i> Refund Policy</h2>
+            <ul>
+                <li>All sales are final. No refunds will be provided under any circumstance.</li>
+                <li>Chargebacks result in a permanent ban of your product key and blacklisting from all services.</li>
+                <li>Payments flagged as fraudulent will be denied, and the product key will not be delivered.</li>
+                <li>No refunds will be issued due to update delays or product downtime.</li>
+                <li>Chargeback threats or fraudulent chargeback attempts will be reported to payment processors, and all user access will be revoked permanently.</li>
+                <li>We log all digital agreements, purchase confirmations, and server communications as evidence to protect against fraudulent claims.</li>
+                <li>Cryptocurrency payments are non-refundable. Incorrect amounts or payments sent to the wrong address are the buyer's responsibility.</li>
+            </ul>
+        </section>
+
+        <div class="acknowledgment fade-in-up">
+            <p><i class="fas fa-check-circle"></i> By purchasing from RIPTIDE Store, you confirm that you have read, understood, and fully agree to these Terms of Service and the Refund Policy.</p>
+        </div>
+
+        <div class="faq-section fade-in-up">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--text-primary);"><i class="fas fa-question-circle"></i> Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <i class="fas fa-chevron-down"></i>
+                    What happens if I lose my product key?
+                </button>
+                <div class="faq-answer">
+                    <p>You are responsible for keeping your product key safe. Lost keys will not be replaced and your access will be lost. Make sure to store your key in a secure location and never share it with others.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <i class="fas fa-chevron-down"></i>
+                    Can I get a refund if the product is in update?
+                </button>
+                <div class="faq-answer">
+                    <p>No. Purchasing during updates does not guarantee immediate access. Refunds will not be issued due to update delays. We recommend waiting for stable releases if immediate access is required.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <i class="fas fa-chevron-down"></i>
+                    How fast is support?
+                </button>
+                <div class="faq-answer">
+                    <p>Support is provided when we are available. Instant support is not guaranteed. Please use the setup guides and documentation first before requesting assistance. Spamming support channels will result in refused assistance.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <i class="fas fa-chevron-down"></i>
+                    Can I share my key with a friend?
+                </button>
+                <div class="faq-answer">
+                    <p>No. Sharing your key will result in a permanent ban. Each key is tied to your hardware ID and account. Unauthorized sharing, distribution, or reselling is strictly prohibited.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <i class="fas fa-chevron-down"></i>
+                    What happens if I chargeback?
+                </button>
+                <div class="faq-answer">
+                    <p>Your product key will be permanently banned, and you will be blacklisted from all current and future services. We will submit all transaction records and user agreements to the payment processor to dispute the chargeback and protect our business.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFAQ(this)">
+                    <i class="fas fa-chevron-down"></i>
+                    What happens if I send the wrong crypto amount?
+                </button>
+                <div class="faq-answer">
+                    <p>You are fully responsible for sending the correct crypto amount, including network fees. If you send less than required, send to the wrong address, or fail to cover fees, your payment will not be processed and no refund or product key will be provided.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-to-top" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('i');
+            
+            // Close all other FAQs
+            document.querySelectorAll('.faq-question').forEach(q => {
+                if (q !== element) {
+                    q.classList.remove('active');
+                    q.nextElementSibling.classList.remove('active');
+                    q.querySelector('i').style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Toggle current FAQ
+            element.classList.toggle('active');
+            answer.classList.toggle('active');
+            
+            if (element.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Scroll to top functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/hide back to top button
+        window.addEventListener('scroll', function() {
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Initialize animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intersection Observer for animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            // Observe all animated elements
+            document.querySelectorAll('.fade-in-up').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
