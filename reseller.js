@@ -366,21 +366,36 @@ function showContactModal(resellerName) {
 const visitStoreButtons = document.querySelectorAll('.reseller-actions .btn-primary');
 visitStoreButtons.forEach(button => {
     button.addEventListener('click', (e) => {
-        e.preventDefault();
+        const href = button.getAttribute('href');
         
-        const resellerCard = button.closest('.reseller-card');
-        const resellerName = resellerCard.querySelector('.reseller-name').textContent;
-        
-        // Simulate visiting store
-        const originalText = button.innerHTML;
-        button.innerHTML = '<span>Redirecting...</span>';
-        button.disabled = true;
-        
-        setTimeout(() => {
-            alert(`Opening ${resellerName} store...`);
-            button.innerHTML = originalText;
-            button.disabled = false;
-        }, 1500);
+        // Only prevent default if there's no href or it's a placeholder
+        if (!href || href === '#') {
+            e.preventDefault();
+            
+            const resellerCard = button.closest('.reseller-card');
+            const resellerName = resellerCard.querySelector('.reseller-name').textContent;
+            
+            // Simulate visiting store for placeholder links
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span>Redirecting...</span>';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                alert(`Opening ${resellerName} store...`);
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }, 1500);
+        } else {
+            // Allow normal link behavior for valid URLs
+            // Add visual feedback before navigation
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span>Opening...</span>';
+            
+            // Reset button state after a short delay (in case user goes back)
+            setTimeout(() => {
+                button.innerHTML = originalText;
+            }, 2000);
+        }
     });
 });
 
