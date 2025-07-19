@@ -68,7 +68,9 @@ class AnimationController {
         const counter = element.querySelector('.stat-number');
         if (!counter) return;
         
-        const target = parseInt(counter.getAttribute('data-target'));
+        const targetText = counter.getAttribute('data-target');
+        const hasPlus = targetText.includes('+');
+        const target = parseInt(targetText);
         const duration = 2000;
         const startTime = performance.now();
         
@@ -80,7 +82,7 @@ class AnimationController {
             const easeOutQuart = 1 - Math.pow(1 - progress, 4);
             const current = Math.floor(target * easeOutQuart);
             
-            counter.textContent = current;
+            counter.textContent = current + (hasPlus ? '+' : '');
             
             if (progress < 1) {
                 requestAnimationFrame(updateCounter);
@@ -94,13 +96,15 @@ class AnimationController {
         const counters = statsSection.querySelectorAll('.stat-number');
         counters.forEach((counter, index) => {
             setTimeout(() => {
-                const target = parseInt(counter.getAttribute('data-target'));
-                this.animateCounterValue(counter, target);
+                const targetText = counter.getAttribute('data-target');
+                const hasPlus = targetText.includes('+');
+                const target = parseInt(targetText);
+                this.animateCounterValue(counter, target, hasPlus);
             }, index * 200);
         });
     }
     
-    animateCounterValue(counter, target) {
+    animateCounterValue(counter, target, hasPlus = false) {
         const duration = 2000;
         const startTime = performance.now();
         
@@ -111,7 +115,7 @@ class AnimationController {
             const easeOutCubic = 1 - Math.pow(1 - progress, 3);
             const current = Math.floor(target * easeOutCubic);
             
-            counter.textContent = current;
+            counter.textContent = current + (hasPlus ? '+' : '');
             
             if (progress < 1) {
                 requestAnimationFrame(updateCounter);
