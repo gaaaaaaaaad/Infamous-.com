@@ -3,312 +3,808 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="images/logo.png">
-    <title>Payment Methods | INFAMOUS // NENYOOO </title>
+    <link rel="icon" href="images/logo.png" type="image/x-icon">
+    <title>Payment Methods | Infamous - Premium Gaming Cheats</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #e74c3c;
-            --secondary: #2980b9;
-            --accent: #3498db;
-            --text: #2d3436;
-            --light-gray: #f5f6fa;
-            --medium-gray: #dfe6e9;
-            --dark-gray: #636e72;
+            --primary-color: #dc2626;
+            --secondary-color: #ef4444;
+            --accent-color: #fbbf24;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #151515;
+            --bg-glass: rgba(220, 38, 38, 0.05);
+            --bg-glass-hover: rgba(220, 38, 38, 0.1);
+            
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+            --text-accent: #f9fafb;
+            
+            --border-color: rgba(220, 38, 38, 0.2);
+            --border-hover: rgba(220, 38, 38, 0.4);
+            
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 32px rgba(220, 38, 38, 0.4);
+            --shadow-glow-hover: 0 0 48px rgba(220, 38, 38, 0.6);
+            
+            --gradient-primary: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            --gradient-secondary: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+            --gradient-accent: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #111111 25%, #1a1a1a 50%, #111111 75%, #0a0a0a 100%);
+            --gradient-mesh: 
+                radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
+            
+            --blur-sm: blur(4px);
+            --blur-md: blur(8px);
+            --blur-lg: blur(16px);
+            --blur-xl: blur(24px);
+            
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 15px;
-            color: var(--text);
-            line-height: 1.5;
-            background-color: var(--light-gray);
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            background-image: var(--gradient-mesh);
+            background-attachment: fixed;
+            background-size: 100% 100%;
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            position: relative;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+            min-height: 100vh;
+            padding-top: 100px;
         }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-bg);
+            background-size: 400% 400%;
+            animation: gradientFlow 20s ease infinite;
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(239, 68, 68, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 50%);
+            animation: meshAnimation 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 50% 0%; }
+        }
+
+        @keyframes meshAnimation {
+            0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+            33% { opacity: 0.8; transform: scale(1.1) rotate(120deg); }
+            66% { opacity: 0.4; transform: scale(0.9) rotate(240deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+        }
+
+        .glass-hover {
+            transition: all var(--transition-normal);
+        }
+
+        .glass-hover:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: all var(--transition-normal);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: var(--blur-lg);
+            border-bottom: 1px solid rgba(220, 38, 38, 0.2);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: all var(--transition-normal);
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-img {
+            height: 44px;
+            width: auto;
+            filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.4));
+            transition: all var(--transition-normal);
+        }
+
+        .nav-logo:hover .logo-img {
+            filter: drop-shadow(0 8px 16px rgba(220, 38, 38, 0.6));
+        }
+
+        .logo-text {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all var(--transition-normal);
+            position: relative;
+            backdrop-filter: var(--blur-sm);
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
         .tabs {
             display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--medium-gray);
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 8px;
         }
+
         .tab {
-            padding: 10px 20px;
+            padding: 16px 32px;
             cursor: pointer;
-            background: white;
-            border: 1px solid var(--medium-gray);
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
             border-bottom: none;
-            border-radius: 5px 5px 0 0;
-            margin-right: 5px;
+            border-radius: 16px 16px 0 0;
             font-weight: 600;
-            color: var(--dark-gray);
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            transition: all var(--transition-normal);
+            backdrop-filter: var(--blur-md);
+            position: relative;
+            overflow: hidden;
         }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tab:hover::before {
+            left: 100%;
+        }
+
         .tab.active {
-            background: var(--primary);
+            background: var(--gradient-primary);
             color: white;
-            border-color: var(--primary);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-glow);
         }
+
         .tab:hover:not(.active) {
-            background: var(--medium-gray);
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
         }
+
         .tab-content {
             display: none;
-            background: white;
-            padding: 20px;
-            border-radius: 0 5px 5px 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 0 20px 20px 20px;
+            box-shadow: var(--shadow-lg);
         }
+
         .tab-content.active {
             display: block;
         }
+
         h1 {
-            color: var(--primary);
-            font-size: 24px;
-            margin: 10px 0 20px;
+            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 40px;
             text-align: center;
             text-transform: uppercase;
             letter-spacing: 1px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+
         .payment-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
         }
+
         .payment-section {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: 20px;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-md);
         }
+
+        .payment-section:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
         h2 {
-            color: var(--secondary);
-            font-size: 18px;
-            margin: 0 0 12px;
-            border-bottom: 1px solid var(--medium-gray);
-            padding-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
+
+        h2 i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
         .payment-method {
-            margin: 10px 0;
-            padding-left: 30px;
+            margin: 12px 0;
+            padding: 16px 20px;
+            padding-left: 45px;
             position: relative;
-            display: flex;
-            align-items: center;
+            display: block;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            transition: all var(--transition-normal);
+            border: 1px solid transparent;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.6;
         }
+
+        .payment-method:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border-color);
+            transform: translateX(4px);
+        }
+
         .payment-method i {
             position: absolute;
-            left: 8px;
-            color: var(--accent);
+            left: 12px;
+            color: var(--accent-color);
             width: 20px;
             text-align: center;
             font-size: 16px;
         }
+
         .highlight {
             font-weight: bold;
-            color: var(--primary);
+            color: var(--primary-color);
         }
+
         .contact-box {
-            background: #e8f4f8;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 32px;
             grid-column: span 2;
-            border: 1px solid #d1e7f5;
+            box-shadow: var(--shadow-lg);
+            min-width: 0; /* Allow box to shrink */
+            overflow-wrap: break-word;
         }
+
         a {
-            color: var(--secondary);
+            color: var(--accent-color);
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.2s;
+            transition: all var(--transition-normal);
         }
+
         a:hover {
-            color: var(--primary);
+            color: var(--primary-color);
             text-decoration: underline;
         }
+
         .compact-list {
             columns: 2;
             column-gap: 25px;
-            margin-top: 10px;
+            margin-top: 16px;
         }
+
         .compact-list div {
-            margin-bottom: 8px;
-            padding-left: 25px;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            padding-left: 32px;
             position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            transition: all var(--transition-normal);
         }
+
+        .compact-list div:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(2px);
+        }
+
         .compact-list div i {
             position: absolute;
-            left: 5px;
-            color: var(--dark-gray);
+            left: 8px;
+            color: var(--accent-color);
         }
+
         .note {
-            font-size: 13px;
-            color: var(--dark-gray);
-            margin-top: 8px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 12px;
             font-style: italic;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
         }
+
         .user-id {
-            font-size: 12px;
-            color: var(--dark-gray);
-            font-family: monospace;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-left: 8px;
+            display: inline-block;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .store-link {
             display: block;
             text-align: center;
-            margin: 20px 0;
+            margin: 32px 0;
         }
-        .store-btn {
-            background: var(--primary);
+
+        .store-btn, .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            min-width: 140px;
+            backdrop-filter: var(--blur-sm);
+        }
+
+        .btn-primary, .store-btn {
+            background: var(--gradient-primary);
             color: white;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            text-transform: uppercase;
-            display: inline-block;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-glow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .store-btn:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+
+        .btn-primary:hover, .store-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-glow-hover);
             text-decoration: none;
         }
+
+        .btn::before, .store-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before, .store-btn:hover::before {
+            left: 100%;
+        }
+
         .store-btn i {
             margin-right: 8px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-normal);
+        }
+
+        .benefit-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+            border-color: var(--border-hover);
+        }
+
+        .benefit-icon {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            min-width: 24px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            body {
+                padding-top: 80px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .tab {
+                border-radius: 12px;
+                border: 1px solid var(--border-color);
+            }
+
+            .tab-content {
+                border-radius: 20px;
+                padding: 24px;
+            }
+
+            .payment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-box {
+                grid-column: span 1;
+                padding: 24px;
+            }
+
+            .user-id {
+                display: block;
+                margin-left: 0;
+                margin-top: 4px;
+                font-size: 0.65rem;
+            }
+
+            .compact-list {
+                columns: 1;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn, .store-btn {
+                width: 100%;
+                padding: 14px 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="tabs">
-        <div class="tab active" onclick="openTab(event, 'alternative')">Alternative Payments</div>
-        <div class="tab" onclick="openTab(event, 'card')">OFFICIAL STORE (Instant Deliver)</div>
-    </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                <span class="logo-text">Infamous</span>
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="store.html" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="reseller.html" class="nav-link">Resellers</a></li>
+                <li class="nav-item"><a href="morepayments.html" class="nav-link">Payments</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
 
-    <div id="alternative" class="tab-content active">
-        <h1><i class="fas fa-money-bill-wave"></i> MORE PAYMENT METHODS FOR <span class="highlight">INFAMOUS // NENYOOO</span></h1>
-        
-        <div class="payment-grid">
-            <div class="payment-section">
-                <h2><i class="fas fa-credit-card"></i> Payments:</h2>
-                <div class="payment-method"><i class="fab fa-paypal"></i> PayPal F&F (FAMILY & FRIENDS) Only</div>
-                <div class="payment-method"><i class="fas fa-money-check"></i> Skrill</div>
-                <div class="payment-method"><i class="fas fa-credit-card"></i> Paysafe</div>
-                <div class="payment-method"><i class="fab fa-alipay"></i> Alipay // <i class="fab fa-weixin"></i> WeChat</div>
-                <div class="payment-method"><i class="fas fa-university"></i> Bank Transfer</div>
-                <div class="payment-method"><i class="fas fa-envelope"></i> Cash by Post: <span class="highlight"> 50% Fee</span></div>
-            </div>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="openTab(event, 'alternative')">Alternative Payments</div>
+            <div class="tab" onclick="openTab(event, 'card')">OFFICIAL STORE (Instant Delivery)</div>
+        </div>
+
+        <div id="alternative" class="tab-content active">
+            <h1><i class="fas fa-money-bill-wave"></i> MORE PAYMENT METHODS FOR <span class="highlight">INFAMOUS</span></h1>
             
-            <div class="payment-section">
-                <h2><i class="fas fa-gift"></i> Gift Cards:</h2>
-                <div class="payment-method"><i class="fab fa-steam"></i> <span class="highlight">Steam:</span> 50% Fee</div>
-                <div class="payment-method"><i class="fab fa-amazon"></i> <span class="highlight">Amazon:</span> 100% Fee</div>
-                <div class="note">(UK/DE/FR/NL/US/CA)</div>
-            </div>
-            
-            <div class="payment-section">
-                <h2><i class="fab fa-bitcoin"></i> Crypto Options</h2>
-                <div class="payment-method"><i class="fas fa-percentage"></i> <span class="highlight">10% OFF Discount</span></div>
-                <div class="payment-method"><i class="fas fa-info-circle"></i> Let us know which crypto and network you're using</div>
-                <div class="compact-list">
-                    <div><i class="fas fa-coins"></i> SUI</div>
-                    <div><i class="fas fa-coins"></i> Kaspa</div>
-                    <div><i class="fas fa-coins"></i> Tao</div>
-                    <div><i class="fab fa-ethereum"></i> USDT</div>
-                    <div><i class="fab fa-ethereum"></i> USDC</div>
-                    <div><i class="fas fa-coins"></i> TRX</div>
-                    <div><i class="fas fa-coins"></i> TON</div>
-                    <div><i class="fab fa-ethereum"></i> BNB</div>
-                    <div><i class="fab fa-solana"></i> SOL</div>
-                    <div><i class="fas fa-x"></i> XRP</div>
-                    <div><i class="fas fa-coins"></i> XLM</div>
-                    <div><i class="fas fa-monero"></i> XMR</div>
-                    <div><i class="fas fa-frog"></i> PEPE</div>
-                    <div><i class="fas fa-coins"></i> NEAR</div>
-                    <div><i class="fas fa-coins"></i> ONDO</div>
+            <div class="payment-grid">
+                <div class="payment-section glass glass-hover">
+                    <h2><i class="fas fa-credit-card"></i> Payments:</h2>
+                    <div class="payment-method"><i class="fab fa-paypal"></i> PayPal F&F (FAMILY & FRIENDS) Only</div>
+                    <div class="payment-method"><i class="fas fa-money-check"></i> Skrill</div>
+                    <div class="payment-method"><i class="fas fa-credit-card"></i> Paysafe</div>
+                    <div class="payment-method"><i class="fab fa-alipay"></i> Alipay // <i class="fab fa-weixin"></i> WeChat</div>
+                    <div class="payment-method"><i class="fas fa-university"></i> Bank Transfer</div>
+                    <div class="payment-method"><i class="fas fa-envelope"></i> Cash by Post: <span class="highlight"> 50% Fee</span></div>
                 </div>
-            </div>
-            
-            <div class="contact-box">
-                <h2><i class="fas fa-shopping-cart"></i> CONTACT TO ORDER</h2>
-                <div class="payment-method">
-                    <i class="fab fa-discord"></i> <strong>Discord: </strong><br>
-                    <a href="#" target="_blank">@pornsad </a> <span class="user-id"> ID: 791411600103702528</span><br>
-                    <a href="#" target="_blank">@lt.evergreen1337 </a> <span class="user-id"> ID: 1306686547243958323</span><br>
-                    <a href="#" target="_blank">@starfaceedx </a> <span class="user-id"> ID: 351874614995058689</span>
+                
+                <div class="payment-section glass glass-hover">
+                    <h2><i class="fas fa-gift"></i> Gift Cards:</h2>
+                    <div class="payment-method"><i class="fab fa-steam"></i> <span class="highlight">Steam:</span> 50% Fee</div>
+                    <div class="payment-method"><i class="fab fa-amazon"></i> <span class="highlight">Amazon:</span> 100% Fee</div>
+                    <div class="note"><i class="fas fa-info-circle"></i> (UK/DE/FR/NL/US/CA)</div>
                 </div>
-                <div class="payment-method">
-                    <i class="fab fa-discord"></i> <strong>Discord Server: </strong> <a href="https://discord.gg/6Z6Fvf2Bv3" target="_blank"> Join Here</a>
-                    <div class="note">Make ticket in Support channel after joining</div>
+                
+                <div class="payment-section glass glass-hover">
+                    <h2><i class="fab fa-bitcoin"></i> Crypto Options</h2>
+                    <div class="payment-method"><i class="fas fa-percentage"></i> <span class="highlight">10% OFF Discount</span></div>
+                    <div class="payment-method"><i class="fas fa-info-circle"></i> Let us know which crypto and network you're using</div>
+                    <div class="compact-list">
+                        <div><i class="fas fa-coins"></i> SUI</div>
+                        <div><i class="fas fa-coins"></i> Kaspa</div>
+                        <div><i class="fas fa-coins"></i> Tao</div>
+                        <div><i class="fab fa-ethereum"></i> USDT</div>
+                        <div><i class="fab fa-ethereum"></i> USDC</div>
+                        <div><i class="fas fa-coins"></i> TRX</div>
+                        <div><i class="fas fa-coins"></i> TON</div>
+                        <div><i class="fab fa-ethereum"></i> BNB</div>
+                        <div><i class="fab fa-solana"></i> SOL</div>
+                        <div><i class="fas fa-x"></i> XRP</div>
+                        <div><i class="fas fa-coins"></i> XLM</div>
+                        <div><i class="fas fa-monero"></i> XMR</div>
+                        <div><i class="fas fa-frog"></i> PEPE</div>
+                        <div><i class="fas fa-coins"></i> NEAR</div>
+                        <div><i class="fas fa-coins"></i> ONDO</div>
+                    </div>
                 </div>
-                <div class="payment-method">
-                    <i class="fab fa-telegram"></i> <strong>Telegram Group: </strong> <a href="https://t.me/InfamousMenu" target="_blank"> Infamous Group</a>
-                </div>
-                <div class="payment-method">
-                    <i class="fab fa-telegram"></i> <strong>Telegram User: </strong> <a href="https://t.me/whatwhatboy" target="_blank"> @whatwhatboy</a>
-                </div>
-                <div class="payment-method">
-                    <i class="fas fa-comment"></i> <span class="highlight"> Message us with your preferred payment method</span>
+                
+                <div class="contact-box glass glass-hover">
+                    <h2><i class="fas fa-shopping-cart"></i> CONTACT TO ORDER</h2>
+                    <div class="payment-method">
+                        <i class="fab fa-discord"></i> <strong>Discord Users:</strong><br><br>
+                        <div style="margin-left: 20px;">
+                            <div style="margin-bottom: 8px;">
+                                <a href="#" target="_blank">@pornsad</a> 
+                                <span class="user-id">ID: 791411600103702528</span>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <a href="#" target="_blank">@lt.evergreen1337</a> 
+                                <span class="user-id">ID: 1306686547243958323</span>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <a href="#" target="_blank">@starfaceedx</a> 
+                                <span class="user-id">ID: 351874614995058689</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payment-method">
+                        <i class="fab fa-discord"></i> <strong>Discord Server: </strong> <a href="https://discord.gg/6Z6Fvf2Bv3" target="_blank"> Join Here</a>
+                        <div class="note">Make ticket in Support channel after joining</div>
+                    </div>
+                    <div class="payment-method">
+                        <i class="fab fa-telegram"></i> <strong>Telegram Group: </strong> <a href="https://t.me/InfamousMenu" target="_blank"> Infamous Group</a>
+                    </div>
+                    <div class="payment-method">
+                        <i class="fab fa-telegram"></i> <strong>Telegram User: </strong> <a href="https://t.me/whatwhatboy" target="_blank"> @whatwhatboy</a>
+                    </div>
+                    <div class="payment-method">
+                        <i class="fas fa-comment"></i> <span class="highlight"> Message us with your preferred payment method</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="card" class="tab-content">
-        <h1><i class="fas fa-store"></i> OFFICIAL STORE PAYMENTS</h1>
-        
-        <div class="payment-section" style="grid-column: span 2;">
-            <h2><i class="fas fa-credit-card"></i> Payment Options</h2>
+        <div id="card" class="tab-content">
+            <h1><i class="fas fa-store"></i> OFFICIAL STORE PAYMENTS</h1>
             
-            <div class="benefits-grid">
-                <div class="benefit-item">
-                    <i class="fas fa-credit-card benefit-icon"></i>
-                    <div>
-                        <strong>Credit/Debit Cards</strong><br>
-                        Visa, Mastercard, Amex ETC
+            <div class="payment-section glass glass-hover" style="grid-column: span 2;">
+                <h2><i class="fas fa-credit-card"></i> Payment Options</h2>
+                
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <i class="fas fa-credit-card benefit-icon"></i>
+                        <div>
+                            <strong>Credit/Debit Cards</strong><br>
+                            <span class="text-muted">Visa, Mastercard, Amex ETC</span>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fab fa-bitcoin benefit-icon"></i>
+                        <div>
+                            <strong>Crypto Payments</strong><br>
+                            <span class="text-muted">BTC, ETH, LTC, POL ETC</span>
+                        </div>
                     </div>
                 </div>
-                <div class="benefit-item">
-                    <i class="fab fa-bitcoin benefit-icon"></i>
-                    <div>
-                        <strong>Crypto Payments</strong><br>
-                        BTC, ETH, LTC, POL ETC
-                    </div>
+                
+                <div class="store-link">
+                    <a href="https://dizzgaming.selly.store/" class="store-btn btn-primary" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Visit Store Now
+                    </a>
+                </div>
+                
+                <h2><i class="fas fa-bolt"></i> Instant Delivery</h2>
+                <div class="payment-method">
+                    <i class="fas fa-envelope"></i> Product delivered instantly via email after payment confirmation
+                </div>
+                <div class="payment-method">
+                    <i class="fas fa-clock"></i> Automated 24/7 delivery system
+                </div>
+                
+                <div class="note">
+                    <i class="fas fa-info-circle"></i> For any delivery issues, check spam folder or contact support
                 </div>
             </div>
             
-            <div class="store-link">
-                <a href="https://dizzgaming.selly.store/" class="store-btn" target="_blank">
-                    <i class="fas fa-external-link-alt"></i> Visit Store Now
-                </a>
-            </div>
-            
-            <h2><i class="fas fa-bolt"></i> Instant Delivery</h2>
-            <div class="payment-method">
-                <i class="fas fa-envelope"></i> Product delivered instantly via email after payment confirmation
-            </div>
-            <div class="payment-method">
-                <i class="fas fa-clock"></i> Automated 24/7 delivery system
-            </div>
-            
-            <div class="note">
-                <i class="fas fa-info-circle"></i> For any delivery issues, check spam folder or contact support
-            </div>
-        </div>
-        
-        <div class="contact-box">
-            <h2><i class="fas fa-headset"></i> NEED HELP?</h2>
-            <div class="payment-method">
-                <i class="fab fa-discord"></i> <strong>Discord Support: </strong> 
-                <a href="https://discord.gg/6Z6Fvf2Bv3" target="_blank">Join Server</a>
-            </div>
-            <div class="payment-method">
-                <i class="fab fa-telegram"></i> <strong>Telegram Support: </strong> 
-                <a href="https://t.me/whatwhatboy" target="_blank">@whatwhatboy</a>
-            </div>
-            <div class="payment-method">
-                <i class="fas fa-envelope"></i> <strong>Email Support: </strong> 
-                <a href="mailto:support@example.com">support@example.com</a>
+            <div class="contact-box glass glass-hover">
+                <h2><i class="fas fa-headset"></i> NEED HELP?</h2>
+                <div class="payment-method">
+                    <i class="fab fa-discord"></i> <strong>Discord Support: </strong> 
+                    <a href="https://discord.gg/6Z6Fvf2Bv3" target="_blank">Join Server</a>
+                </div>
+                <div class="payment-method">
+                    <i class="fab fa-telegram"></i> <strong>Telegram Support: </strong> 
+                    <a href="https://t.me/whatwhatboy" target="_blank">@whatwhatboy</a>
+                </div>
+                <div class="payment-method">
+                    <i class="fas fa-envelope"></i> <strong>Email Support: </strong> 
+                    <a href="mailto:support@example.com">support@example.com</a>
+                </div>
             </div>
         </div>
     </div>
@@ -330,6 +826,25 @@
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
         }
+
+        // Mobile menu toggle
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
