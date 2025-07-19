@@ -1228,6 +1228,42 @@ body::after {
     position: relative;
 }
 
+.contact-content-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 2;
+    position: relative;
+}
+
+.contact-info-full {
+    max-width: 600px;
+    width: 100%;
+}
+
+.contact-info-full h3 {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.contact-info-full p {
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.contact-info-full .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
 .contact-info {
     position: relative;
 }
@@ -1253,6 +1289,13 @@ body::after {
     gap: 16px;
 }
 
+.contact-content-centered .social-links {
+    flex-direction: row;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
 .social-link {
     display: flex;
     align-items: center;
@@ -1267,6 +1310,13 @@ body::after {
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
+}
+
+.contact-content-centered .social-link {
+    flex-direction: column;
+    min-width: 120px;
+    text-align: center;
+    gap: 12px;
 }
 
 .social-link::before {
@@ -1292,6 +1342,10 @@ body::after {
     border-color: var(--border-hover);
 }
 
+.contact-content-centered .social-link:hover {
+    transform: translateY(-8px) scale(1.05);
+}
+
 .social-link img {
     width: 28px;
     height: 28px;
@@ -1305,78 +1359,6 @@ body::after {
 .social-link span {
     font-weight: 500;
     font-size: 1.1rem;
-}
-
-.contact-form {
-    background: var(--bg-glass);
-    backdrop-filter: var(--blur-lg);
-    padding: 40px 32px;
-    border-radius: 24px;
-    border: 1px solid var(--border-color);
-    position: relative;
-    overflow: hidden;
-}
-
-.contact-form::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: conic-gradient(from 0deg, transparent, rgba(99, 102, 241, 0.05), transparent);
-    animation: formRotate 20s linear infinite;
-}
-
-@keyframes formRotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.form-group {
-    margin-bottom: 24px;
-    position: relative;
-    z-index: 2;
-}
-
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 16px 20px;
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    background: var(--bg-glass);
-    backdrop-filter: var(--blur-sm);
-    color: var(--text-primary);
-    font-family: inherit;
-    font-size: 1rem;
-    transition: all var(--transition-normal);
-    position: relative;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: var(--text-muted);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-    transform: scale(1.02);
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 120px;
-    font-family: inherit;
-}
-
-.contact-form .btn {
-    width: 100%;
-    position: relative;
-    z-index: 2;
 }
 
 /* Modern Footer */
@@ -1529,6 +1511,18 @@ body::after {
     .contact-content {
         gap: 48px;
     }
+
+    .contact-content-centered .social-links {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .contact-content-centered .social-link {
+        flex-direction: row;
+        gap: 16px;
+        min-width: auto;
+        text-align: left;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1632,12 +1626,24 @@ body::after {
         gap: 40px;
     }
 
-    .contact-info h3 {
+    .contact-info h3,
+    .contact-info-full h3 {
         font-size: 2rem;
     }
 
-    .contact-form {
-        padding: 32px 24px;
+    .contact-content-centered .social-links {
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .contact-content-centered .social-link {
+        flex-direction: row;
+        gap: 16px;
+        min-width: auto;
+        text-align: left;
+        width: 100%;
+        max-width: 300px;
     }
 
     .footer {
@@ -1687,10 +1693,6 @@ body::after {
 
     .stat-number {
         font-size: 2rem;
-    }
-
-    .contact-form {
-        padding: 24px 20px;
     }
 
     .form-group input,
@@ -1838,7 +1840,6 @@ textarea:focus-visible {
 @media print {
     .navbar,
     .hero-buttons,
-    .contact-form,
     .footer {
         display: none;
     }
