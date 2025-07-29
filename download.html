@@ -3,25 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIPTIDE - Loader Download</title>
-    <link rel="icon" type="image/png" href="images/logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Infamous - Loader Download</title>
+    <link rel="icon" href="images/logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #8b5cf6;
-            --secondary-color: #ec4899;
-            --accent-color: #f472b6;
+            --primary-color: #dc2626;
+            --secondary-color: #ef4444;
+            --accent-color: #fbbf24;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #151515;
+            --bg-glass: rgba(220, 38, 38, 0.05);
+            --bg-glass-hover: rgba(220, 38, 38, 0.1);
+            
             --text-primary: #ffffff;
             --text-secondary: #e5e7eb;
             --text-muted: #9ca3af;
-            --bg-primary: #0f0f23;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #16213e;
-            --gradient-main: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            --gradient-accent: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
-            --shadow-glow: 0 20px 40px rgba(139, 92, 246, 0.3);
-            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --text-accent: #f9fafb;
+            
+            --border-color: rgba(220, 38, 38, 0.2);
+            --border-hover: rgba(220, 38, 38, 0.4);
+            
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 32px rgba(220, 38, 38, 0.4);
+            --shadow-glow-hover: 0 0 48px rgba(220, 38, 38, 0.6);
+            
+            --gradient-primary: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            --gradient-secondary: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+            --gradient-accent: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #111111 25%, #1a1a1a 50%, #111111 75%, #0a0a0a 100%);
+            --gradient-mesh: 
+                radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
+            
+            --blur-sm: blur(4px);
+            --blur-md: blur(8px);
+            --blur-lg: blur(16px);
+            --blur-xl: blur(24px);
+            
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            --transition-bounce: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
         * {
@@ -30,17 +64,27 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg-primary);
+            background-image: var(--gradient-mesh);
+            background-attachment: fixed;
+            background-size: 100% 100%;
             color: var(--text-primary);
-            line-height: 1.6;
+            line-height: 1.7;
             overflow-x: hidden;
             position: relative;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: 400;
+            letter-spacing: -0.01em;
         }
 
         body::before {
@@ -50,114 +94,124 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+            background: var(--gradient-bg);
+            background-size: 400% 400%;
+            animation: gradientFlow 20s ease infinite;
+            z-index: -2;
         }
 
-        .floating-shapes {
+        body::after {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(239, 68, 68, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 50%);
+            animation: meshAnimation 15s ease infinite;
+            z-index: -1;
         }
 
-        .shape {
-            position: absolute;
-            background: var(--gradient-main);
-            border-radius: 50%;
-            opacity: 0.1;
-            animation: float 6s ease-in-out infinite;
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 50% 0%; }
         }
 
-        .shape:nth-child(1) {
-            width: 80px;
-            height: 80px;
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
+        @keyframes meshAnimation {
+            0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+            33% { opacity: 0.8; transform: scale(1.1) rotate(120deg); }
+            66% { opacity: 0.4; transform: scale(0.9) rotate(240deg); }
         }
 
-        .shape:nth-child(2) {
-            width: 120px;
-            height: 120px;
-            top: 20%;
-            right: 10%;
-            animation-delay: 2s;
-        }
 
-        .shape:nth-child(3) {
-            width: 60px;
-            height: 60px;
-            bottom: 20%;
-            left: 20%;
-            animation-delay: 4s;
-        }
-
-        .shape:nth-child(4) {
-            width: 100px;
-            height: 100px;
-            bottom: 10%;
-            right: 20%;
-            animation-delay: 1s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
-        }
 
         .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
             max-width: 600px;
             width: 90%;
             position: relative;
             z-index: 1;
         }
 
+        /* Glassmorphism utility classes */
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+        }
+
+        .glass-hover {
+            transition: all var(--transition-normal);
+        }
+
+        .glass-hover:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Modern Navigation */
         .navbar {
-            background: rgba(26, 26, 46, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(139, 92, 246, 0.2);
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: var(--blur-lg);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 15px 30px;
-            margin-bottom: 40px;
             display: flex;
             gap: 30px;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow-card);
+            box-shadow: var(--shadow-md);
             flex-wrap: wrap;
+            transition: all var(--transition-normal);
         }
 
         .navbar a {
             color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             gap: 8px;
             padding: 10px 20px;
             border-radius: 12px;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
             position: relative;
             overflow: hidden;
+            letter-spacing: -0.01em;
         }
 
         .navbar a::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-main);
-            transition: left 0.3s ease;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            border-radius: 12px;
+            transition: all var(--transition-normal);
             z-index: -1;
+        }
+
+        .navbar a:hover::before {
+            opacity: 0.1;
         }
 
         .navbar a:hover {
@@ -165,21 +219,18 @@
             transform: translateY(-2px);
         }
 
-        .navbar a:hover::before {
-            left: 0;
-        }
-
         .download-card {
-            background: rgba(26, 26, 46, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(139, 92, 246, 0.2);
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
             border-radius: 25px;
             padding: 50px 40px;
             text-align: center;
-            box-shadow: var(--shadow-card);
+            box-shadow: var(--shadow-lg);
             position: relative;
             overflow: hidden;
             animation: fadeInUp 0.8s ease-out;
+            margin-top: 120px;
         }
 
         .download-card::before {
@@ -189,7 +240,7 @@
             left: 0;
             width: 100%;
             height: 3px;
-            background: var(--gradient-main);
+            background: var(--gradient-primary);
         }
 
         .download-icon {
@@ -204,19 +255,20 @@
 
         @keyframes pulse {
             0%, 100% { transform: scale(1); box-shadow: var(--shadow-glow); }
-            50% { transform: scale(1.05); box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4); }
+            50% { transform: scale(1.05); box-shadow: var(--shadow-glow-hover); }
         }
 
         .download-card h1 {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 2.5rem;
             font-weight: 700;
-            background: var(--gradient-main);
+            background: var(--gradient-primary);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 20px;
-            text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+            text-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+            letter-spacing: -0.02em;
         }
 
         .download-message {
@@ -229,7 +281,7 @@
         .highlight {
             color: var(--accent-color);
             font-weight: 600;
-            background: rgba(244, 114, 182, 0.1);
+            background: rgba(251, 191, 36, 0.1);
             padding: 2px 8px;
             border-radius: 6px;
         }
@@ -280,7 +332,7 @@
         }
 
         .countdown-number {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 2rem;
             font-weight: 700;
             color: var(--text-primary);
@@ -294,7 +346,7 @@
         .progress-bar {
             width: 100%;
             height: 6px;
-            background: rgba(139, 92, 246, 0.2);
+            background: rgba(220, 38, 38, 0.2);
             border-radius: 3px;
             margin: 20px 0;
             overflow: hidden;
@@ -302,7 +354,7 @@
 
         .progress-fill {
             height: 100%;
-            background: var(--gradient-main);
+            background: var(--gradient-primary);
             border-radius: 3px;
             width: 0%;
             transition: width 1s ease;
@@ -320,17 +372,19 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            padding: 15px 30px;
+            padding: 16px 32px;
             color: var(--text-primary);
             text-decoration: none;
-            border-radius: 15px;
-            font-size: 1.1rem;
+            border-radius: 16px;
+            font-size: 1rem;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
             border: none;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            min-width: 140px;
+            backdrop-filter: var(--blur-sm);
         }
 
         .btn::before {
@@ -340,32 +394,38 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            transition: left 0.3s ease;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
         }
 
         .btn:hover::before {
-            left: 0;
+            left: 100%;
         }
 
         .btn-primary {
-            background: var(--gradient-main);
+            background: var(--gradient-primary);
+            color: white;
             box-shadow: var(--shadow-glow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-glow-hover);
         }
 
         .btn-secondary {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(139, 92, 246, 0.3);
+            background: var(--bg-glass);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            backdrop-filter: var(--blur-md);
         }
 
         .btn-secondary:hover {
-            background: rgba(139, 92, 246, 0.2);
-            transform: translateY(-2px);
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-help {
@@ -377,7 +437,7 @@
         .btn-help:hover {
             background: var(--primary-color);
             color: var(--text-primary);
-            transform: translateY(-2px);
+            transform: translateY(-4px) scale(1.02);
         }
 
         #redownload-btn {
@@ -398,9 +458,9 @@
         }
 
         .status-success {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #22c55e;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
         }
 
         .status-info {
@@ -469,27 +529,31 @@
                 <i class="fas fa-home"></i>
                 Home
             </a>
+            <a href="store.html">
+                <i class="fas fa-store"></i>
+                Store
+            </a>
+            <a href="reseller.html">
+                <i class="fas fa-users"></i>
+                Resellers
+            </a>
             <a href="setup.html">
                 <i class="fas fa-book-open"></i>
                 Setup
             </a>
-            <a href="changelogs.html">
-                <i class="fas fa-list-alt"></i>
-                Changelogs
-            </a>
-            <a href="TOS.html">
+            <a href="tos.html">
                 <i class="fas fa-file-contract"></i>
                 Terms of Service
             </a>
         </nav>
 
         <div class="download-card">
-            <img src="images/catok.gif" alt="RIPTIDE Loader" class="download-icon">
+            <img src="images/logo.png" alt="Infamous Loader" class="download-icon">
             
             <h1><i class="fas fa-download"></i> LOADER DOWNLOAD</h1>
             
             <div class="download-message">
-                Your RIPTIDE loader <span class="highlight">executable</span> will begin downloading automatically in <span class="highlight" id="countdown-text">5</span> seconds...
+                Your Infamous launcher <span class="highlight">ZIP file</span> will begin downloading automatically in <span class="highlight" id="countdown-text">5</span> seconds...
             </div>
             
             <div class="countdown-container">
@@ -512,10 +576,6 @@
                 Download Again
             </button>
             
-            <a href="https://mega.nz/file/4P0iBDaB#6_juzUHTo3F4ZhYUYckFhLLJkNhPE47mx-hosVP6gNU" target="_blank" id="alternative-download" class="btn btn-secondary" style="display: none;">
-                <i class="fas fa-cloud-download-alt"></i>
-                Alternative Download (MEGA)
-            </a>
             
             <div class="button-group">
                 <a href="index.html" class="btn btn-primary">
@@ -550,30 +610,25 @@
                 downloadStarted = true;
                 
                 // Show download started message
-                statusMessage.innerHTML = '<i class="fas fa-check-circle"></i> Downloading Riptide.exe! Check your downloads folder.';
+                statusMessage.innerHTML = '<i class="fas fa-check-circle"></i> Downloading Infamous Launcher.zip! Check your downloads folder.';
                 statusMessage.className = 'status-message status-success';
                 statusMessage.style.display = 'block';
                 
-                // Download and rename the file to .exe
-                fetch("https://files.catbox.moe/tpkx1a.rip")
-                    .then(response => response.blob())
-                    .then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = "Riptide.exe";
-                        link.style.display = 'none';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        window.URL.revokeObjectURL(url);
-                    })
-                    .catch(error => {
-                        console.error('Download failed:', error);
-                        statusMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Download failed. Please try the alternative download link below.';
-                        statusMessage.className = 'status-message status-info';
-                        statusMessage.style.display = 'block';
-                    });
+                // Download Infamous Launcher.zip
+                try {
+                    const link = document.createElement('a');
+                    link.href = "downloads/Infamous Launcher.zip";
+                    link.download = "Infamous Launcher.zip";
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (error) {
+                    console.error('Download failed:', error);
+                    statusMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Download failed. Please try the alternative download link below.';
+                    statusMessage.className = 'status-message status-info';
+                    statusMessage.style.display = 'block';
+                }
                 
                 // Show redownload button and alternative download
                 redownloadBtn.style.display = 'inline-flex';
@@ -581,7 +636,7 @@
                 
                 // Update message
                 document.querySelector('.download-message').innerHTML = 
-                    'Download completed! <span class="highlight">Riptide.exe</span> should be in your downloads folder. If it didn\'t start automatically, use one of the download options below.';
+                    'Download completed! <span class="highlight">Infamous Launcher.zip</span> should be in your downloads folder. If it didn\'t start automatically, use one of the download options below.';
             }
         }
         
@@ -605,29 +660,24 @@
         
         // Redownload button handler
         redownloadBtn.addEventListener('click', function() {
-            // Download and rename the file to .exe
-            fetch("https://files.catbox.moe/hleelt.rip")
-                .then(response => response.blob())
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = "Riptide.exe";
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(url);
-                })
-                .catch(error => {
-                    console.error('Download failed:', error);
-                    statusMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Download failed. Please try again or contact support.';
-                    statusMessage.className = 'status-message status-info';
-                    statusMessage.style.display = 'block';
-                });
+            // Download Infamous Launcher.zip
+            try {
+                const link = document.createElement('a');
+                link.href = "downloads/Infamous Launcher.zip";
+                link.download = "Infamous Launcher.zip";
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('Download failed:', error);
+                statusMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Download failed. Please try again or contact support.';
+                statusMessage.className = 'status-message status-info';
+                statusMessage.style.display = 'block';
+            }
             
             // Update status message
-            statusMessage.innerHTML = '<i class="fas fa-download"></i> Re-downloading Riptide.exe...';
+            statusMessage.innerHTML = '<i class="fas fa-download"></i> Re-downloading Infamous Launcher.zip...';
             statusMessage.className = 'status-message status-info';
             statusMessage.style.display = 'block';
             
@@ -642,11 +692,11 @@
         function showHelp() {
             statusMessage.innerHTML = `
                 <strong><i class="fas fa-info-circle"></i> Need Help?</strong><br>
-                1. Make sure your antivirus is disabled before running the .exe<br>
-                2. The downloaded file is <strong>Riptide.exe</strong><br>
-                3. Run the executable as Administrator<br>
+                1. Extract the ZIP file to a folder of your choice<br>
+                2. The downloaded file is <strong>Infamous Launcher.zip</strong><br>
+                3. Run the executable inside the extracted folder as Administrator<br>
                 4. If Windows blocks it, click "More info" then "Run anyway"<br>
-                5. Check our <a href="guide.html" style="color: var(--accent-color);">Setup Guide</a> for detailed instructions
+                5. Check our <a href="setup.html" style="color: var(--accent-color);">Setup Guide</a> for detailed instructions
             `;
             statusMessage.className = 'status-message status-info';
             statusMessage.style.display = 'block';

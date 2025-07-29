@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infamous Setup Guide | Ultimate GTA V Mod Menu Installation</title>
+    <link rel="icon" href="images/logo.png" type="image/x-icon">
+
+    <meta name="title" content="Infamous Setup Guide - Complete Installation Instructions">
+    <meta name="description" content="Step-by-step installation guide for Infamous GTA 5 Mod Menu. Includes instructions for both BattlEye and NO_BattlEye versions with detailed screenshots.">
+    <meta name="keywords" content="Infamous Setup, GTA 5 Mod Menu Installation, BattlEye Setup, GTA 5 Mod Installation Guide, Infamous Tutorial">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+   
+    <style>
+        /* Setup-specific styles that extend the main styles.css */
+        
+        /* Custom setup page styling */
+        .setup-hero {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 140px 0 80px;
+            background: var(--bg-primary);
+            background-image: var(--gradient-mesh);
+        }
+
+        .setup-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(220, 38, 38, 0.15) 0%, transparent 60%),
+                radial-gradient(circle at 70% 60%, rgba(239, 68, 68, 0.1) 0%, transparent 60%);
+            animation: heroGlow 12s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .setup-hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .setup-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+            filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.5));
+        }
+
+        .setup-hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        /* Setup Categories Grid */
+        .setup-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+            padding: 2rem 0;
+        }
+
+        .category-card {
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .category-card:hover::before {
+            left: 100%;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .category-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .category-card h3 i {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+
+        .category-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .category-btn {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            width: 100%;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .category-btn:hover::before {
+            left: 100%;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* Setup Instructions */
+        .setup-instructions {
+            display: none;
+            margin: 3rem 0;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .setup-instructions.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .instruction-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .instruction-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .instruction-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            transition: all var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Steps */
+        .steps-container {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .step {
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--gradient-primary);
+            transform: scaleY(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .step:hover::before {
+            transform: scaleY(1);
+        }
+
+        .step:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-4px);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .step h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .step-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .step-content-no-image {
+            display: block;
+        }
+
+        .step-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .step-text p {
+            margin-bottom: 1rem;
+        }
+
+        .step-text ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .step-text li {
+            margin-bottom: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .step-text a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        .step-text a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .step-image {
+            text-align: center;
+        }
+
+        .step-image img {
+            max-width: 100%;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .step-image img:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--primary-color);
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: var(--blur-lg);
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 16px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 2001;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-normal);
+            backdrop-filter: var(--blur-sm);
+        }
+
+        .close-modal:hover {
+            background: rgba(220, 38, 38, 0.8);
+            transform: scale(1.1);
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .warning-box i {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .warning-box .warning-content h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .warning-box .warning-content p {
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .setup-hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .setup-categories {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1rem 0;
+                margin-bottom: 3rem;
+            }
+            
+            .step-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+
+            .instruction-header h2 {
+                font-size: 2rem;
+            }
+
+            .category-card {
+                padding: 1.5rem;
+            }
+
+            .step {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .setup-hero {
+                padding: 120px 0 60px;
+            }
+
+            .setup-hero h1 {
+                font-size: 2rem;
+            }
+
+            .instruction-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                <span class="logo-text">Infamous</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="store.html" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="reseller.html" class="nav-link">Resellers</a></li>
+                <li class="nav-item"><a href="setup.html" class="nav-link active">Setup</a></li>
+                <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="setup-hero">
+                <div class="setup-hero-content">
+                    <h1>Setup Guide</h1>
+                    <p>Complete installation instructions for Infamous GTA V Mod Menu. Choose your installation type below to get started.</p>
+                </div>
+            </section>
+
+            <!-- Category Selection -->
+            <section class="setup-categories" id="categories">
+                <div class="category-card battleye" onclick="showInstructions('battleye')">
+                    <h3><i class="fas fa-shield-alt"></i> ULTIMATE - (BattlEye On Setup Guide)</h3>
+                    <p>For servers with BattlEye anti-cheat protection. This version includes special bypass features.</p>
+                    <button class="category-btn">View ULTIMATE Setup</button>
+                </div>
+                
+                <div class="category-card no-battleye" onclick="showInstructions('no-battleye')">
+                    <h3><i class="fas fa-rocket"></i> ULTIMATE / Free (BattlEye OFF Setup Guide)</h3>
+                    <p>For servers without BattlEye protection. Easier installation with full functionality.</p>
+                    <button class="category-btn">View Standard Setup</button>
+                </div>
+
+                <div class="category-card crashing-after-injection" onclick="showInstructions('crashing-after-injection')">
+                    <h3><i class="fas fa-bug"></i> Crashing After Injection</h3>
+                    <p>Common issues and solutions for crashes after injection.</p>
+                    <button class="category-btn">View Troubleshooting</button>
+                </div>
+
+                <div class="category-card faq" onclick="showInstructions('faq')">
+                    <h3><i class="fas fa-question-circle"></i> FAQ</h3>
+                    <p>Frequently asked questions and tips.</p>
+                    <button class="category-btn">View FAQ</button>
+                </div>
+
+                <div class="category-card important-disclaimer" onclick="showInstructions('important-disclaimer')">
+                    <h3><i class="fas fa-exclamation-circle"></i> Important Disclaimer</h3>
+                    <p>Please read the following disclaimer carefully before using Infamous.</p>
+                    <button class="category-btn">View Disclaimer</button>
+                </div>
+
+                 <div class="category-card how-to-completely-remove-battleye" onclick="showInstructions('how-to-completely-remove-battleye')">
+                    <h3><i class="fas fa-trash-alt"></i> How to Completely Remove BattlEye</h3>
+                    <p>Step-by-step guide to completely remove BattlEye from your system.</p>
+                    <button class="category-btn">View Removal Guide</button>
+                </div>
+
+                 <div class="category-card loader-crashing" onclick="showInstructions('loader-crashing')">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Loader Crashing / Not Opening</h3>
+                    <p>Solutions for issues with the loader crashing during startup.</p>
+                    <button class="category-btn">View Loader Fixes</button>
+                </div>
+
+                <div class="category-card controls" onclick="showInstructions('controls')">
+                    <h3><i class="fas fa-gamepad"></i> Controls</h3>
+                    <p>Learn about the controls and keybindings for Infamous.</p>
+                    <button class="category-btn">View Controls</button>
+                </div>
+
+            </section>
+
+
+
+            <!-- Warning Box -->
+            <div class="warning-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="warning-content">
+                    <h4>Important Notice</h4>
+                    <p>Always make sure to disable your antivirus software temporarily during installation. Some antivirus programs may flag mod menus as false positives. Re-enable your antivirus after installation is complete.</p>
+                </div>
+            </div>
+
+            <!-- BattlEye Instructions -->
+            <section class="setup-instructions" id="battleye-instructions">
+                <button class="back-btn" onclick="showCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                
+                <div class="instruction-header">
+                    <h2>BattlEye Installation Guide</h2>
+                    <p>Follow these steps carefully to install Infamous on BattlEye protected servers</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Steps will be generated dynamically from JSON -->
+                </div>
+            </section>
+
+            <!-- NO BattlEye Instructions -->
+            <section class="setup-instructions" id="no-battleye-instructions">
+                <button class="back-btn" onclick="showCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                
+                <div class="instruction-header">
+                    <h2>Standard Installation Guide</h2>
+                    <p>Follow these steps to install Infamous on standard servers without BattlEye</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Steps will be generated dynamically from JSON -->
+                </div>
+            </section>
+
+            <!-- Crashing After Injection Instructions -->
+            <section class="setup-instructions" id="crashing-after-injection-instructions">
+                <button class="back-btn" onclick="showCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                
+                <div class="instruction-header">
+                    <h2>Troubleshooting Guide</h2>
+                    <p>Solutions for common issues and crashes after injection</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Steps will be generated dynamically from JSON -->
+                </div>
+            </section>
+
+            <!-- FAQ Instructions -->
+            <section class="setup-instructions" id="faq-instructions">
+                <button class="back-btn" onclick="showCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                
+                <div class="instruction-header">
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Answers to common questions about Infamous</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Steps will be generated dynamically from JSON -->
+                </div>
+            </section>
+
+            <!-- Important Disclaimer Instructions -->
+            <section class="setup-instructions" id="important-disclaimer-instructions">
+                <button class="back-btn" onclick="showCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                
+                <div class="instruction-header">
+                    <h2>Important Disclaimer</h2>
+                    <p>Please read the following disclaimer carefully before using Infamous</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Steps will be generated dynamically from JSON -->
+                </div>
+            </section>
+
+            <!-- How to Completely Remove BattlEye Instructions -->
+            <section class="setup-instructions" id="how-to-completely-remove-battleye-instructions">
+                <button class="back-btn" onclick="showCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                
+                <div class="instruction-header">
+                    <h2>How to Completely Remove BattlEye</h2>
+                    <p>Step-by-step guide to completely remove BattlEye from your system</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Steps will be generated dynamically from JSON -->
+                </div>
+        </div>
+            </section>
+
+            <!-- Loader Crashing Instructions -->
+            <section class="setup-instructions" id="loader-crashing-instructions">
+                <button class="back-btn" onclick="showCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                
+                <div class="instruction-header">
+                    <h2>Loader Crashing Solutions</h2>
+                    <p>Solutions for issues with the loader crashing during startup</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Steps will be generated dynamically from JSON -->
+                </div>
+            </section>
+
+            <!-- Controls Instructions -->
+            <section class="setup-instructions" id="controls-instructions">
+                <button class="back-btn" onclick="showCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                
+                <div class="instruction-header">
+                    <h2>Controls and Keybindings</h2>
+                    <p>Learn about the controls and keybindings for RIPTIDE</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Steps will be generated dynamically from JSON -->
+                </div>  
+        
+    </main>
+
+    <!-- Image Modal -->
+    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        // JSON Configuration for easy content management
+        const setupConfig = {
+            "battleye": {
+                "title": "ULTIMATE (BattlEye On Setup Guide)",
+                "description": "Follow these steps carefully to Setup / Use Infamous on BattlEye protected servers",
+                "steps": [
+                    {
+                        "title": "Disable Antivirus",
+                        "description": "Temporarily disable your antivirus software to prevent false positive detections.",
+                        "bullets": [
+                            "Open Windows Security settings",
+                            "Turn off real-time protection",
+                            "Add the Infamous folder to exclusions"
+                        ],
+                        "image": "images/setup/BattlEye/2.png"
+                    },
+                    {
+                        "title": "Download",
+                        "description": "Download the Infamous Loader.",
+                        "bullets": [
+                            "<a href='https://infamous.com/loader.html' target='_blank' rel='noopener noreferrer'>Download</a> the Infamous loader from the official site",
+
+
+                        ],
+                        "image": "images/setup/DownloadPage.png"
+                    },
+                    {
+                        "title": "Make Sure BattlEye is Enabled",
+                        "description": "Open Rockstar Games Launcher And Go To Settings And Enable BattlEye.",
+                        "bullets": [
+                            "Open Rockstar Games Launcher",
+                            "Go to Settings",
+                            "Enable BattlEye if not already enabled"
+                        ],
+                        "image": "images/setup/BattlEye/1.png"
+                    },
+                    {
+                        "title": "Game Startup Process",
+                        "description": "Start GTA V and wait for it to fully load, then open Infamous Loader.",
+                        "bullets": [
+                            "Launch GTA V and load into story mode or online",
+                            "Wait for the game to fully load",
+                        ],
+                        "image": "images/setup/BattlEye/3.jpg"
+                    },
+                     {
+                        "title": "Game Loaded",
+                        "description": "Make sure the game is fully loaded.",
+                        "bullets": [
+                       
+                        ],
+                        "image": "images/setup/BattlEye/5.jpg"
+                    },
+                    {
+                        "title": "Injection Process",
+                        "description": "Open Infamous Loader.",
+                        "bullets": [
+                            "Log in with your credentials",
+                            "Select GTAV from the list",
+                            "Click 'Load' to start the injection process",
+                            "If successful, loader will exit it self"
+                        ],
+                        "image": "images/setup/BattlEye/4.png"
+                    },
+
+                    {
+                        "title": "Menu Access",
+                        "description": "Patience is key.",
+                        "bullets": [
+                            "Wait for the menu to load",
+                            "You may need to wait a few seconds",
+                            "It may fell like nothing is happening, but it is loading",
+                           
+                        ],
+                        "image": "images/setup/BattlEye/5.jpg"
+                    },
+                    {
+                        "title": "Loaded",
+                        "description": "Your mod menu is now ready to use! Access it with the INSERT key.",
+                        "bullets": [
+                            "As you can see in image on right bottom corner, the menu is loaded",            
+                        ],
+                        "image": "images/setup/BattlEye/7.jpg"
+                    },
+                    {
+                        "title": "Enjoy",
+                        "description": "Explore all available features and have fun responsibly!",
+                        "bullets": [
+                            "Press F4 to open the menu",
+                            "Explore all available features",
+                            "Have fun responsibly!"
+                        ],
+                        "image": "images/setup/BattlEye/8.jpg"      
+                        // No image needed for final step
+                    },
+                    {
+                        "title": "",
+                        "description": "",
+                        "bullets": [
+                          
+                        ],
+                        "image": "images/setup/BattlEye/9.jpg"
+                    }
+                ]
+            },
+            "no-battleye": {
+                "title": "ULTIMATE / Free (BattlEye OFF Setup Guide)",
+                "description": "Follow these steps to install Infamous on standard servers without BattlEye",
+                "steps": [
+                     {
+                        "title": "Disable Antivirus",
+                        "description": "Temporarily disable your antivirus software to prevent false positive detections.",
+                        "bullets": [
+                            "Open Windows Security settings",
+                            "Turn off real-time protection",
+                            "Add the Infamous folder to exclusions"
+                        ],
+                        "image": "images/setup/BattlEye/2.png"
+                    },
+                    {
+                        "title": "Download",
+                        "description": "Download the Infamous Loader.",
+                        "bullets": [
+                            "<a href='https://infamous.com/loader.html' target='_blank' rel='noopener noreferrer'>Download</a> the Infamous loader from the official site",
+                        ],
+                        "image": "images/setup/DownloadPage.png"
+                    },
+                    {
+                        "title": "Turn Off BattlEye",
+                        "description": "BattlEye is not needed for this version, ensure it is turned off in your game settings.",
+                        "bullets": [
+                            "Open Rockstar Games Launcher",
+                            "Go to Settings",
+                            "Disable BattlEye"
+                        ],
+                        "image": "images/setup/NO_BattlEye/1.png"
+                    },
+                    {
+                        "title": "Open Infamous Loader (Ignore This Step If You Are Using Free Version)",
+                        "description": "Launch the Infamous loader.",
+                        "bullets": [
+                            "Open the Infamous loader application",
+                            "Log in with your credentials",
+                            "Select GTAV from the list"
+
+                        ],
+                        "image": "images/setup/RiptideLoaderPaid.png"
+                    },
+                    {
+                        "title": "Open Infamous Loader (Ignore This Step If You Are Using ULTIMATE Version)",
+                        "description": "Start GTA V and inject Infamous with one click.",
+                        "bullets": [
+                            "Open the Infamous loader application",
+                            "Brokie In With Your Free Key",
+                        ],
+                        "image": "images/setup/RiptideLoaderFree.png"
+                    },
+
+                    {
+                        "title": "Injection Process",
+                        "description": "Start GTA V and wait for it to be on the main menu.",
+                        "bullets": [
+                           "Once you are on the main menu, click 'Load' to start the injection process",
+                            "If successful, loader will exit it self"
+                        ],
+                        "image": "images/setup/NO_BattlEye/3.jpg"
+                    },
+
+                    {
+                        "title": "Patience is Key",
+                        "description": "It may take some time for the game to fully load.",
+                        "bullets": [
+                            "You may need to wait a few seconds",
+                            "It may feel like nothing is happening, but it is loading",
+                            "Wait for the notification to show up on right top corner (Look at image on right)",
+
+                        ],
+                        "image": "images/setup/NO_BattlEye/4.jpg"
+                    },
+
+                    {
+                        "title": "Loaded",
+                        "description": "Your mod menu is now ready to use! Load into GTA V.",
+                        "bullets": [
+                            "As you can see in image on right bottom corner, the menu is loaded",
+                            "Press F4 to open the menu"
+                        ],
+                        "image": "images/setup/NO_BattlEye/5.jpg"
+                    },
+                    {
+                        "title": "Enjoy",
+                        "description": "Explore all available features and have fun responsibly!",
+                        "bullets": [
+                            "Explore all available features",
+                            "Have fun responsibly!"
+                        ],
+                        "image": "images/setup/NO_BattlEye/6.jpg"
+                    }
+                    
+                ]
+
+            },
+            "crashing-after-injection": {
+                "title": "Crashing After Injection",
+                "description": "Common issues and solutions for crashes after injection.",
+                "steps": [
+                    {
+                        "title": "Windows Defender",
+                        "description": "Ensure Windows Defender is not blocking the loader.",
+                        "bullets": [
+                            "Open Windows Security",
+                            "Go to 'Virus & threat protection'",
+                            "Check for any blocked items",
+                            "Add the RIPTIDE folder to exclusions",
+                            "Disable real-time protection temporarily"
+                        ]
+                    },
+                    {
+                        "title": "Install Visual C++ Redistributables",
+                        "description": "Ensure you have the latest Visual C++ Redistributables installed.",
+                        "bullets": [
+                            "Download the latest supported <a href='https://www.techpowerup.com/download/visual-c-redistributable-runtime-package-all-in-one/' target='_blank' rel='noopener noreferrer'>Visual C++ Redistributable</a>",
+                            "Install the redistributable and restart your computer"
+                        ],
+                    },
+                    {
+                        "title": "Try Switching Game From Full Screen",
+                        "description": "If the issue persists, try switching the game from full screen to windowed mode / borderless.",
+                        "bullets": [
+                            "Open GTA V settings",
+                            "Change display mode to 'Windowed' or 'Borderless'",
+                            "Apply the changes and restart the game"       
+                        ],
+                      
+                    }, 
+                    {
+                        "title": "Update GPU Drivers",
+                        "description": "Ensure your GPU drivers are up to date.",
+                        "bullets": [
+                            "Visit the manufacturer's website (NVIDIA, AMD, Intel)",
+                            "Download and install the latest drivers",
+                            "Restart your computer"
+                        ],
+                        "image": ""
+                    },
+     
+                ]
+            },
+            "faq": {
+                "title": "Frequently Asked Questions",
+                "description": "Answers to common questions about Infamous.",
+                "steps": [
+                    {
+                        "title": "How do I report a bug?",
+                        "description": "If you encounter any issues, please report them on our <a href='https://discord.gg/ZkEaPwNkZa' target='_blank' rel='noopener noreferrer'>Discord server</a>.",
+                        "bullets": [
+                            "Go to the Discord server",
+                            "Find the '🐛bugs' forum",
+                            "Provide detailed information about the bug",
+                            "Include screenshots if possible",
+                            "Add Steps To Reproduce The Bug If Possible"
+                        ],
+                        "image": ""
+                    },
+                    {
+                        "title": "What should I do if Infamous is detected by antivirus?",
+                        "description": "This is a common false positive. Most antivirus programs flag mod menus.",
+                        "bullets": [
+                            "Add Infamous folder to antivirus exclusions",
+                            "Temporarily disable real-time protection during installation",
+                            "Download only from official sources",
+                            "This is normal behavior for injection-based tools"
+                        ],
+                        "image": ""
+                    },
+                    {
+                        "title": "Can I use Infamous with other mods?",
+                        "description": "Infamous may conflict with other script mods or trainers.",
+                        "bullets": [
+                            "Disable other trainers before using Infamous",
+                            "Remove conflicting script mods",
+                            "Use Infamous as the primary mod menu",
+                            "Some visual mods may work alongside Infamous"
+                        ],
+                        "image": ""
+                    },
+                    {
+                        "title": "How often is Infamous updated?",
+                        "description": "Infamous is regularly updated to maintain compatibility and add new features.",
+                        "bullets": [
+                            "Updates are released as needed",
+                            "Always download the latest version",
+                            "Check the official site for update notifications",
+                            "Older versions may not work with game updates"
+                        ],
+                        "image": ""
+                    },
+                    {
+                        "title": "Is Infamous safe to use?",
+                        "description": "Infamous is designed for educational purposes and should be used responsibly.",
+                        "bullets": [
+                            "While no mod menu can guarantee 100% safety, Infamous employs advanced protection mechanisms and receives frequent updates to minimize detection risks. Our development team continuously monitors anti-cheat updates to maintain effectiveness.",
+                        ],
+                     
+                    },
+                    {
+                        "title": "How do I update RIPTIDE?",
+                        "description": "You don't need to manually update RIPTIDE as the loader handles updates automatically.",
+                        "bullets": [
+                            "Simply run the RIPTIDE loader - it will automatically check for and download any available updates. Always ensure you're using the latest version for optimal protection and features."
+                        ],
+                        "image": ""
+                    },
+                    {
+                        "title": "What if I get detected?",
+                        "description": "If you get detected while using RIPTIDE, follow these steps:",
+                        "bullets": [
+                            "If detection occurs, immediately stop using the menu and wait for the next update. Join our Discord community for real-time status updates and support."
+                        ],
+                        "image": ""
+                    },
+                    {
+                        "title": "Can I use recovery features safely?",
+                        "description": "Recovery features can be risky and may lead to detection if used excessively.",
+                        "bullets": [
+                            "Use recovery features sparingly and avoid excessive amounts. Large money drops or rapid level increases are more likely to trigger detection systems."
+                        ],
+                        "image": ""
+                    },
+                    {
+                        "title": "Does RIPTIDE Support Controllers?",
+                        "description": "RIPTIDE has support for controllers & keyboard/mouse input.",
+    
+                    }
+                ]
+            },
+            "important-disclaimer": {
+                "title": "Important Disclaimer",
+                "description": "Please read the following disclaimer carefully before using RIPTIDE.",
+                "steps": [
+                    {
+                        "title": "Disclaimer",
+                        "description": "RIPTIDE is a mod menu for GTA V and is intended for educational purposes only. Use at your own risk.",
+                        "bullets": [
+                            "RIPTIDE is not affiliated with Rockstar Games or Take-Two Interactive.",
+                            "Using this mod may result in a ban from online services.",
+                            "Always use mods responsibly and respect the game's terms of service.",
+                            "Use the menu responsibly and respect other players' gaming experience.",
+                            "RIPTIDE is not responsible for any bans or issues that may arise from its use.",
+                            "By using RIPTIDE, you agree to these terms and acknowledge the risks involved."
+                        ],
+                        "image": ""
+                    }
+                ]
+            },
+            "how-to-completely-remove-battleye": {
+                "title": "How to Completely Remove BattlEye",
+                "description": "Follow these steps to disable BattlEye anti-cheat for enhanced compatibility.",
+                "steps": [
+                    {
+                        "title": "",
+                        "description": "Ensure BattlEye is disabled in your Rockstar Games Launcher settings.",
+            
+                    },
+                    {
+                        "title": "",
+                        "description": "Add the parameter -nobattleeye to your commandline.txt file located in your game directory.",
+    
+                    },
+                    {
+                        "title": "",
+                        "description": "Open Command Prompt as Administrator and execute: sc delete BEService to completely remove the BattlEye service.",
+                    }
+                ]
+            },
+            "loader-crashing": {
+                "title": "Loader Crashing / Not Opening Solutions",
+                "description": "Solutions for issues with the loader crashing during startup.",
+                "steps": [
+                    {
+                        "title": "Install Visual C++ Redistributables",
+                        "description": "Visit <a href='https://www.techpowerup.com/download/visual-c-redistributable-runtime-package-all-in-one/' target='_blank' rel='noopener noreferrer'>Visual C++ Redistributable</a> and install the latest version.",
+                    },
+                    {
+                        "title": "Update Graphics Drivers",
+                        "description": "Make sure your graphics drivers are up to date.",
+                    }
+                ]
+            },
+            "controls": {
+                "title": "Controls",
+                "description": "Learn about the controls and keybindings for RIPTIDE.",
+                "steps": [
+                    {
+                        "title": "Keyboard Controls",
+                        "description": "Open: F4 / NumPad *  Controller Right D PAD + RB| Back: Backspace / NumPad - / Esc / Controller B | Enter: Enter / NumPad 5 / Controller A | Navigation: Arrows (incl. NumPad) / Controller D-Pad",
+
+                    },
+                ]
+            }
+        };
+
+        
+        // Generate steps dynamically from JSON
+        function generateSteps(type) {
+            const config = setupConfig[type];
+            let stepsHTML = '';
+            
+            config.steps.forEach((step, index) => {
+                const stepNumber = index + 1;
+                const hasImage = step.image ? true : false;
+                
+                // Create bullets HTML
+                let bulletsHTML = '';
+                if (step.bullets && step.bullets.length > 0) {
+                    bulletsHTML = '<ul>' + step.bullets.map(bullet => `<li>${bullet}</li>`).join('') + '</ul>';
+                }
+                
+                // Determine layout class based on image presence
+                const contentClass = hasImage ? 'step-content' : 'step-content-no-image';
+                
+                stepsHTML += `
+                    <div class="step">
+                        <div class="step-header">
+                            <div class="step-number">${stepNumber}</div>
+                            <h3>${step.title}</h3>
+                        </div>
+                        <div class="${contentClass}">
+                            <div class="step-text">
+                                <p>${step.description}</p>
+                                ${bulletsHTML}
+                            </div>
+                            ${hasImage ? `
+                            <div class="step-image">
+                                <img src="${step.image}" alt="${step.title}" onclick="openImageModal('${step.image}')">
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return stepsHTML;
+        }
+
+        // Show/Hide instructions
+        function showInstructions(type) {
+            document.getElementById('categories').style.display = 'none';
+            document.querySelectorAll('.setup-instructions').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const instructionSection = document.getElementById(type + '-instructions');
+            const config = setupConfig[type];
+            
+            // Update header
+            instructionSection.querySelector('.instruction-header h2').textContent = config.title;
+            instructionSection.querySelector('.instruction-header p').textContent = config.description;
+            
+            // Generate and insert steps
+            const stepsContainer = instructionSection.querySelector('.steps-container');
+            stepsContainer.innerHTML = generateSteps(type);
+            
+            instructionSection.classList.add('active');
+            
+            // Re-initialize animations for new content
+            initializeStepAnimations();
+        }
+
+        function showCategories() {
+            document.getElementById('categories').style.display = 'grid';
+            document.querySelectorAll('.setup-instructions').forEach(section => {
+                section.classList.remove('active');
+            });
+        }
+
+        // Image modal functionality
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.classList.add('active');
+            modalImg.src = src;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+
+        // Initialize step animations
+        function initializeStepAnimations() {
+            const steps = document.querySelectorAll('.step');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            steps.forEach(step => {
+                step.style.opacity = '0';
+                step.style.transform = 'translateY(30px)';
+                step.style.transition = 'all 0.6s ease-out';
+                observer.observe(step);
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStepAnimations();
+        });
+    </script>
+</body>
+</html>

@@ -3,24 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIPTIDE - Terms of Service</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Infamous - Terms of Service</title>
+    <link rel="icon" href="images/logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #8b5cf6;
-            --secondary-color: #ec4899;
-            --accent-color: #f472b6;
+            --primary-color: #dc2626;
+            --secondary-color: #ef4444;
+            --accent-color: #fbbf24;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #151515;
+            --bg-glass: rgba(220, 38, 38, 0.05);
+            --bg-glass-hover: rgba(220, 38, 38, 0.1);
+            
             --text-primary: #ffffff;
             --text-secondary: #e5e7eb;
             --text-muted: #9ca3af;
-            --bg-primary: #0f0f23;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #16213e;
-            --gradient-main: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            --gradient-accent: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
-            --shadow-glow: 0 20px 40px rgba(139, 92, 246, 0.3);
-            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --text-accent: #f9fafb;
+            
+            --border-color: rgba(220, 38, 38, 0.2);
+            --border-hover: rgba(220, 38, 38, 0.4);
+            
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 32px rgba(220, 38, 38, 0.4);
+            --shadow-glow-hover: 0 0 48px rgba(220, 38, 38, 0.6);
+            
+            --gradient-primary: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            --gradient-secondary: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+            --gradient-accent: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --gradient-bg: linear-gradient(135deg, #0a0a0a 0%, #111111 25%, #1a1a1a 50%, #111111 75%, #0a0a0a 100%);
+            --gradient-mesh: 
+                radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
+            
+            --blur-sm: blur(4px);
+            --blur-md: blur(8px);
+            --blur-lg: blur(16px);
+            --blur-xl: blur(24px);
+            
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
         }
 
         * {
@@ -30,12 +64,17 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg-primary);
+            background-image: var(--gradient-mesh);
+            background-attachment: fixed;
+            background-size: 100% 100%;
             color: var(--text-primary);
-            line-height: 1.6;
+            line-height: 1.7;
             overflow-x: hidden;
             position: relative;
+            font-weight: 400;
+            letter-spacing: -0.01em;
         }
 
         body::before {
@@ -45,85 +84,157 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(ellipse at top, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
+            background: var(--gradient-bg);
+            background-size: 400% 400%;
+            animation: gradientFlow 20s ease infinite;
+            z-index: -2;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(239, 68, 68, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
             position: relative;
             z-index: 1;
         }
 
+        /* Navigation matching main site */
         .navbar {
-            background: rgba(26, 26, 46, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 20px;
-            padding: 15px 30px;
-            margin: 20px 0 40px 0;
-            display: flex;
-            gap: 30px;
-            align-items: center;
-            box-shadow: var(--shadow-card);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: all var(--transition-normal);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: var(--blur-lg);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
         }
 
-        .navbar a {
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: all var(--transition-normal);
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-img {
+            height: 44px;
+            width: auto;
+            filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.4));
+            transition: all var(--transition-normal);
+        }
+
+        .nav-logo:hover .logo-img {
+            filter: drop-shadow(0 8px 16px rgba(220, 38, 38, 0.6));
+        }
+
+        .logo-text {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
             color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            transition: all var(--transition-normal);
             position: relative;
-            overflow: hidden;
+            padding: 8px 16px;
+            border-radius: 12px;
+            letter-spacing: -0.01em;
         }
 
-        .navbar a::before {
+        .nav-link::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-main);
-            transition: left 0.3s ease;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            border-radius: 12px;
+            transition: all var(--transition-normal);
             z-index: -1;
         }
 
-        .navbar a:hover {
+        .nav-link:hover::before {
+            opacity: 0.1;
+        }
+
+        .nav-link:hover {
             color: var(--text-primary);
             transform: translateY(-2px);
         }
 
-        .navbar a:hover::before {
-            left: 0;
-        }
-
         .header {
             text-align: center;
-            margin: 60px 0;
+            margin: 120px 0 60px 0;
             position: relative;
+            padding-top: 40px;
         }
 
         .header h1 {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 700;
-            background: var(--gradient-main);
+            font-weight: 800;
+            background: var(--gradient-primary);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 20px;
-            text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+            text-shadow: 0 0 30px rgba(220, 38, 38, 0.5);
+            letter-spacing: -0.02em;
         }
 
         .header p {
@@ -131,18 +242,26 @@
             color: var(--text-secondary);
             max-width: 600px;
             margin: 0 auto;
+            font-weight: 400;
         }
 
         .section {
-            background: rgba(26, 26, 46, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(139, 92, 246, 0.2);
+            background: rgba(21, 21, 21, 0.8);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 40px;
             margin: 30px 0;
-            box-shadow: var(--shadow-card);
+            box-shadow: var(--shadow-lg);
             position: relative;
             overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+
+        .section:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px);
         }
 
         .section::before {
@@ -152,22 +271,23 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: var(--gradient-main);
+            background: var(--gradient-primary);
         }
 
         .section h2 {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Inter', sans-serif;
             font-size: 1.8rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 15px;
+            letter-spacing: -0.01em;
         }
 
         .section h2 i {
-            background: var(--gradient-main);
+            background: var(--gradient-primary);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -189,15 +309,15 @@
             color: var(--text-secondary);
             margin: 15px 0;
             padding: 15px 20px;
-            background: rgba(139, 92, 246, 0.1);
+            background: var(--bg-glass);
             border-left: 4px solid var(--primary-color);
             border-radius: 0 12px 12px 0;
             position: relative;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
         }
 
         .section li:hover {
-            background: rgba(139, 92, 246, 0.15);
+            background: var(--bg-glass-hover);
             transform: translateX(5px);
         }
 
@@ -210,16 +330,16 @@
         }
 
         .warning {
-            border: 1px solid rgba(236, 72, 153, 0.4);
-            background: rgba(236, 72, 153, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.05);
         }
 
         .warning::before {
-            background: var(--gradient-accent);
+            background: var(--gradient-secondary);
         }
 
         .warning h2 {
-            color: var(--accent-color);
+            color: var(--secondary-color);
         }
 
         .faq-section {
@@ -227,30 +347,30 @@
         }
 
         .faq-item {
-            background: rgba(26, 26, 46, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(139, 92, 246, 0.2);
+            background: rgba(21, 21, 21, 0.8);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
             border-radius: 15px;
             margin: 20px 0;
             overflow: hidden;
-            box-shadow: var(--shadow-card);
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
         }
 
         .faq-item:hover {
-            border-color: rgba(139, 92, 246, 0.4);
+            border-color: var(--border-hover);
             transform: translateY(-2px);
         }
 
         .faq-question {
-            background: rgba(139, 92, 246, 0.1);
+            background: var(--bg-glass);
             padding: 20px 25px;
             cursor: pointer;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 15px;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
             border: none;
             width: 100%;
             text-align: left;
@@ -259,15 +379,15 @@
         }
 
         .faq-question:hover {
-            background: rgba(139, 92, 246, 0.15);
+            background: var(--bg-glass-hover);
         }
 
         .faq-question i {
-            background: var(--gradient-main);
+            background: var(--gradient-primary);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            transition: transform 0.3s ease;
+            transition: transform var(--transition-normal);
         }
 
         .faq-question.active i {
@@ -278,8 +398,8 @@
             padding: 0 25px;
             max-height: 0;
             overflow: hidden;
-            transition: all 0.3s ease;
-            background: rgba(16, 16, 35, 0.8);
+            transition: all var(--transition-normal);
+            background: rgba(10, 10, 10, 0.9);
         }
 
         .faq-answer.active {
@@ -287,16 +407,11 @@
             padding: 25px;
         }
 
-        .faq-answer p {
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-
         .back-to-top {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: var(--gradient-main);
+            background: var(--gradient-primary);
             color: white;
             border: none;
             width: 50px;
@@ -305,7 +420,7 @@
             cursor: pointer;
             font-size: 1.2rem;
             box-shadow: var(--shadow-glow);
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
             opacity: 0;
             visibility: hidden;
             z-index: 1000;
@@ -318,22 +433,28 @@
 
         .back-to-top:hover {
             transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 25px 50px rgba(139, 92, 246, 0.4);
+            box-shadow: var(--shadow-glow-hover);
         }
 
         .acknowledgment {
             text-align: center;
             margin-top: 50px;
             padding: 30px;
-            background: rgba(139, 92, 246, 0.1);
+            background: var(--bg-glass);
             border-radius: 20px;
-            border: 1px solid rgba(139, 92, 246, 0.3);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-lg);
         }
 
         .acknowledgment p {
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--text-primary);
+        }
+
+        .faq-answer p {
+            color: var(--text-secondary);
+            line-height: 1.8;
         }
 
         /* Animation classes */
@@ -359,10 +480,8 @@
                 padding: 0 15px;
             }
 
-            .navbar {
-                flex-direction: column;
-                gap: 15px;
-                padding: 20px;
+            .nav-menu {
+                display: none;
             }
 
             .section {
@@ -372,38 +491,153 @@
             .header h1 {
                 font-size: 2.5rem;
             }
+
+            .nav-container {
+                padding: 0 15px;
+            }
+        }
+
+        /* Footer styles matching main site */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 60px 0 20px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition-normal);
+            font-size: 0.95rem;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        .footer-section p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-top: 15px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .footer-logo .logo-img {
+            height: 40px;
+            filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.4));
+        }
+
+        .footer-logo .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+        }
+
+        .social-links a:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .social-links img {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0.9);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                <span class="logo-text">Infamous</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="store.html" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="reseller.html" class="nav-link">Resellers</a></li>
+                <li class="nav-item"><a href="setup.html" class="nav-link">Setup Guide</a></li>
+                <li class="nav-item"><a href="download.html" class="nav-link">Download</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <div class="container">
-        <nav class="navbar fade-in-up">
-            <a href="index.html">
-                <i class="fas fa-home"></i>
-                Home
-            </a>
-            <a href="guide.html">
-                <i class="fas fa-book-open"></i>
-                Setup Guide
-            </a>
-            <a href="changelogs.html">
-                <i class="fas fa-list-alt"></i>
-                Changelogs
-            </a>
-            <a href="loader.html">
-                <i class="fas fa-download"></i>
-                Download Loader
-            </a>
-        </nav>
 
         <div class="header fade-in-up delay-1">
             <h1><i class="fas fa-file-contract"></i> TERMS OF SERVICE</h1>
-            <p>Please read these terms carefully before purchasing or using RIPTIDE</p>
+            <p>Please read these terms carefully before purchasing or using Infamous products</p>
         </div>
 
         <section class="section fade-in-up delay-2">
             <h2><i class="fas fa-key"></i> Product Access and Usage</h2>
-            <p>By purchasing, downloading, or using any products sold through RIPTIDE Store, you fully agree to the following Terms of Service. If you do not agree, you must not purchase, download, or use our products.</p>
+            <p>By purchasing, downloading, or using any products sold through Infamous Store, you fully agree to the following Terms of Service. If you do not agree, you must not purchase, download, or use our products.</p>
             <ul>
                 <li>We reserve the right to ban, suspend, or permanently terminate your product key and account at any time without prior notice if you are found in violation of our terms.</li>
                 <li>Lifetime access means the lifetime of the product, not your lifetime. Products can be shut down, discontinued, or retired at any time without compensation.</li>
@@ -421,7 +655,7 @@
                 <li>Threatening a chargeback will result in an instant ban.</li>
                 <li>All purchases are logged and secured with transaction records, IP address, and device information to be used as evidence against fraudulent chargebacks.</li>
                 <li>Attempting a chargeback after agreeing to these terms is considered a breach of contract and fraudulent activity. We will submit all logs, communications, and user agreements as proof to the payment processor to contest chargebacks.</li>
-                <li>Users who attempt a chargeback agree to forfeit all future access to RIPTIDE Store and its associated services permanently.</li>
+                <li>Users who attempt a chargeback agree to forfeit all future access to Infamous Store and its associated services permanently.</li>
                 <li>Providing fake payment information such as a false name, billing address, or contact details will result in the order being placed on hold for manual review. We will require a valid reason for the fake information and proof of card ownership.</li>
             </ul>
         </section>
@@ -490,7 +724,7 @@
         </section>
 
         <div class="acknowledgment fade-in-up">
-            <p><i class="fas fa-check-circle"></i> By purchasing from RIPTIDE Store, you confirm that you have read, understood, and fully agree to these Terms of Service and the Refund Policy.</p>
+            <p><i class="fas fa-check-circle"></i> By purchasing from Infamous Store, you confirm that you have read, understood, and fully agree to these Terms of Service and the Refund Policy.</p>
         </div>
 
         <div class="faq-section fade-in-up">
@@ -557,6 +791,50 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer matching main site -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                        <span class="logo-text">Infamous</span>
+                    </div>
+                    <p>Premium gaming cheats for the ultimate gaming experience.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="store.html">Store</a></li>
+                        <li><a href="reseller.html">Resellers</a></li>
+                        <li><a href="tos.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="store.html">GTA V Cheats</a></li>
+                        <li><a href="store.html">RDR2 Mods</a></li>
+                        <li><a href="store.html">FiveM Support</a></li>
+                        <li><a href="store.html">HWID Spoofer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="https://discord.gg/2KYUvZkD5q" target="_blank"><img src="assets/discord.png" alt="Discord"></a>
+                        <a href="https://t.me/InfamousMenu" target="_blank"><img src="assets/telegram.png" alt="Telegram"></a>
+                        <a href="https://t.me/InfamousMenu" target="_blank"><img src="assets/twitter.png" alt="Twitter"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Infamous. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
     <button class="back-to-top" onclick="scrollToTop()">
         <i class="fas fa-arrow-up"></i>

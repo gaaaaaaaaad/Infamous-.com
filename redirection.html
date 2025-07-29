@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting - Infamous</title>
+    <link rel="icon" href="images/logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .coming-soon-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coming-soon-content {
+            text-align: center;
+            z-index: 10;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+        .coming-soon-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .coming-soon-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            min-width: 100px;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-normal);
+        }
+
+        .countdown-item:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-5px);
+        }
+
+        .countdown-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .redirect-notice {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .redirect-text {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .redirect-button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .redirect-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+            }
+            to {
+                text-shadow: 0 0 30px rgba(220, 38, 38, 0.8);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .coming-soon-title {
+                font-size: 2.5rem;
+            }
+            
+            .countdown-timer {
+                gap: 1rem;
+            }
+            
+            .countdown-item {
+                min-width: 80px;
+                padding: 1rem;
+            }
+            
+            .countdown-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <script>
+        // Redirect to index.html after 10 seconds
+        setTimeout(function() {
+            window.location.href = 'https://www.infamouscheats.com/';
+        }, 10000);
+
+        // Countdown timer
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const redirectTime = now + 10000; // 10 seconds from now
+            
+            const interval = setInterval(function() {
+                const currentTime = new Date().getTime();
+                const timeLeft = redirectTime - currentTime;
+                
+                if (timeLeft < 0) {
+                    clearInterval(interval);
+                    window.location.href = 'https://www.infamouscheats.com/';
+                    return;
+                }
+                
+                const seconds = Math.floor(timeLeft / 1000);
+                document.getElementById('seconds').innerHTML = seconds.toString().padStart(2, '0');
+            }, 1000);
+        }
+
+        // Initialize particles
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize when page loads
+        window.onload = function() {
+            updateCountdown();
+            createParticles();
+        };
+    </script>
+</head>
+<body>
+   
+
+    <!-- Redirection Section -->
+    <section class="coming-soon-container">
+        <div class="particles"></div>
+        
+        <div class="coming-soon-content">
+            <h1 class="coming-soon-title glow-text">REDIRECTING</h1>
+            <p class="coming-soon-subtitle">Taking you to the main page</p>
+            
+            <div class="countdown-timer">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">10</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+            
+            <div class="redirect-notice">
+                <p class="redirect-text">You will be automatically redirected to our main page in <span id="redirect-seconds">10</span> seconds.</p>
+                <a href="https://www.infamouscheats.com/" class="redirect-button">Go Now</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Update redirect countdown text
+        function updateRedirectText() {
+            const redirectSeconds = document.getElementById('redirect-seconds');
+            let count = 10;
+            
+            const interval = setInterval(function() {
+                count--;
+                if (redirectSeconds) {
+                    redirectSeconds.textContent = count;
+                }
+                
+                if (count <= 0) {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+
+        // Initialize redirect text countdown
+        updateRedirectText();
+    </script>
+</body>
+</html>
