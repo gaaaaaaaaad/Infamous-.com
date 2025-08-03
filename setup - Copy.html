@@ -37,9 +37,10 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 30% 40%, rgba(220, 38, 38, 0.15) 0%, transparent 60%),
-                radial-gradient(circle at 70% 60%, rgba(239, 68, 68, 0.1) 0%, transparent 60%);
-            animation: heroGlow 12s ease-in-out infinite;
+                radial-gradient(ellipse at 30% 30%, rgba(220, 38, 38, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse at 70% 70%, rgba(239, 68, 68, 0.06) 0%, transparent 80%),
+                radial-gradient(ellipse at 50% 20%, rgba(220, 38, 38, 0.04) 0%, transparent 90%);
+            animation: heroGlow 15s ease-in-out infinite;
             z-index: 1;
         }
 
@@ -533,54 +534,7 @@
 
             <!-- Category Selection -->
             <section class="setup-categories" id="categories">
-                <div class="category-card battleye" onclick="showInstructions('battleye')">
-                    <h3><i class="fas fa-shield-alt"></i> ULTIMATE - (BattlEye On Setup Guide)</h3>
-                    <p>For servers with BattlEye anti-cheat protection. This version includes special bypass features.</p>
-                    <button class="category-btn">View ULTIMATE Setup</button>
-                </div>
-                
-                <div class="category-card no-battleye" onclick="showInstructions('no-battleye')">
-                    <h3><i class="fas fa-rocket"></i> ULTIMATE / Free (BattlEye OFF Setup Guide)</h3>
-                    <p>For servers without BattlEye protection. Easier installation with full functionality.</p>
-                    <button class="category-btn">View Standard Setup</button>
-                </div>
-
-                <div class="category-card crashing-after-injection" onclick="showInstructions('crashing-after-injection')">
-                    <h3><i class="fas fa-bug"></i> Crashing After Injection</h3>
-                    <p>Common issues and solutions for crashes after injection.</p>
-                    <button class="category-btn">View Troubleshooting</button>
-                </div>
-
-                <div class="category-card faq" onclick="showInstructions('faq')">
-                    <h3><i class="fas fa-question-circle"></i> FAQ</h3>
-                    <p>Frequently asked questions and tips.</p>
-                    <button class="category-btn">View FAQ</button>
-                </div>
-
-                <div class="category-card important-disclaimer" onclick="showInstructions('important-disclaimer')">
-                    <h3><i class="fas fa-exclamation-circle"></i> Important Disclaimer</h3>
-                    <p>Please read the following disclaimer carefully before using Infamous.</p>
-                    <button class="category-btn">View Disclaimer</button>
-                </div>
-
-                 <div class="category-card how-to-completely-remove-battleye" onclick="showInstructions('how-to-completely-remove-battleye')">
-                    <h3><i class="fas fa-trash-alt"></i> How to Completely Remove BattlEye</h3>
-                    <p>Step-by-step guide to completely remove BattlEye from your system.</p>
-                    <button class="category-btn">View Removal Guide</button>
-                </div>
-
-                 <div class="category-card loader-crashing" onclick="showInstructions('loader-crashing')">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Loader Crashing / Not Opening</h3>
-                    <p>Solutions for issues with the loader crashing during startup.</p>
-                    <button class="category-btn">View Loader Fixes</button>
-                </div>
-
-                <div class="category-card controls" onclick="showInstructions('controls')">
-                    <h3><i class="fas fa-gamepad"></i> Controls</h3>
-                    <p>Learn about the controls and keybindings for Infamous.</p>
-                    <button class="category-btn">View Controls</button>
-                </div>
-
+                <!-- Category cards will be generated dynamically from setupConfig -->
             </section>
 
 
@@ -594,134 +548,11 @@
                 </div>
             </div>
 
-            <!-- BattlEye Instructions -->
-            <section class="setup-instructions" id="battleye-instructions">
-                <button class="back-btn" onclick="showCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                
-                <div class="instruction-header">
-                    <h2>BattlEye Installation Guide</h2>
-                    <p>Follow these steps carefully to install Infamous on BattlEye protected servers</p>
-                </div>
-
-                <div class="steps-container">
-                    <!-- Steps will be generated dynamically from JSON -->
-                </div>
-            </section>
-
-            <!-- NO BattlEye Instructions -->
-            <section class="setup-instructions" id="no-battleye-instructions">
-                <button class="back-btn" onclick="showCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                
-                <div class="instruction-header">
-                    <h2>Standard Installation Guide</h2>
-                    <p>Follow these steps to install Infamous on standard servers without BattlEye</p>
-                </div>
-
-                <div class="steps-container">
-                    <!-- Steps will be generated dynamically from JSON -->
-                </div>
-            </section>
-
-            <!-- Crashing After Injection Instructions -->
-            <section class="setup-instructions" id="crashing-after-injection-instructions">
-                <button class="back-btn" onclick="showCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                
-                <div class="instruction-header">
-                    <h2>Troubleshooting Guide</h2>
-                    <p>Solutions for common issues and crashes after injection</p>
-                </div>
-
-                <div class="steps-container">
-                    <!-- Steps will be generated dynamically from JSON -->
-                </div>
-            </section>
-
-            <!-- FAQ Instructions -->
-            <section class="setup-instructions" id="faq-instructions">
-                <button class="back-btn" onclick="showCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                
-                <div class="instruction-header">
-                    <h2>Frequently Asked Questions</h2>
-                    <p>Answers to common questions about Infamous</p>
-                </div>
-
-                <div class="steps-container">
-                    <!-- Steps will be generated dynamically from JSON -->
-                </div>
-            </section>
-
-            <!-- Important Disclaimer Instructions -->
-            <section class="setup-instructions" id="important-disclaimer-instructions">
-                <button class="back-btn" onclick="showCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                
-                <div class="instruction-header">
-                    <h2>Important Disclaimer</h2>
-                    <p>Please read the following disclaimer carefully before using Infamous</p>
-                </div>
-
-                <div class="steps-container">
-                    <!-- Steps will be generated dynamically from JSON -->
-                </div>
-            </section>
-
-            <!-- How to Completely Remove BattlEye Instructions -->
-            <section class="setup-instructions" id="how-to-completely-remove-battleye-instructions">
-                <button class="back-btn" onclick="showCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                
-                <div class="instruction-header">
-                    <h2>How to Completely Remove BattlEye</h2>
-                    <p>Step-by-step guide to completely remove BattlEye from your system</p>
-                </div>
-
-                <div class="steps-container">
-                    <!-- Steps will be generated dynamically from JSON -->
-                </div>
+            <!-- Dynamic Instructions Container - All instruction sections will be generated automatically -->
+            <div id="dynamic-instructions-container">
+                <!-- All instruction sections will be dynamically generated from setupConfig -->
+            </div>
         </div>
-            </section>
-
-            <!-- Loader Crashing Instructions -->
-            <section class="setup-instructions" id="loader-crashing-instructions">
-                <button class="back-btn" onclick="showCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                
-                <div class="instruction-header">
-                    <h2>Loader Crashing Solutions</h2>
-                    <p>Solutions for issues with the loader crashing during startup</p>
-                </div>
-
-                <div class="steps-container">
-                    <!-- Steps will be generated dynamically from JSON -->
-                </div>
-            </section>
-
-            <!-- Controls Instructions -->
-            <section class="setup-instructions" id="controls-instructions">
-                <button class="back-btn" onclick="showCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                
-                <div class="instruction-header">
-                    <h2>Controls and Keybindings</h2>
-                    <p>Learn about the controls and keybindings for RIPTIDE</p>
-                </div>
-
-                <div class="steps-container">
-                    <!-- Steps will be generated dynamically from JSON -->
-                </div>  
-        
     </main>
 
     <!-- Image Modal -->
@@ -736,6 +567,10 @@
             "battleye": {
                 "title": "ULTIMATE (BattlEye On Setup Guide)",
                 "description": "Follow these steps carefully to Setup / Use Infamous on BattlEye protected servers",
+                "cardTitle": "ULTIMATE - (BattlEye On Setup Guide)",
+                "cardDescription": "For servers with BattlEye anti-cheat protection. This version includes special bypass features.",
+                "cardIcon": "fas fa-shield-alt",
+                "buttonText": "View ULTIMATE Setup",
                 "steps": [
                     {
                         "title": "Disable Antivirus",
@@ -839,6 +674,10 @@
             "no-battleye": {
                 "title": "ULTIMATE / Free (BattlEye OFF Setup Guide)",
                 "description": "Follow these steps to install Infamous on standard servers without BattlEye",
+                "cardTitle": "ULTIMATE / Free (BattlEye OFF Setup Guide)",
+                "cardDescription": "For servers without BattlEye protection. Easier installation with full functionality.",
+                "cardIcon": "fas fa-rocket",
+                "buttonText": "View Standard Setup",
                 "steps": [
                      {
                         "title": "Disable Antivirus",
@@ -936,6 +775,10 @@
             "crashing-after-injection": {
                 "title": "Crashing After Injection",
                 "description": "Common issues and solutions for crashes after injection.",
+                "cardTitle": "Crashing After Injection",
+                "cardDescription": "Common issues and solutions for crashes after injection.",
+                "cardIcon": "fas fa-bug",
+                "buttonText": "View Troubleshooting",
                 "steps": [
                     {
                         "title": "Windows Defender",
@@ -982,6 +825,10 @@
             "faq": {
                 "title": "Frequently Asked Questions",
                 "description": "Answers to common questions about Infamous.",
+                "cardTitle": "FAQ",
+                "cardDescription": "Frequently asked questions and tips.",
+                "cardIcon": "fas fa-question-circle",
+                "buttonText": "View FAQ",
                 "steps": [
                     {
                         "title": "How do I report a bug?",
@@ -1070,6 +917,10 @@
             "important-disclaimer": {
                 "title": "Important Disclaimer",
                 "description": "Please read the following disclaimer carefully before using RIPTIDE.",
+                "cardTitle": "Important Disclaimer",
+                "cardDescription": "Please read the following disclaimer carefully before using Infamous.",
+                "cardIcon": "fas fa-exclamation-circle",
+                "buttonText": "View Disclaimer",
                 "steps": [
                     {
                         "title": "Disclaimer",
@@ -1089,6 +940,10 @@
             "how-to-completely-remove-battleye": {
                 "title": "How to Completely Remove BattlEye",
                 "description": "Follow these steps to disable BattlEye anti-cheat for enhanced compatibility.",
+                "cardTitle": "How to Completely Remove BattlEye",
+                "cardDescription": "Step-by-step guide to completely remove BattlEye from your system.",
+                "cardIcon": "fas fa-trash-alt",
+                "buttonText": "View Removal Guide",
                 "steps": [
                     {
                         "title": "",
@@ -1109,6 +964,10 @@
             "loader-crashing": {
                 "title": "Loader Crashing / Not Opening Solutions",
                 "description": "Solutions for issues with the loader crashing during startup.",
+                "cardTitle": "Loader Crashing / Not Opening",
+                "cardDescription": "Solutions for issues with the loader crashing during startup.",
+                "cardIcon": "fas fa-exclamation-triangle",
+                "buttonText": "View Loader Fixes",
                 "steps": [
                     {
                         "title": "Install Visual C++ Redistributables",
@@ -1123,6 +982,10 @@
             "controls": {
                 "title": "Controls",
                 "description": "Learn about the controls and keybindings for RIPTIDE.",
+                "cardTitle": "Controls",
+                "cardDescription": "Learn about the controls and keybindings for Infamous.",
+                "cardIcon": "fas fa-gamepad",
+                "buttonText": "View Controls",
                 "steps": [
                     {
                         "title": "Keyboard Controls",
@@ -1133,6 +996,52 @@
             }
         };
 
+        // Generate category cards dynamically
+        function generateCategoryCards() {
+            const categoriesContainer = document.getElementById('categories');
+            let cardsHTML = '';
+            
+            Object.keys(setupConfig).forEach(key => {
+                const config = setupConfig[key];
+                cardsHTML += `
+                    <div class="category-card ${key}" onclick="showInstructions('${key}')">
+                        <h3><i class="${config.cardIcon}"></i> ${config.cardTitle}</h3>
+                        <p>${config.cardDescription}</p>
+                        <button class="category-btn">${config.buttonText}</button>
+                    </div>
+                `;
+            });
+            
+            categoriesContainer.innerHTML = cardsHTML;
+        }
+
+        // Generate instruction sections dynamically
+        function generateInstructionSections() {
+            const container = document.getElementById('dynamic-instructions-container');
+            let sectionsHTML = '';
+            
+            Object.keys(setupConfig).forEach(key => {
+                const config = setupConfig[key];
+                sectionsHTML += `
+                    <section class="setup-instructions" id="${key}-instructions">
+                        <button class="back-btn" onclick="showCategories()">
+                            <i class="fas fa-arrow-left"></i> Back to Categories
+                        </button>
+                        
+                        <div class="instruction-header">
+                            <h2>${config.title}</h2>
+                            <p>${config.description}</p>
+                        </div>
+
+                        <div class="steps-container">
+                            <!-- Steps will be generated dynamically from JSON -->
+                        </div>
+                    </section>
+                `;
+            });
+            
+            container.innerHTML = sectionsHTML;
+        }
         
         // Generate steps dynamically from JSON
         function generateSteps(type) {
@@ -1185,10 +1094,6 @@
             
             const instructionSection = document.getElementById(type + '-instructions');
             const config = setupConfig[type];
-            
-            // Update header
-            instructionSection.querySelector('.instruction-header h2').textContent = config.title;
-            instructionSection.querySelector('.instruction-header p').textContent = config.description;
             
             // Generate and insert steps
             const stepsContainer = instructionSection.querySelector('.steps-container');
@@ -1254,6 +1159,9 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Generate all dynamic content
+            generateCategoryCards();
+            generateInstructionSections();
             initializeStepAnimations();
         });
     </script>
