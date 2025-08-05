@@ -278,6 +278,111 @@
             line-height: 1.6;
         }
 
+        .download-list {
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .download-item {
+            background: var(--bg-glass);
+            backdrop-filter: var(--blur-md);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-normal);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .download-item:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .download-item-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            background: rgba(220, 38, 38, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .download-details h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .download-details p {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .download-action {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+            min-width: 120px;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        #outfits-item .btn-download {
+            background: var(--gradient-accent);
+            color: var(--bg-primary);
+        }
+
+        #outfits-item .btn-download:hover {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+        }
+
         .highlight {
             color: var(--accent-color);
             font-weight: 600;
@@ -286,85 +391,24 @@
             border-radius: 6px;
         }
 
-        .countdown-container {
-            margin: 40px 0;
-            position: relative;
-        }
-
-        .countdown-circle {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .countdown-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: conic-gradient(
-                var(--primary-color) 0deg,
-                var(--secondary-color) 72deg,
-                var(--accent-color) 144deg,
-                var(--primary-color) 216deg,
-                var(--secondary-color) 288deg,
-                var(--primary-color) 360deg
-            );
-            animation: rotate 2s linear infinite;
-        }
-
-        .countdown-inner {
-            position: absolute;
-            width: 85%;
-            height: 85%;
-            background: var(--bg-secondary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .countdown-number {
-            font-family: 'Inter', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(220, 38, 38, 0.2);
-            border-radius: 3px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--gradient-primary);
-            border-radius: 3px;
-            width: 0%;
-            transition: width 1s ease;
-        }
-
         .button-group {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             margin-top: 40px;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .button-row .btn {
+            flex: 1;
+            min-width: 140px;
+            max-width: 200px;
         }
 
         .btn {
@@ -440,6 +484,19 @@
             transform: translateY(-4px) scale(1.02);
         }
 
+        .btn-outfit {
+            background: var(--gradient-accent);
+            color: var(--bg-primary);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            font-weight: 700;
+        }
+
+        .btn-outfit:hover {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 0 32px rgba(251, 191, 36, 0.6);
+        }
+
         #redownload-btn {
             display: none;
             margin-top: 10px;
@@ -480,6 +537,19 @@
             }
         }
 
+        @keyframes buttonFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .button-group .btn {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .button-group .btn:nth-child(1) { animation-delay: 0.1s; }
+        .button-group .btn:nth-child(2) { animation-delay: 0.2s; }
+        .button-group .btn:nth-child(3) { animation-delay: 0.3s; }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -504,8 +574,36 @@
                 font-size: 1.1rem;
             }
 
+            .download-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 20px;
+            }
+
+            .download-info {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .download-item-icon {
+                font-size: 2rem;
+                padding: 12px;
+            }
+
             .button-group {
                 gap: 15px;
+            }
+
+            .button-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .button-row .btn {
+                max-width: none;
+                width: 100%;
             }
 
             .btn {
@@ -550,23 +648,47 @@
         <div class="download-card">
             <img src="images/logo.png" alt="Infamous Loader" class="download-icon">
             
-            <h1><i class="fas fa-download"></i> LOADER DOWNLOAD</h1>
+            <h1><i class="fas fa-download"></i> DOWNLOAD CENTER</h1>
             
             <div class="download-message">
-                Your Infamous launcher <span class="highlight">ZIP file</span> will begin downloading automatically in <span class="highlight" id="countdown-text">5</span> seconds...
+                Choose what you want to download from the <span class="highlight">Infamous Collection</span>
             </div>
             
-            <div class="countdown-container">
-                <div class="countdown-circle">
-                    <div class="countdown-bg"></div>
-                    <div class="countdown-inner">
-                        <div class="countdown-number" id="countdown-number">5</div>
+            <div class="download-list">
+                <div class="download-item" id="loader-item">
+                    <div class="download-info">
+                        <i class="fas fa-rocket download-item-icon"></i>
+                        <div class="download-details">
+                            <h3>Infamous Loader</h3>
+                            <p>Main application launcher</p>
+                        </div>
+                    </div>
+                    <div class="download-action">
+                        <button class="btn-download" id="download-loader-btn">
+                            <i class="fas fa-download"></i>
+                            Download
+                        </button>
+                        <div class="spinner" id="loader-spinner" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
+                <div class="download-item" id="outfits-item">
+                    <div class="download-info">
+                        <i class="fas fa-tshirt download-item-icon"></i>
+                        <div class="download-details">
+                            <h3>Outfits Collection</h3>
+                            <p>Browse and download outfits</p>
+                        </div>
+                    </div>
+                    <div class="download-action">
+                        <button class="btn-download" id="download-outfits-btn">
+                            <i class="fas fa-external-link-alt"></i>
+                            View Outfits
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="status-message" id="status-message"></div>
@@ -578,42 +700,42 @@
             
             
             <div class="button-group">
-                <a href="index.html" class="btn btn-primary">
-                    <i class="fas fa-home"></i>
-                    Back to Homepage
-                </a>
-                <a href="setup.html" class="btn btn-secondary">
-                    <i class="fas fa-book-open"></i>
-                    Setup
-                </a>
-                <a href="#" class="btn btn-help" onclick="showHelp()">
-                    <i class="fas fa-question-circle"></i>
-                    Need Help?
-                </a>
+   
+                <div class="button-row">
+                    <a href="index.html" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        Back to Homepage
+                    </a>
+                    <a href="setup.html" class="btn btn-secondary">
+                        <i class="fas fa-book-open"></i>
+                        Setup Guide
+                    </a>
+                </div>
+                <div class="button-row">
+                    <a href="#" class="btn btn-help" onclick="showHelp()">
+                        <i class="fas fa-question-circle"></i>
+                        Need Help?
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        let seconds = 5;
-        const countdownText = document.getElementById('countdown-text');
-        const countdownNumber = document.getElementById('countdown-number');
-        const progressFill = document.getElementById('progress-fill');
         const statusMessage = document.getElementById('status-message');
         const redownloadBtn = document.getElementById('redownload-btn');
-        const alternativeDownload = document.getElementById('alternative-download');
-        let downloadStarted = false;
         
-        // Function to initiate download
-        function startDownload() {
-            if (!downloadStarted) {
-                downloadStarted = true;
-                
-                // Show download started message
-                statusMessage.innerHTML = '<i class="fas fa-check-circle"></i> Downloading Infamous Launcher.zip! Check your downloads folder.';
-                statusMessage.className = 'status-message status-success';
-                statusMessage.style.display = 'block';
-                
+        // Download loader button handler
+        document.getElementById('download-loader-btn').addEventListener('click', function() {
+            const button = this;
+            const spinner = document.getElementById('loader-spinner');
+            
+            // Disable button and show spinner
+            button.style.display = 'none';
+            spinner.style.display = 'block';
+            
+            // Start 5 second countdown
+            setTimeout(() => {
                 // Download Infamous Launcher.zip
                 try {
                     const link = document.createElement('a');
@@ -623,40 +745,36 @@
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
+                    
+                    // Update status message
+                    statusMessage.innerHTML = '<i class="fas fa-check-circle"></i> Loader download completed! Check your downloads folder.';
+                    statusMessage.className = 'status-message status-success';
+                    statusMessage.style.display = 'block';
+                    
+                    // Show redownload button
+                    redownloadBtn.style.display = 'inline-flex';
+                    
                 } catch (error) {
                     console.error('Download failed:', error);
-                    statusMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Download failed. Please try the alternative download link below.';
+                    statusMessage.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Download failed. Please try again or contact support.';
                     statusMessage.className = 'status-message status-info';
                     statusMessage.style.display = 'block';
                 }
                 
-                // Show redownload button and alternative download
-                redownloadBtn.style.display = 'inline-flex';
-                alternativeDownload.style.display = 'inline-flex';
+                // Hide spinner and show button again
+                spinner.style.display = 'none';
+                button.style.display = 'inline-flex';
+                button.innerHTML = '<i class="fas fa-check"></i> Downloaded';
+                button.disabled = true;
                 
-                // Update message
-                document.querySelector('.download-message').innerHTML = 
-                    'Download completed! <span class="highlight">Infamous Launcher.zip</span> should be in your downloads folder. If it didn\'t start automatically, use one of the download options below.';
-            }
-        }
+            }, 5000); // 5 seconds
+        });
         
-        // Update countdown every second
-        const countdownInterval = setInterval(function() {
-            seconds--;
-            countdownText.textContent = seconds;
-            countdownNumber.textContent = seconds;
-            
-            // Update progress bar
-            const progress = ((5 - seconds) / 5) * 100;
-            progressFill.style.width = progress + '%';
-            
-            if (seconds <= 0) {
-                clearInterval(countdownInterval);
-                countdownNumber.textContent = '✓';
-                progressFill.style.width = '100%';
-                startDownload();
-            }
-        }, 1000);
+        // Download outfits button handler
+        document.getElementById('download-outfits-btn').addEventListener('click', function() {
+            // Redirect to outfits page
+            window.location.href = 'outfits.html';
+        });
         
         // Redownload button handler
         redownloadBtn.addEventListener('click', function() {
