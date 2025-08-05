@@ -689,6 +689,22 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="download-item" id="outfits-item">
+                    <div class="download-info">
+                        <i class="fas fa-car download-item-icon"></i>
+                        <div class="download-details">
+                            <h3>Vehicles Collection</h3>
+                            <p>Browse and download vehicles</p>
+                        </div>
+                    </div>
+                    <div class="download-action">
+                        <button class="btn-download" id="download-vehicles-btn">
+                            <i class="fas fa-external-link-alt"></i>
+                            View Vehicles
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="status-message" id="status-message"></div>
@@ -774,6 +790,13 @@
         document.getElementById('download-outfits-btn').addEventListener('click', function() {
             // Redirect to outfits page
             window.location.href = 'outfits.html';
+        });
+
+        // Download vehicles button handler
+        document.getElementById('download-vehicles-btn').addEventListener('click', function
+() {
+            // Redirect to vehicles page
+            window.location.href = 'vehicles.html';
         });
         
         // Redownload button handler
