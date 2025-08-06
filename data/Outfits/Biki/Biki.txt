@@ -1,0 +1,39 @@
+Model: shinobi
+Plate Style: 1
+Plate Text: 45QVX805
+Primary Colour: 29
+Secondary Colour: 0
+Pearl Colour: 4
+Wheel Colour: 135
+Wheel Type: 6
+Front Bumper: 3
+Sideskirt: 2
+Exhaust: 1
+Chassis: 0
+Hood: 0
+Engine: 5
+Brakes: 4
+Transmission: 4
+Horns: 0
+Armor: 5
+Nitrous: No
+Turbo: Yes
+Subwoofer: No
+Tiresmoke: No
+Unk21: No
+Headlights: 12
+Front Wheels: 42, Custom
+Back Wheels: 42, Custom
+Livery: 8
+Tyre Smoke Colour: #ffffff
+Window Tint: 1
+Custom Primary Colour: #b01259
+Custom Secondary Colour: #b01259
+Neon Colour: #000000
+Neon Front: Yes
+Neon Back: Yes
+Neon Left: Yes
+Neon Right: Yes
+Interior Colour: 0
+Dashboard Colour: 0
+Tyres Mode: 1
