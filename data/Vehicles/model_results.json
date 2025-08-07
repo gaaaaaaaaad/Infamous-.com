@@ -1,23 +1,5 @@
 [
   {
-    "file": "data/Vehicles/out.py",
-    "folder": "Vehicles",
-    "hash": -1667301416,
-    "model": "MP_F_Freemode_01",
-    "download": [
-      "data/Vehicles/VehicleList.ini"
-    ]
-  },
-  {
-    "file": "data/Vehicles/VehicleList.ini",
-    "folder": "Vehicles",
-    "hash": 3078201489,
-    "model": "adder",
-    "download": [
-      "data/Vehicles/VehicleList.ini"
-    ]
-  },
-  {
     "file": "data/Vehicles/C512/0/0.json",
     "folder": "0",
     "hash": 433954513,
