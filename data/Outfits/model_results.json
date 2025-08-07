@@ -1,25 +1,5 @@
 [
   {
-    "file": "data/Outfits/model_results.json",
-    "folder": "Outfits",
-    "hash": -1667301416,
-    "model": "MP_F_Freemode_01",
-    "download": [
-      "data/Outfits/model_results.json",
-      "data/Outfits/PedList.ini"
-    ]
-  },
-  {
-    "file": "data/Outfits/out.py",
-    "folder": "Outfits",
-    "hash": -1667301416,
-    "model": "MP_F_Freemode_01",
-    "download": [
-      "data/Outfits/model_results.json",
-      "data/Outfits/PedList.ini"
-    ]
-  },
-  {
     "file": "data/Outfits/PedList.ini",
     "folder": "Outfits",
     "hash": -832573324,
