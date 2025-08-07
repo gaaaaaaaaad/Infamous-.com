@@ -326,7 +326,7 @@ if (document.readyState === 'loading') {
     initFloatingActionButton();
     console.log('Store initialization complete');
 }
-}
+
 
 // Floating Action Button
 function initFloatingActionButton() {
