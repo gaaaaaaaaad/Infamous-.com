@@ -1453,6 +1453,9 @@
     const perfStart = performance.now();
     console.log('🚀 Infamous Outfits - Initializing...');
     
+    // Base URL for GitHub raw content
+    const BASE_URL = 'https://raw.githubusercontent.com/XXTOUCOXX/INF_DATA/refs/heads/main/';
+    
     const data = [
   {
     "file": "data/Outfits/PedList.ini",
@@ -17019,7 +17022,7 @@
             const img = document.createElement('img');
             
             // Use intersection observer for better performance
-            img.dataset.src = imgUrl;
+            img.dataset.src = BASE_URL + imgUrl;
             img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="140"%3E%3Crect width="100%25" height="100%25" fill="%23333"/%3E%3C/svg%3E';
             img.alt = `${getOutfitName(downloadUrl)} preview`;
             img.loading = 'lazy';
@@ -17042,7 +17045,7 @@
             }
             
             img.addEventListener('click', () => {
-              openImageModal(imgUrl);
+              openImageModal(BASE_URL + imgUrl);
               createClickParticles(img);
             });
             
@@ -17100,7 +17103,7 @@
       // Download button
       const downloadBtn = document.createElement('a');
       downloadBtn.className = 'download-btn';
-      downloadBtn.href = outfit.download && outfit.download.length > 0 ? outfit.download[0] : '#';
+      downloadBtn.href = outfit.download && outfit.download.length > 0 ? BASE_URL + outfit.download[0] : '#';
       downloadBtn.download = '';
       downloadBtn.innerHTML = `
         <i class="fas fa-download download-icon"></i>
