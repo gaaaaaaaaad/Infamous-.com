@@ -17103,8 +17103,13 @@
       // Download button
       const downloadBtn = document.createElement('a');
       downloadBtn.className = 'download-btn';
-      downloadBtn.href = outfit.download && outfit.download.length > 0 ? BASE_URL + outfit.download[0] : '#';
-      downloadBtn.download = '';
+      downloadBtn.href = downloadUrl ? BASE_URL + downloadUrl : '#';
+      
+      // Extract filename from the download URL
+      const urlParts = downloadUrl.split('/');
+      const filename = urlParts[urlParts.length - 1] || 'outfit.json';
+      downloadBtn.download = filename;
+      
       downloadBtn.innerHTML = `
         <i class="fas fa-download download-icon"></i>
         Download ${formatOutfitName(outfit.folder || getOutfitName(outfit.download && outfit.download.length > 0 ? outfit.download[0] : ''))}
@@ -17608,20 +17613,45 @@
 
     function continueDownload() {
       if (currentDownloadButton && currentDownloadUrl && currentDownloadUrl !== '#') {
-        // Create a new temporary link that mimics the original button but without our event listener
-        const tempLink = document.createElement('a');
-        tempLink.href = currentDownloadUrl;
-        tempLink.download = currentDownloadButton.download || '';
-        tempLink.style.display = 'none';
+        // Extract filename from URL
+        const urlParts = currentDownloadUrl.split('/');
+        const filename = urlParts[urlParts.length - 1] || 'outfit.json';
         
-        // Add to DOM and trigger click
-        document.body.appendChild(tempLink);
-        tempLink.click();
-        
-        // Clean up
-        setTimeout(() => {
-          document.body.removeChild(tempLink);
-        }, 100);
+        // Use fetch to download as blob to force download behavior
+        fetch(currentDownloadUrl)
+          .then(response => response.blob())
+          .then(blob => {
+            // Create blob URL
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            // Create temporary link with proper download attribute
+            const tempLink = document.createElement('a');
+            tempLink.href = blobUrl;
+            tempLink.download = filename;
+            tempLink.style.display = 'none';
+            
+            // Add to DOM and trigger click
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            
+            // Clean up
+            setTimeout(() => {
+              document.body.removeChild(tempLink);
+              window.URL.revokeObjectURL(blobUrl);
+            }, 100);
+          })
+          .catch(error => {
+            console.error('Download error:', error);
+            // Fallback to direct link if fetch fails
+            const tempLink = document.createElement('a');
+            tempLink.href = currentDownloadUrl;
+            tempLink.download = filename;
+            tempLink.target = '_blank';
+            tempLink.style.display = 'none';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            setTimeout(() => document.body.removeChild(tempLink), 100);
+          });
       }
       closeAdModal();
     }
