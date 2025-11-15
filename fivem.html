@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="FiveM spoofer, FiveM ban bypass, FiveM unban, FiveM lua executor, FiveM dumper, FiveM mod menu, FiveM aimbot, FiveM ESP, FiveM cheats">
+    <meta name="description" content="Infamous FiveM - The #1 choice for FiveM. Complete toolkit featuring ban removal, lua executor, file dumper, aimbot, ESP, and the best trolling mod menu for FiveM.">
+    <title>FiveM Tools - Your #1 Choice | Infamous</title>
+    <link rel="icon" href="images/logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="store.css">
+    <style>
+        /* Custom FiveM Page Styles */
+        .fivem-hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0f 50%, #0a0a0a 100%);
+            overflow: hidden;
+        }
+
+        .fivem-hero::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(239, 68, 68, 0.15) 0%, transparent 50%);
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .fivem-hero-content {
+            text-align: center;
+            z-index: 2;
+            position: relative;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        .fivem-main-title {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #dc2626 50%, #fff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        .fivem-tagline {
+            font-size: 2.5rem;
+            color: #dc2626;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .fivem-description {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .fivem-features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 4rem;
+        }
+
+        .fivem-feature-box {
+            background: rgba(220, 38, 38, 0.1);
+            border: 2px solid rgba(220, 38, 38, 0.3);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .fivem-feature-box:hover {
+            background: rgba(220, 38, 38, 0.2);
+            border-color: #dc2626;
+            transform: translateY(-5px);
+        }
+
+        .fivem-feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .fivem-feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .fivem-feature-text {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        .fivem-cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+            margin-top: 2rem;
+        }
+
+        .fivem-cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6);
+        }
+
+        .fivem-tools-section {
+            padding: 100px 0;
+            background: #0a0a0a;
+        }
+
+        .fivem-section-title {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .fivem-section-subtitle {
+            text-align: center;
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 60px;
+        }
+
+        .fivem-tool-card {
+            background: rgba(26, 10, 15, 0.8);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .fivem-tool-card:hover {
+            border-color: #dc2626;
+            transform: translateX(10px);
+            box-shadow: 0 20px 60px rgba(220, 38, 38, 0.2);
+        }
+
+        .fivem-tool-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .fivem-tool-icon {
+            font-size: 3.5rem;
+            flex-shrink: 0;
+        }
+
+        .fivem-tool-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #dc2626;
+            margin: 0;
+        }
+
+        .fivem-tool-description {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .fivem-tool-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .fivem-tool-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+
+        .fivem-tool-feature::before {
+            content: '✓';
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .fivem-showcase {
+            padding: 100px 0;
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a0a0f 100%);
+        }
+
+        .fivem-image-container {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(220, 38, 38, 0.3);
+            border: 2px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .fivem-image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .fivem-pricing-section {
+            padding: 100px 0;
+            background: #0a0a0a;
+        }
+
+        .fivem-pricing-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            border: 2px solid #dc2626;
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .fivem-price-badge {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .fivem-price {
+            font-size: 5rem;
+            font-weight: 900;
+            color: #fff;
+            margin: 20px 0;
+        }
+
+        .fivem-price-features {
+            text-align: left;
+            margin: 40px 0;
+        }
+
+        .fivem-price-feature {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .fivem-price-feature::before {
+            content: '✓';
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .fivem-buy-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .fivem-buy-button {
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .fivem-buy-button.primary {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+        }
+
+        .fivem-buy-button.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6);
+        }
+
+        .fivem-buy-button.secondary {
+            background: transparent;
+            color: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .fivem-buy-button.secondary:hover {
+            background: rgba(220, 38, 38, 0.1);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .fivem-main-title {
+                font-size: 3rem;
+            }
+
+            .fivem-tagline {
+                font-size: 1.8rem;
+            }
+
+            .fivem-description {
+                font-size: 1.1rem;
+            }
+
+            .fivem-section-title {
+                font-size: 2.5rem;
+            }
+
+            .fivem-tool-title {
+                font-size: 1.8rem;
+            }
+
+            .fivem-tool-description {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                <span class="logo-text">Infamous</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="store.html" class="nav-link">Store</a></li>
+                <li class="nav-item"><a href="fivem.html" class="nav-link active">FiveM</a></li>
+                <li class="nav-item"><a href="tos.html" class="nav-link">Terms of Service</a></li>
+                <li class="nav-item"><a href="setup.html" class="nav-link">Setup & Troubleshooting</a></li>
+                <li class="nav-item"><a href="download.html" class="nav-link">Download</a></li>
+                <li class="nav-item"><a href="reseller.html" class="nav-link">Resellers</a></li>
+                <li class="nav-item"><a href="videos.html" class="nav-link">Videos</a></li>
+                <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="fivem-hero">
+        <div class="fivem-hero-content">
+            <h1 class="fivem-main-title">INFAMOUS FIVEM</h1>
+            <p class="fivem-tagline">Your #1 Choice for FiveM</p>
+            <p class="fivem-description">
+                Take complete control of FiveM – it's easier than you think. The ultimate all-in-one toolkit featuring ban removal, lua execution, server dumping, and the best trolling mod menu with aimbot, ESP, and much more.
+            </p>
+
+            <div class="fivem-features-grid">
+                <div class="fivem-feature-box">
+                    <div class="fivem-feature-icon">🛡️</div>
+                    <div class="fivem-feature-title">Ban Removal</div>
+                    <div class="fivem-feature-text">Bypass any FiveM ban instantly</div>
+                </div>
+                <div class="fivem-feature-box">
+                    <div class="fivem-feature-icon">🚀</div>
+                    <div class="fivem-feature-title">Lua Executor</div>
+                    <div class="fivem-feature-text">Execute any script with ease</div>
+                </div>
+                <div class="fivem-feature-box">
+                    <div class="fivem-feature-icon">💾</div>
+                    <div class="fivem-feature-title">Server Dumper</div>
+                    <div class="fivem-feature-text">Extract server files instantly</div>
+                </div>
+                <div class="fivem-feature-box">
+                    <div class="fivem-feature-icon">🎮</div>
+                    <div class="fivem-feature-title">Full Mod Menu</div>
+                    <div class="fivem-feature-text">Aimbot, ESP, trolling & more</div>
+                </div>
+            </div>
+
+            <a href="#pricing" class="fivem-cta-button">Get Started Now</a>
+        </div>
+    </section>
+
+    <!-- Showcase Section -->
+    <section class="fivem-showcase">
+        <div class="container">
+            <div class="fivem-image-container">
+                <img src="https://cdn.discordapp.com/attachments/1346478908056272927/1435298700246122547/firefox_UCFzrkajOZ.png" alt="Infamous FiveM Interface">
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="fivem-tools-section">
+        <div class="container">
+            <h2 class="fivem-section-title">Complete Feature Suite</h2>
+            <p class="fivem-section-subtitle">Everything you need to dominate FiveM servers</p>
+
+            <!-- FiveM Spoofer -->
+            <div class="fivem-tool-card">
+                <div class="fivem-tool-header">
+                    <div class="fivem-tool-icon">🛡️</div>
+                    <h3 class="fivem-tool-title">FiveM Spoofer - Ban Removal</h3>
+                </div>
+                <p class="fivem-tool-description">
+                    🛡️ Instantly bypass any FiveM ban, whether global or server-specific. One-click operation with effortless setup – just launch and you're free! Our advanced spoofer removes all traces and gets you back in the game within seconds. Need help? Our 24/7 support team is always ready to assist. ✅
+                </p>
+                <div class="fivem-tool-features">
+                    <div class="fivem-tool-feature">Bypass Global Bans</div>
+                    <div class="fivem-tool-feature">Remove Server Bans</div>
+                    <div class="fivem-tool-feature">One-Click Operation</div>
+                    <div class="fivem-tool-feature">100% Safe & Secure</div>
+                    <div class="fivem-tool-feature">Instant Results</div>
+                    <div class="fivem-tool-feature">24/7 Support</div>
+                </div>
+            </div>
+
+            <!-- Lua Executor -->
+            <div class="fivem-tool-card">
+                <div class="fivem-tool-header">
+                    <div class="fivem-tool-icon">🚀</div>
+                    <h3 class="fivem-tool-title">Infamous Lua Executor</h3>
+                </div>
+                <p class="fivem-tool-description">
+                    🚀 Execute server triggers with precision and view a complete list of all available triggers on any server. Load your favorite .Lua menus, inject custom scripts, and manipulate server-side functions with ease. Full control over server events and triggers at your fingertips. 🎮💻
+                </p>
+                <div class="fivem-tool-features">
+                    <div class="fivem-tool-feature">Execute Server Triggers</div>
+                    <div class="fivem-tool-feature">View All Server Triggers</div>
+                    <div class="fivem-tool-feature">Load Custom Lua Scripts</div>
+                    <div class="fivem-tool-feature">Inject Any Menu</div>
+                    <div class="fivem-tool-feature">Server Event Control</div>
+                    <div class="fivem-tool-feature">Real-Time Execution</div>
+                </div>
+            </div>
+
+            <!-- FiveM Dumper -->
+            <div class="fivem-tool-card">
+                <div class="fivem-tool-header">
+                    <div class="fivem-tool-icon">💾</div>
+                    <h3 class="fivem-tool-title">FiveM File Dumper</h3>
+                </div>
+                <p class="fivem-tool-description">
+                    💾 Instantly retrieve all client-side files from any FiveM server. Simply join the server, activate the dumper function, and watch as all files are extracted and downloaded to your PC in milliseconds. Perfect for analyzing server resources, extracting custom vehicles, weapons, maps, and more. Lightning-fast extraction speed. ⚡
+                </p>
+                <div class="fivem-tool-features">
+                    <div class="fivem-tool-feature">Extract Client Files</div>
+                    <div class="fivem-tool-feature">Download Server Resources</div>
+                    <div class="fivem-tool-feature">Millisecond Speed</div>
+                    <div class="fivem-tool-feature">Export Vehicles & Weapons</div>
+                    <div class="fivem-tool-feature">Save Custom Maps</div>
+                    <div class="fivem-tool-feature">One-Click Dump</div>
+                </div>
+            </div>
+
+            <!-- Mod Menu -->
+            <div class="fivem-tool-card">
+                <div class="fivem-tool-header">
+                    <div class="fivem-tool-icon">🎮</div>
+                    <h3 class="fivem-tool-title">Best FiveM Mod Menu</h3>
+                </div>
+                <p class="fivem-tool-description">
+                    🎮 The ultimate trolling and domination mod menu for FiveM. Featuring advanced aimbot with customizable FOV and smoothing, full ESP system with player detection, vehicle spawning, weather control, teleportation, god mode, infinite ammo, super jump, speed hacks, and hundreds of trolling options to mess with other players. The most comprehensive FiveM menu available.
+                </p>
+                <div class="fivem-tool-features">
+                    <div class="fivem-tool-feature">Advanced Aimbot</div>
+                    <div class="fivem-tool-feature">Full ESP System</div>
+                    <div class="fivem-tool-feature">Player Trolling Tools</div>
+                    <div class="fivem-tool-feature">Vehicle Spawner</div>
+                    <div class="fivem-tool-feature">Teleportation</div>
+                    <div class="fivem-tool-feature">God Mode</div>
+                    <div class="fivem-tool-feature">Weather Control</div>
+                    <div class="fivem-tool-feature">Super Speed</div>
+                    <div class="fivem-tool-feature">Infinite Ammo</div>
+                    <div class="fivem-tool-feature">No Recoil</div>
+                    <div class="fivem-tool-feature">Noclip</div>
+                    <div class="fivem-tool-feature">Custom Commands</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="fivem-pricing-section" id="pricing">
+        <div class="container">
+            <h2 class="fivem-section-title">Get Full Access Today</h2>
+            <p class="fivem-section-subtitle">One purchase, unlimited power</p>
+
+            <div class="fivem-pricing-card">
+                <div class="fivem-price-badge">BEST VALUE</div>
+                <h3 style="font-size: 2rem; color: #fff; margin: 20px 0;">Infamous FiveM Complete</h3>
+                <div class="fivem-price">$19.99</div>
+                <p style="color: rgba(255,255,255,0.6); font-size: 1.1rem;">One-time payment • Lifetime access</p>
+
+                <div class="fivem-price-features">
+                    <div class="fivem-price-feature">FiveM Ban Spoofer</div>
+                    <div class="fivem-price-feature">Lua Script Executor</div>
+                    <div class="fivem-price-feature">Server File Dumper</div>
+                    <div class="fivem-price-feature">Complete Mod Menu</div>
+                    <div class="fivem-price-feature">Aimbot & ESP</div>
+                    <div class="fivem-price-feature">All Trolling Features</div>
+                    <div class="fivem-price-feature">Lifetime Updates</div>
+                    <div class="fivem-price-feature">24/7 Support</div>
+                    <div class="fivem-price-feature">Instant Delivery</div>
+                </div>
+
+                <div class="fivem-buy-buttons">
+                    <a href="https://nenyooounleashed.myshopify.com/" class="fivem-buy-button primary" target="_blank">
+                        💳 Buy with Card
+                    </a>
+                    <a href="https://nenyooocrypto.shop/" class="fivem-buy-button primary" target="_blank">
+                        ₿ Buy with Crypto
+                    </a>
+                    <a href="morepayments.html" class="fivem-buy-button secondary">
+                        More Payment Options
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
+                        <span class="logo-text">Infamous</span>
+                    </div>
+                    <p>Premium gaming cheats for the ultimate gaming experience.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="store.html">Store</a></li>
+                        <li><a href="fivem.html">FiveM</a></li>
+                        <li><a href="tos.html">Terms of Service</a></li>
+                        <li><a href="download.html">Download</a></li>
+                        <li><a href="reseller.html">Resellers</a></li>
+                        <li><a href="videos.html">Videos</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="store.html#gta5">GTA V Cheats</a></li>
+                        <li><a href="store.html#rdr2">RDR2 Mods</a></li>
+                        <li><a href="store.html#fivem">FiveM Support</a></li>
+                        <li><a href="fivem.html">FiveM Complete</a></li>
+                        <li><a href="store.html#tools">HWID Spoofer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="https://discord.gg/2KYUvZkD5q" target="_blank"><img src="assets/discord.png" alt="Discord"></a>
+                        <a href="https://t.me/InfamousMenu" target="_blank"><img src="assets/telegram.png" alt="Telegram"></a>
+                        <a href="https://t.me/InfamousMenu" target="_blank"><img src="assets/twitter.png" alt="Twitter"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Infamous. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+# **General Setup \& Troubleshooting Guide for Infamous**
+
+### --------------------------------------------------------------------
+
+## Pre-Setup Instructions:
+
+### --------------------------------------------------------------------
+
+Make sure you sync time in order to avoid issues with loader.
+
+Settings > Time \& language > Date \& time > Additional settings > Sync now.
+
+Make sure you have full admin permissions on your PC, or you will have issues launching Infamous.
+
+> Make a new PC user as super admin will sort permission issues. 
+
+Make sure you have:
+
+* Up-to date Graphics Drivers
+* [All runtimes](https://www.techpowerup.com/download/visual-c-redistributable-runtime-package-all-in-one) + [DirectX runtimes](https://www.microsoft.com/en-ca/download/details.aspx?id=35) \[Download \*\*AND\*\* install]. You need to EXTRACT them after downloading... **IMPORTANT!:** Restart PC after installing.
+* [Download the latest loader from the website.](https://www.infamouscheats.com/download.html)
+*  Make sure Windows Defender is disabled. **ALL 3rd party antivirus software *\*\*UNINSTALLED\*\**.** Having multiple installed will just cause conflicts between the 2 and will not work correctly. Windows Defender is all you need. **You can add this to exclusions to prevent the loader from being deleted by AntiVirus software.**
+* \[Use the Runtime Checker \[BLuescreen.exe]](https://infamouscheats.com/downloads/Runtime%20Checker.exe) to make sure you are not missing any dependencies, you will experience various issues if these are not installed correctly.
+  NOTE: If the redirect link for the exe gives you unsecure network, just click on proceed to Infamouscheats to start the download and it will work.
+
+This file is just a process list for installed runtimes. It will open an error window and you will likely have 4 or 5 DLL to download. If no window pops up and you have process list text file, no errors occurred and you may continue.
+
+IF YOU GET ERRORS: Download your missing DLL(s) [from this site](https://www.dllme.com/), and extract them into their respective folders.
+Place 64-bit DLLs in the '/Windows/System32' directory.
+
+Place 32-bit DLLs in the '/Windows/SysWOW64' directory.
+
+Restart PC when finished.
+
+
+
+* Use a VPN if the loader instantly closes after opening. It is likely SSL error caused by your ISP blocking connection to the servers.
+* You may benefit from Disk Cleanup and clearing cache. To do this, go to "Start > Disk Cleanup > Select drive > OK > Select File Types > OK > Delete files to confirm.
+  Restart your PC when you are finished.
+
+
+
+###### You may do this manually, or you can use the **Quick Setup Tool** to automatically install runtimes, update drivers, add exclusions and so on. **NOTE:** You will still need to check for the additional missing dependencies with the Runtime Checker Exe provided.
+
+### --------------------------------------------------------------------
+
+## Registration Guide + Upgrades
+
+### --------------------------------------------------------------------
+
+### Finding your license key:
+
+### --------------------------------------------------------------------
+
+Updated for Shopify \& N3NYOO Store
+
+After purchase, you will get a confirmation email with the order invoice. This is what you will provide to support if there are any issues with your key, along with your key.
+
+If you lose your key, it will **NOT** be replaced. 
+
+Afterward you will receive a second email that contains your key. This is usually sent as junk/spam, and is advised to mark as not spam to avoid losing your key.
+
+You must back up your keys, if its lost it cant be recovered. 
+
+Your key begins after "License Key:" so copy everything after where it says "License Key:" and paste it into the loader. If you get an error while registering, likely you didn't copy the entire key or you're putting it in the wrong slot.
+
+In rare cases, or manual deliveries for special sales and master packages, you will not receive a key in the second email. These are manual deliveries only, via a ticket on Discord. You must provide your invoice as proof of purchase along with the email you used to make the order, and the link to your invoice. 
+You can find this link by clicking the "View order" button inside the confirmation email you were sent. Once all info has been received, staff will provide you with your key(s).
+
+### --------------------------------------------------------------------
+
+### Registering:
+
+### --------------------------------------------------------------------
+
+After you've downloaded the loader and purchased a license, you need to register your key in the loader. 
+
+To do this simply open the loader, and you will see the login screen. To the left side you will see an arrow -->
+This is where you will select login, register, and settings. The loader chat is also found here after youve signed in.
+Click on the person with a + icon to go to the register page. Here you will pick a username and a password, this can be any username. Special characters most likely will not be accepted in the loader, only numbers letters and symbols.
+**Your PASSWORD goes in the middle box, next to the LOCK ICON. Your KEY goes in the third box, next to the KEY ICON. You will get invalid license if you do not put the key in the correct spot. Put it next to the key icon. Make sure you copy the ENTIRE key, your key starts after "License key:" so copy everything after "License Key:" and paste in the loader.**
+
+After you've registered an account with your license, it should log you into the loader. You will see that everything inside is still locked, simply reload the loader, sign in and your product will be available.
+
+### ---------------------------------------------------------------------
+
+### To Upgrade:
+
+### ---------------------------------------------------------------------
+
+Login to your Infamous account, and head to the left side of the loader where the settings tab is. Inside settings you will see a grey box with an upgrade button, just paste your key inside the box and press upgrade. Make sure you copy the ENTIRE key, your key starts after "License key:" so copy everything after "License Key:" and paste in the loader. 
+You may need to restart the loader after upgrading in order to access your content.
+
+### ---------------------------------------------------------------------
+
+## Legacy Full Version **\[NO BATTLEYE]**
+
+### ---------------------------------------------------------------------
+
+
+
+First make sure you have disabled BattlEye in the Rockstar launcher. Settings > BattlEye > Uncheck the box.
+
+
+
+Step 1. Open Loader And Sign In To Your Account.
+
+Step 2. Start GTA V Legacy.
+
+Step 2.1: Make Sure You're On Main Loading Screen Before Injecting. \[Landing page, where you select Story Mode or Online.]
+
+Step 3. Press Inject.
+
+Step 4. It May Say Menu Is Not Installed We Will Install It For You. \[Press OK]
+
+Step 5. Enter Story Mode.
+
+Step 6. F4 To Open Menu.
+
+Step 7. Use Infamous Menu To Join Invite Only Session.
+
+
+
+###### > BattlEye is required to play GTA Online: You did not inject properly. Inject in \*\*landing page BEFORE selecting Story Mode.\*\*
+
+###### Game May Crash First Time, Reinject And It Will Work Fine
+
+###### \*\***Only working in solo/invite only session as of 03/2025 BattlEye update.**\*\* FSL will not help this issue, BattlEye off means you will be desync kicked from lobbies. There is no fix.
+
+#### --------------------------------------------------------------------------
+
+## Legacy Full Plus **\[BattlEye Disabled]**
+
+### -----------------------------------------------------------------
+
+First make sure you have disabled BattlEye in the Rockstar launcher. Settings > BattlEye > Uncheck the box.
+
+Step 1: Make sure BattlEye is disabled.
+
+Step 2: Launch GTA 5 Legacy
+
+Step 3: Open Loader \& Sign In.
+
+Step 4: Inject Legacy Full+ in Landing Page. \[Before selecting Story/Online].
+
+Step 5: Enter Story Mode.
+
+Step 6: Press F4 to Open Menu.
+
+Step 7: Use Infamous Menu to Join Invite Only Session.
+
+
+
+###### > BattlEye is required to play GTA Online: You did not inject properly. Inject in \*\*landing page BEFORE selecting Story Mode.\*\*
+
+###### Game May Crash First Time, Reinject And It Will Work Fine
+
+###### \*\***Only working in solo/invite only session as of 03/2025 BattlEye update.**\*\* FSL will not help this issue, BattlEye off means you will be desync kicked from lobbies. There is no fix.
+
+### -----------------------------------------------------------------
+
+## Legacy Full Plus **\[BattlEye Enabled]**
+
+### -----------------------------------------------------------------
+
+Step 1: Make sure you have enabled BattlEye in the Rockstar launcher. Settings > BattlEye > Check the box.
+
+Step 2: Launch GTA 5 Legacy
+
+Step 3: Open Loader \& Sign In.
+
+Step 4: Inject Legacy Full+ in Landing Page. \[Before selecting Story/Online].
+
+Step 5: Enter Game.
+
+Step 6: Press F4 to Open Menu.```
+
+###### 
+
+###### > Note: BattlEye version for GTA 5 Legacy is currently disabled for updates.
+
+### -----------------------------------------------------------------
+
+## Enhanced Full Plus **\[BattlEye Disabled]**
+
+### -----------------------------------------------------------------
+
+###### First, make sure you have disabled BattlEye in the Rockstar launcher. Settings > BattlEye > Uncheck the box.
+
+1\. Launch game \& open Infamous Loader while it loads.
+
+2\. Inject in landing page BEFORE selecting story mode.
+
+3\. Loader will close. <-- THIS IS NOT A CRASH!
+
+4\. Enter the game.
+
+5\. Press F4 to open menu.
+
+6\. Use Infamous menu to join Invite Only Session.
+
+
+
+###### > BattlEye is required to play GTA Online: You did not Inject correctly, inject in the landing page \*\*BEFORE\*\* selecting Story/Online.
+
+###### The menu MUST be injected BEFORE you enter story mode, or you will experience issues and menu will probably fail to load.
+
+### ------------------------------------------------------------------
+
+## Enhanced Full Plus + Tester **\[BattlEye Enabled]**
+
+### -----------------------------------------------------------------
+
+###### First make sure you have BattlEye enabled in Rockstar launcher. Settings > BattlEye > Check the box.
+
+1\. Launch game and open Infamous loader.
+
+2\. Inject in landing page BEFORE going to story mode.
+
+3\. Loader will close. \[NOT A CRASH!] <- Stop opening tickets for this.
+
+4\. Enter the game.
+
+5\. Use keybinds on right side of screen. \[TESTERS: F4 to open menu]
+
+###### The menu MUST be injected BEFORE you enter story mode, or you will experience issues and menu will probably fail to load.
+
+
+
+###### NOTE:
+
+###### There is no F4 to open menu.
+
+###### It is keybinds on screen until the menu is finished being rebuilt. Current Full+ users only have access to a basic keybind shortcut menu, as this is a old test build for the bypass. If you want the full list menu, you need to either use Full+ WITHOUT BattlEye, or upgrade to tester and use the full tester version.
+
+### -----------------------------------------------------------------
+
