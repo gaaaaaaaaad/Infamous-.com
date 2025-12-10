@@ -5,25 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resellers - Infamous Premium Cheats</title>
     <link rel="icon" href="images/logo.png" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-new.css">
     <link rel="stylesheet" href="reseller.css">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
+            <a href="index.html" class="nav-logo">
                 <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
                 <span class="logo-text">Infamous</span>
-            </div>
+            </a>
             <ul class="nav-menu">
                 <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="store.html" class="nav-link">Store</a></li>
-         
-               <li class="nav-item"><a href="https://proudlyauthentication.com/customers/613591817/infamous" class="nav-link" target="_blank">Login</a></li>
-                <li class="nav-item"><a href="https://proudlyauthentication.com/customers/613591817/infamous#forumView=category&category=8" class="nav-link" target="_blank">Changelog</a></li>
-                <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="setup.html" class="nav-link">Setup</a></li>
+                <li class="nav-item"><a href="download.html" class="nav-link">Download</a></li>
+                <li class="nav-item"><a href="https://proudlyauthentication.com/customers/613591817/infamous" class="nav-link" target="_blank">Login</a></li>
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
@@ -35,34 +34,30 @@
 
     <!-- Reseller Hero Section -->
     <section class="reseller-hero">
-        <div class="hero-background">
-            <div class="particles"></div>
-        </div>
+        <div class="hero-background"></div>
         <div class="container">
             <div class="reseller-hero-content">
-                <h1 class="hero-title">
-                    <span class="glow-text">Authorized Resellers</span>
-                    <span class="subtitle">Trusted Partners Worldwide</span>
-                </h1>
-                <p class="hero-description">
-                    Purchase our premium cheats from our verified resellers around the globe. 
-                    All resellers are authorized and provide genuine products with full support.
-                </p>
-                <div class="hero-stats">
-
+                <div class="hero-badge">
+                    <span class="badge-icon">🌐</span>
+                    Trusted Partners
                 </div>
+                <h1 class="hero-title">Authorized Resellers</h1>
+                <p class="hero-subtitle">Worldwide Distribution Network</p>
+                <p class="hero-description">
+                    Purchase from our verified resellers around the globe. All partners are authorized and provide genuine products with full support.
+                </p>
             </div>
         </div>
     </section>
 
-    <!-- Reseller Search -->
-    <section class="reseller-search">
+    <!-- Reseller Search & Filter -->
+    <section class="reseller-filter">
         <div class="container">
-            <div class="search-bar">
-                <input type="text" id="resellerSearch" placeholder="Search resellers by name...">
-                <button class="search-btn">
-                    <i class="search-icon">🔍</i>
-                </button>
+            <div class="search-container">
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="resellerSearch" placeholder="Search resellers...">
+                </div>
             </div>
             <div class="region-filters">
                 <button class="region-filter active" data-region="all">All Regions</button>
@@ -75,206 +70,239 @@
     </section>
 
     <!-- Resellers Grid -->
-    <section class="resellers">
+    <section class="resellers-section">
         <div class="container">
             <div class="resellers-grid">
-                <!-- Premium Resellers -->
-                <div class="reseller-card premium glass glass-hover" data-region="australia europe">
-                    <div class="reseller-logo">
-                        <img src="images/reseller/wwbst.png" alt="WWB">
+                <!-- WWB - Premium -->
+                <div class="reseller-card premium" data-region="australia europe">
+                    <div class="card-badge">Premium</div>
+                    <div class="reseller-header">
+                        <div class="reseller-logo">
+                            <img src="images/reseller/wwbst.png" alt="WWB">
+                        </div>
+                        <div class="reseller-title">
+                            <h3>WWB</h3>
+                            <p class="reseller-region">Australia & Europe</p>
+                        </div>
                     </div>
-                    <div class="reseller-info">
-                        <h3 class="reseller-name">WWB</h3>
-                        <p class="reseller-region">Australia • Europe</p>
+                    <div class="reseller-body">
                         <div class="reseller-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">4.9/5</span>
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-value">4.9/5</span>
                         </div>
                         <div class="reseller-features">
-                            <span class="feature">✓ Instant delivery</span>
-                            <span class="feature">✓ 24/7 support</span>
+                            <span class="feature-tag">Instant Delivery</span>
+                            <span class="feature-tag">24/7 Support</span>
                         </div>
-                        <div class="reseller-actions">
-                            <a href="https://nenyooounleashed.myshopify.com/products/infamous-full-plus-gta-5-enhanced" class="btn btn-primary" target="_blank">
-                                <span>GTA 5 Enhanced</span>
-                                <i class="arrow">→</i>
-                            </a>
-                            <a href="https://nenyooounleashed.myshopify.com/products/infamous-full-plus-gta-5-legacy" class="btn btn-secondary" target="_blank">
-                                <span>GTA 5 Legacy</span>
-                                <i class="arrow">→</i>
-                            </a>
-                        </div>
+                    </div>
+                    <div class="reseller-actions">
+                        <a href="https://nenyooounleashed.myshopify.com/products/infamous-full-plus-gta-5-enhanced" class="btn-reseller primary" target="_blank">
+                            GTA 5 Enhanced
+                            <span class="arrow">→</span>
+                        </a>
+                        <a href="https://nenyooounleashed.myshopify.com/products/infamous-full-plus-gta-5-legacy" class="btn-reseller secondary" target="_blank">
+                            GTA 5 Legacy
+                            <span class="arrow">→</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="reseller-card premium glass glass-hover" data-region="europe">
-                    <div class="reseller-logo">
-                        <img src="images/reseller/ezMod.png" alt="EZmod">
+                <!-- EZmod - Premium -->
+                <div class="reseller-card premium" data-region="europe">
+                    <div class="card-badge">Premium</div>
+                    <div class="reseller-header">
+                        <div class="reseller-logo">
+                            <img src="images/reseller/ezMod.png" alt="EZmod">
+                        </div>
+                        <div class="reseller-title">
+                            <h3>EZmod</h3>
+                            <p class="reseller-region">Europe</p>
+                        </div>
                     </div>
-                    <div class="reseller-info">
-                        <h3 class="reseller-name">EZmod</h3>
-                        <p class="reseller-region">Europe • English</p>
+                    <div class="reseller-body">
                         <div class="reseller-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">4.9/5</span>
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-value">4.9/5</span>
                         </div>
                         <div class="reseller-features">
-                             <span class="feature">✓ Instant delivery</span>
-                            <span class="feature">✓ 24/7 support</span>
+                            <span class="feature-tag">Instant Delivery</span>
+                            <span class="feature-tag">24/7 Support</span>
                         </div>
-                        <div class="reseller-actions">
-                            <a href="https://ezmod.vip/product/infamous-gta-mod-menu/" class="btn btn-primary" target="_blank">
-                                <span>Visit Store</span>
-                                <i class="arrow">→</i>
-                            </a>
-                          
-                        </div>
+                    </div>
+                    <div class="reseller-actions">
+                        <a href="https://ezmod.vip/product/infamous-gta-mod-menu/" class="btn-reseller primary" target="_blank">
+                            Visit Store
+                            <span class="arrow">→</span>
+                        </a>
                     </div>
                 </div>
 
-                <!-- Standard Resellers -->
-                <div class="reseller-card glass glass-hover" data-region="americas">
-                    <div class="reseller-logo">
-                        <img src="images/reseller/rg.png" alt="RecoveryGods">
+                <!-- RecoveryGods -->
+                <div class="reseller-card" data-region="americas">
+                    <div class="reseller-header">
+                        <div class="reseller-logo">
+                            <img src="images/reseller/rg.png" alt="RecoveryGods">
+                        </div>
+                        <div class="reseller-title">
+                            <h3>RecoveryGods</h3>
+                            <p class="reseller-region">Americas</p>
+                        </div>
                     </div>
-                    <div class="reseller-info">
-                        <h3 class="reseller-name">RecoveryGods</h3>
-                        <p class="reseller-region">Americas • English</p>
+                    <div class="reseller-body">
                         <div class="reseller-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">4.9/5</span>
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-value">4.9/5</span>
                         </div>
                         <div class="reseller-features">
-                            <span class="feature">✓ Instant delivery</span>
-                            <span class="feature">✓ 24/7 support</span>
+                            <span class="feature-tag">Instant Delivery</span>
+                            <span class="feature-tag">24/7 Support</span>
                         </div>
-                        <div class="reseller-actions">
-                            <a href="https://recoverygods.xyz/product/infamous-gta/" class="btn btn-primary" target="_blank">
-                                <span>Visit Store</span>
-                                <i class="arrow">→</i>
-                            </a>
-                         
-                        </div>
+                    </div>
+                    <div class="reseller-actions">
+                        <a href="https://recoverygods.xyz/product/infamous-gta/" class="btn-reseller primary" target="_blank">
+                            Visit Store
+                            <span class="arrow">→</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="reseller-card glass glass-hover" data-region="chinese">
-                    <div class="reseller-logo">
-                        <img src="images/reseller/shicn.png" alt="Shark">
+                <!-- Shark -->
+                <div class="reseller-card" data-region="chinese">
+                    <div class="reseller-header">
+                        <div class="reseller-logo">
+                            <img src="images/reseller/shicn.png" alt="Shark">
+                        </div>
+                        <div class="reseller-title">
+                            <h3>Shark</h3>
+                            <p class="reseller-region">Chinese</p>
+                        </div>
                     </div>
-                    <div class="reseller-info">
-                        <h3 class="reseller-name">Shark</h3>
-                        <p class="reseller-region">Chinese</p>
+                    <div class="reseller-body">
                         <div class="reseller-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">4.9/5</span>
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-value">4.9/5</span>
                         </div>
                         <div class="reseller-features">
-                            <span class="feature">✓ Instant delivery</span>
-                            <span class="feature">✓ 24/7 support</span>
+                            <span class="feature-tag">Instant Delivery</span>
+                            <span class="feature-tag">24/7 Support</span>
                         </div>
-                        <div class="reseller-actions">
-                            <a href="https://shark9.com/" class="btn btn-primary" target="_blank">
-                                <span>Visit Store</span>
-                                <i class="arrow">→</i>
-                            </a>
-
-                        </div>
+                    </div>
+                    <div class="reseller-actions">
+                        <a href="https://shark9.com/" class="btn-reseller primary" target="_blank">
+                            Visit Store
+                            <span class="arrow">→</span>
+                        </a>
                     </div>
                 </div>
 
-                <div class="reseller-card glass glass-hover" data-region="chinese">
-                    <div class="reseller-logo">
-                        <img src="images/reseller/XiGua.jpg" alt="XiGua">
+                <!-- XiGua -->
+                <div class="reseller-card" data-region="chinese">
+                    <div class="reseller-header">
+                        <div class="reseller-logo">
+                            <img src="images/reseller/XiGua.jpg" alt="XiGua">
+                        </div>
+                        <div class="reseller-title">
+                            <h3>XiGua</h3>
+                            <p class="reseller-region">Chinese</p>
+                        </div>
                     </div>
-                    <div class="reseller-info">
-                        <h3 class="reseller-name">XiGua</h3>
-                        <p class="reseller-region">Chinese</p>
+                    <div class="reseller-body">
                         <div class="reseller-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">4.9/5</span>
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-value">4.9/5</span>
                         </div>
                         <div class="reseller-features">
-                            <span class="feature">✓ Instant delivery</span>
-                            <span class="feature">✓ 24/7 support</span>
+                            <span class="feature-tag">Instant Delivery</span>
+                            <span class="feature-tag">24/7 Support</span>
                         </div>
-                        <div class="reseller-actions">
-                            <a href="https://xgmenu.shop//" class="btn btn-primary" target="_blank">
-                                <span>Visit Store</span>
-                                <i class="arrow">→</i>
-                            </a>
-
-                        </div>
+                    </div>
+                    <div class="reseller-actions">
+                        <a href="https://xgmenu.shop/" class="btn-reseller primary" target="_blank">
+                            Visit Store
+                            <span class="arrow">→</span>
+                        </a>
                     </div>
                 </div>
 
-
-                <div class="reseller-card glass glass-hover" data-region="chinese">
-                    <div class="reseller-logo">
-                        <img src="images/reseller/HZ.png" alt="HZ">
+                <!-- HZ -->
+                <div class="reseller-card" data-region="chinese">
+                    <div class="reseller-header">
+                        <div class="reseller-logo">
+                            <img src="images/reseller/HZ.png" alt="HZ">
+                        </div>
+                        <div class="reseller-title">
+                            <h3>HZ</h3>
+                            <p class="reseller-region">Chinese</p>
+                        </div>
                     </div>
-                    <div class="reseller-info">
-                        <h3 class="reseller-name">HZ</h3>
-                        <p class="reseller-region">Chinese</p>
+                    <div class="reseller-body">
                         <div class="reseller-rating">
-                            <div class="stars">★★★★★</div>
-                            <span class="rating-text">4.9/5</span>
+                            <span class="stars">★★★★★</span>
+                            <span class="rating-value">4.9/5</span>
                         </div>
                         <div class="reseller-features">
-                            <span class="feature">✓ Instant delivery</span>
-                            <span class="feature">✓ 24/7 support</span>
-                        </div>
-                        <div class="reseller-actions">
-                            <a href="#" class="btn btn-primary" target="_blank">
-                                <span>Visit Store</span>
-                                <i class="arrow">→</i>
-                            </a>
-
+                            <span class="feature-tag">Instant Delivery</span>
+                            <span class="feature-tag">24/7 Support</span>
                         </div>
                     </div>
+                    <div class="reseller-actions">
+                        <a href="#" class="btn-reseller primary" target="_blank">
+                            Visit Store
+                            <span class="arrow">→</span>
+                        </a>
+                    </div>
                 </div>
-       
+            </div>
+
+            <!-- No Results Message -->
+            <div class="no-results" id="noResults" style="display: none;">
+                <div class="no-results-icon">🔍</div>
+                <h3>No resellers found</h3>
+                <p>Try adjusting your search or filter criteria</p>
             </div>
         </div>
     </section>
 
-    
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-section">
+                <div class="footer-col">
                     <div class="footer-logo">
-                        <img src="images/logo.png" alt="Infamous Logo" class="logo-img">
-                        <span class="logo-text">Infamous</span>
+                        <img src="images/logo.png" alt="Infamous Logo">
+                        <span>Infamous</span>
                     </div>
-                    <p>Premium gaming cheats for the ultimate gaming experience.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="store.html">Store</a></li>
-                        <li><a href="reseller.html">Resellers</a></li>
-                        <li><a href="index.html#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Products</h4>
-                    <ul>
-                        <li><a href="#">GTA V Cheats</a></li>
-                        <li><a href="#">RDR2 Mods</a></li>
-                        <li><a href="#">FiveM Support</a></li>
-                        <li><a href="#">HWID Spoofer</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Follow Us</h4>
+                    <p>Premium gaming modifications for the ultimate gaming experience.</p>
                     <div class="social-links">
                         <a href="https://discord.gg/2KYUvZkD5q" target="_blank"><img src="assets/discord.png" alt="Discord"></a>
                         <a href="https://t.me/InfamousMenu" target="_blank"><img src="assets/telegram.png" alt="Telegram"></a>
-                        <a href="https://t.me/InfamousMenu" target="_blank"><img src="assets/twitter.png" alt="Twitter"></a>
                     </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="store.html">Store</a></li>
+                        <li><a href="setup.html">Setup Guide</a></li>
+                        <li><a href="download.html">Download</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Products</h4>
+                    <ul>
+                        <li><a href="store.html#gta5">GTA V</a></li>
+                        <li><a href="store.html#rdr2">RDR2</a></li>
+                        <li><a href="store.html#fivem">FiveM</a></li>
+                        <li><a href="store.html#tools">HWID Spoofer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="reseller.html">Resellers</a></li>
+                        <li><a href="tos.html">Terms of Service</a></li>
+                        <li><a href="https://discord.gg/2KYUvZkD5q" target="_blank">Discord</a></li>
+                    </ul>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -284,6 +312,74 @@
     </footer>
 
     <script src="script.js"></script>
-    <script src="reseller.js"></script>
+    <script>
+        // Search and Filter Functionality
+        const searchInput = document.getElementById('resellerSearch');
+        const regionFilters = document.querySelectorAll('.region-filter');
+        const resellerCards = document.querySelectorAll('.reseller-card');
+        const noResults = document.getElementById('noResults');
+
+        let currentRegion = 'all';
+
+        // Search functionality
+        searchInput.addEventListener('input', filterResellers);
+
+        // Region filter functionality
+        regionFilters.forEach(filter => {
+            filter.addEventListener('click', function() {
+                regionFilters.forEach(f => f.classList.remove('active'));
+                this.classList.add('active');
+                currentRegion = this.dataset.region;
+                filterResellers();
+            });
+        });
+
+        function filterResellers() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            resellerCards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const region = card.dataset.region.toLowerCase();
+
+                const matchesSearch = name.includes(searchTerm);
+                const matchesRegion = currentRegion === 'all' || region.includes(currentRegion);
+
+                if (matchesSearch && matchesRegion) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.3s ease forwards';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show/hide no results message
+            noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+
+        // Animation keyframe
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Animate cards on load
+        document.addEventListener('DOMContentLoaded', function() {
+            resellerCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.4s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
 </body>
 </html>
