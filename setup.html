@@ -1171,6 +1171,17 @@
                             "Download the <a href='https://www.microsoft.com/en-us/download/details.aspx?id=35' target='_blank'>DirectX End-User Runtime Web Installer</a>",
                             "Run the installer and follow the on-screen instructions"
                         ]
+                    },
+                    {
+                        "title": "Use Procmon to Find Missing DLLs",
+                        "description": "Use Process Monitor to identify exactly which DLL files are missing.",
+                        "bullets": [
+                            "Download <a href='https://docs.microsoft.com/en-us/sysinternals/downloads/procmon' target='_blank'>Process Monitor (Procmon)</a> from Microsoft Sysinternals",
+                            "Run Procmon and set a filter for the loader process name",
+                            "Filter for 'Result' contains 'NAME NOT FOUND' to see missing files",
+                            "Look for missing DLL files and download/install them",
+                            "Watch this video for a complete walkthrough: <a href='https://www.youtube.com/watch?v=O1CkyEogN3c&t=72s' target='_blank'>Procmon Tutorial</a>"
+                        ]
                     }
                 ]
             },
