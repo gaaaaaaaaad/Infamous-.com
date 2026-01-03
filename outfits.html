@@ -16159,9 +16159,9 @@
                 <div class="outfit-info">
                     <div class="outfit-name">${name}</div>
                     <div class="outfit-meta">${outfit.model || 'Unknown Model'}</div>
-                    <a href="${BASE_URL}${downloadUrl}" download class="btn-download">
+                    <button onclick="downloadFile('${BASE_URL}${downloadUrl}', '${getFileName(downloadUrl)}.json')" class="btn-download">
                         <span>⬇</span> Download
-                    </a>
+                    </button>
                 </div>
             `;
 
@@ -16316,6 +16316,28 @@
 
         // Make openModal globally accessible
         window.openModal = openModal;
+
+		 // Download file function for cross-origin downloads
+        async function downloadFile(url, filename) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Download failed');
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+            } catch (error) {
+                console.error('Download error:', error);
+                // Fallback: open in new tab
+                window.open(url, '_blank');
+            }
+        }
+        window.downloadFile = downloadFile;
 
         // Initialize
         function init() {
