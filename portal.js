@@ -764,6 +764,32 @@ function openThread(threadId) {
     loadThread(threadId);
 }
 
+async function likeThread(threadId) {
+    if (!currentUser) {
+        showToast('Please login to like posts', 'warning');
+        return;
+    }
+    const result = await api('POST', `/forum/threads/${threadId}/like`);
+    if (result.ok) {
+        loadThread(threadId);
+    } else {
+        showToast(result.data?.message || 'Failed to like', 'error');
+    }
+}
+
+async function likeReply(threadId, replyId) {
+    if (!currentUser) {
+        showToast('Please login to like posts', 'warning');
+        return;
+    }
+    const result = await api('POST', `/forum/threads/${threadId}/replies/${replyId}/like`);
+    if (result.ok) {
+        loadThread(threadId);
+    } else {
+        showToast(result.data?.message || 'Failed to like', 'error');
+    }
+}
+
 async function loadThread(threadId) {
     const container = document.getElementById('postList');
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading thread...</div>';
@@ -783,11 +809,26 @@ async function loadThread(threadId) {
             document.getElementById('threadCategoryLink').onclick = () => openCategory(catId);
         }
 
-        // Show reply section if logged in
-        document.getElementById('replySection').style.display = currentUser ? '' : 'none';
+        // Show reply section if logged in and thread is not locked
+        const isLocked = thread.is_locked || thread.locked;
+        const replySection = document.getElementById('replySection');
+        if (isLocked) {
+            replySection.style.display = 'none';
+        } else {
+            replySection.style.display = currentUser ? '' : 'none';
+        }
 
         // Render the main thread post first
         let html = '';
+
+        // Show locked notice if thread is locked
+        if (isLocked) {
+            html += `
+                <div class="thread-locked-notice">
+                    <i class="fas fa-lock"></i> This thread is locked. No new replies can be posted.
+                </div>
+            `;
+        }
 
         // Main thread author info (from thread object)
         const threadAuthorId = thread.author_id || thread.author?.id;
@@ -811,6 +852,8 @@ async function loadThread(threadId) {
             : getInitials(threadAuthorName);
 
         // Render main thread post
+        const threadLikeCount = thread.like_count || 0;
+        const threadLikedByUser = thread.liked_by_user || false;
         html += `
             <div class="message">
                 <div class="message-user">
@@ -825,6 +868,11 @@ async function loadThread(threadId) {
                         <div class="message-date">${formatDate(thread.created_at)}</div>
                     </div>
                     <div class="message-body">${parseBBCode(thread.content || thread.body || '')}</div>
+                    <div class="message-footer">
+                        <button class="like-btn ${threadLikedByUser ? 'liked' : ''}" onclick="likeThread(${threadId})">
+                            <i class="fas fa-heart"></i> ${threadLikeCount}
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -853,6 +901,8 @@ async function loadThread(threadId) {
                 ? `<img src="${escapeHtml(authorAvatar)}" alt="Avatar" onerror="this.parentElement.textContent='${getInitials(authorName)}'">`
                 : getInitials(authorName);
 
+            const replyLikeCount = reply.like_count || 0;
+            const replyLikedByUser = reply.liked_by_user || false;
             html += `
                 <div class="message">
                     <div class="message-user">
@@ -867,6 +917,11 @@ async function loadThread(threadId) {
                             <div class="message-date">${formatDate(reply.created_at)}</div>
                         </div>
                         <div class="message-body">${parseBBCode(reply.content || reply.body || '')}</div>
+                        <div class="message-footer">
+                            <button class="like-btn ${replyLikedByUser ? 'liked' : ''}" onclick="likeReply(${threadId}, ${reply.id})">
+                                <i class="fas fa-heart"></i> ${replyLikeCount}
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1506,6 +1561,19 @@ async function replyToTicket() {
     }
 }
 
+async function closeTicket() {
+    if (!confirm('Are you sure you want to close this ticket?')) return;
+
+    const result = await api('POST', `/support/tickets/${currentTicketId}/close`);
+
+    if (result.ok) {
+        showToast('Ticket closed', 'success');
+        showPage('support');
+    } else {
+        showToast(result.data?.message || 'Failed to close ticket', 'error');
+    }
+}
+
 // ==================== PROFILE ====================
 async function loadProfile() {
     if (!currentUser) return;
@@ -1643,11 +1711,6 @@ async function loadFriends() {
                         <div class="friend-request-name">${escapeHtml(recipient.display_name || recipient.username)}</div>
                         <div class="friend-request-time" style="color: var(--warning);">Pending</div>
                     </div>
-                    <div class="friend-request-actions">
-                        <button class="btn btn-danger btn-sm" onclick="cancelFriendRequest(${recipientId})" title="Cancel Request">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
                 </div>
             `;
         }
@@ -1711,22 +1774,6 @@ async function declineFriendRequest(userId, btn) {
         loadFriends();
     } else {
         showToast(result.data.message || 'Failed to decline request', 'error');
-    }
-}
-
-async function cancelFriendRequest(userId, btn) {
-    if (!btn) btn = event?.target?.closest('button');
-    if (btn) setButtonLoading(btn, true);
-
-    const result = await api('DELETE', `/friends/request/${userId}`);
-
-    if (btn) setButtonLoading(btn, false, '<i class="fas fa-times"></i>');
-
-    if (result.ok) {
-        showToast('Friend request cancelled', 'info');
-        loadFriends();
-    } else {
-        showToast(result.data.message || 'Failed to cancel request', 'error');
     }
 }
 
@@ -1801,8 +1848,9 @@ function showUserCard(user, friendshipStatus) {
         friendBtn.innerHTML = '<i class="fas fa-check"></i> Accept Request';
         friendBtn.className = 'btn btn-success btn-sm';
     } else if (friendshipStatus === 'pending_sent') {
-        friendBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Request';
-        friendBtn.className = 'btn btn-warning btn-sm';
+        friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
+        friendBtn.className = 'btn btn-secondary btn-sm';
+        friendBtn.disabled = true;
     } else {
         friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
         friendBtn.className = 'btn btn-secondary btn-sm';
@@ -1830,8 +1878,9 @@ async function fetchUserFriendshipStatus(userId) {
             friendBtn.innerHTML = '<i class="fas fa-check"></i> Accept Request';
             friendBtn.className = 'btn btn-success btn-sm';
         } else if (status === 'pending_sent') {
-            friendBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Request';
-            friendBtn.className = 'btn btn-warning btn-sm';
+            friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
+            friendBtn.className = 'btn btn-secondary btn-sm';
+            friendBtn.disabled = true;
         } else {
             friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
             friendBtn.className = 'btn btn-secondary btn-sm';
@@ -1855,7 +1904,6 @@ async function toggleFriendFromCard() {
     const friendBtn = document.getElementById('userCardFriendBtn');
     const isFriend = friendBtn.innerHTML.includes('Remove Friend');
     const isAcceptRequest = friendBtn.innerHTML.includes('Accept Request');
-    const isCancelRequest = friendBtn.innerHTML.includes('Cancel Request');
     const originalHtml = friendBtn.innerHTML;
 
     friendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -1889,33 +1937,19 @@ async function toggleFriendFromCard() {
             friendBtn.disabled = false;
             showToast(result.data.message || 'Failed to accept request', 'error');
         }
-    } else if (isCancelRequest) {
-        const result = await api('DELETE', `/friends/request/${currentUserCardUser.id}`);
-        if (result.ok) {
-            showToast('Friend request cancelled', 'info');
-            friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
-            friendBtn.className = 'btn btn-secondary btn-sm';
-            friendBtn.disabled = false;
-            // Refresh friends list on profile page
-            loadFriends();
-        } else {
-            friendBtn.innerHTML = originalHtml;
-            friendBtn.disabled = false;
-            showToast(result.data.message || 'Failed to cancel request', 'error');
-        }
     } else {
         const result = await api('POST', '/friends/request', { user_id: currentUserCardUser.id });
         if (result.ok) {
             showToast('Friend request sent!', 'success');
-            friendBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Request';
-            friendBtn.className = 'btn btn-warning btn-sm';
-            friendBtn.disabled = false;
+            friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
+            friendBtn.className = 'btn btn-secondary btn-sm';
+            friendBtn.disabled = true;
             // Refresh friends list on profile page
             loadFriends();
         } else {
             friendBtn.innerHTML = originalHtml;
             friendBtn.disabled = false;
-            showToast(result.data.message || 'Failed to send request', 'error');
+            showToast(result.data?.message || 'Failed to send request', 'error');
         }
     }
 }
@@ -2139,10 +2173,21 @@ function insertBBCode(textareaId, tag) {
     const text = textarea.value;
     const selectedText = text.substring(start, end);
 
-    const newText = `[${tag}]${selectedText}[/${tag}]`;
+    let newText;
+    if (tag === 'list') {
+        if (selectedText) {
+            const items = selectedText.split('\n').map(line => '[*]' + line.trim()).join('\n');
+            newText = '[list]\n' + items + '\n[/list]';
+        } else {
+            newText = '[list]\n[*]Item 1\n[*]Item 2\n[/list]';
+        }
+    } else {
+        newText = `[${tag}]${selectedText}[/${tag}]`;
+    }
+
     textarea.value = text.substring(0, start) + newText + text.substring(end);
     textarea.focus();
-    textarea.setSelectionRange(start + tag.length + 2, start + tag.length + 2 + selectedText.length);
+    textarea.setSelectionRange(start + newText.length, start + newText.length);
 }
 
 function insertBBCodeUrl(textareaId) {
@@ -2170,6 +2215,46 @@ function insertBBCodeImg(textareaId) {
         textarea.value = text.substring(0, start) + newText + text.substring(textarea.selectionEnd);
         textarea.focus();
     }
+}
+
+function insertBBCodeSize(textareaId) {
+    const sizeChoice = prompt('Choose size:\n1. sm (Small)\n2. md (Medium)\n3. lg (Large)\n4. xl (Extra Large)\n5. xxl (Huge)\n\nEnter size name or number:', 'lg');
+    if (!sizeChoice) return;
+
+    let size = sizeChoice.trim().toLowerCase();
+    if (size === '1') size = 'sm';
+    else if (size === '2') size = 'md';
+    else if (size === '3') size = 'lg';
+    else if (size === '4') size = 'xl';
+    else if (size === '5') size = 'xxl';
+    size = size.split(' ')[0];
+
+    const textarea = document.getElementById(textareaId);
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end) || 'text';
+
+    const newText = `[size=${size}]${selectedText}[/size]`;
+    textarea.value = text.substring(0, start) + newText + text.substring(end);
+    textarea.focus();
+}
+
+function insertBBCodeColor(textareaId) {
+    const colorChoice = prompt('Enter color name or hex code:\n\nExamples: red, blue, green, orange, purple, #ff0000, #3b82f6', 'red');
+    if (!colorChoice) return;
+
+    const color = colorChoice.trim();
+
+    const textarea = document.getElementById(textareaId);
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end) || 'text';
+
+    const newText = `[color=${color}]${selectedText}[/color]`;
+    textarea.value = text.substring(0, start) + newText + text.substring(end);
+    textarea.focus();
 }
 
 function parseBBCode(text) {
@@ -2332,6 +2417,22 @@ function showAlert(containerId, message, type) {
             ${escapeHtml(message)}
         </div>
     `;
+}
+
+function copyLinkToClipboard(hash) {
+    const url = window.location.origin + window.location.pathname + '#' + hash;
+    navigator.clipboard.writeText(url).then(() => {
+        showToast('Link copied to clipboard!', 'success');
+    }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast('Link copied to clipboard!', 'success');
+    });
 }
 
 function showToast(message, type = 'info') {

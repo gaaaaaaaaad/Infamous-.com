@@ -821,6 +821,61 @@ a:hover {
     margin-bottom: 0;
 }
 
+.message-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--muted-text);
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.like-btn:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.like-btn.liked {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.like-btn i {
+    font-size: 0.875rem;
+}
+
+.thread-locked-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+    border-radius: var(--radius-md);
+    color: var(--warning);
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+}
+
+.thread-locked-notice i {
+    font-size: 1rem;
+}
+
 /* BBCode Styles */
 .bb-bold { font-weight: 700; }
 .bb-italic { font-style: italic; }

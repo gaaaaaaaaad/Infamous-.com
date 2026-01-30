@@ -306,8 +306,11 @@
                 <span class="current" id="threadBreadcrumb">Thread</span>
             </div>
 
-            <div class="page-title">
+            <div class="page-title" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                 <h1 id="threadTitle">Thread Title</h1>
+                <button class="btn btn-secondary btn-sm" onclick="copyLinkToClipboard('thread/' + currentThreadId)" title="Copy link">
+                    <i class="fas fa-link"></i> Copy Link
+                </button>
             </div>
 
             <div class="content-card" style="margin-bottom: 24px;">
@@ -337,6 +340,10 @@
                         <div class="bbcode-divider"></div>
                         <button type="button" class="bbcode-btn" onclick="insertBBCodeUrl('replyContent')" title="Link"><i class="fas fa-link"></i></button>
                         <button type="button" class="bbcode-btn" onclick="insertBBCodeImg('replyContent')" title="Image"><i class="fas fa-image"></i></button>
+                        <button type="button" class="bbcode-btn" onclick="insertBBCode('replyContent', 'list')" title="List"><i class="fas fa-list-ul"></i></button>
+                        <div class="bbcode-divider"></div>
+                        <button type="button" class="bbcode-btn" onclick="insertBBCodeSize('replyContent')" title="Text Size"><i class="fas fa-text-height"></i></button>
+                        <button type="button" class="bbcode-btn" onclick="insertBBCodeColor('replyContent')" title="Text Color"><i class="fas fa-palette"></i></button>
                     </div>
                     <textarea class="form-input" id="replyContent" rows="5" placeholder="Write your reply..."></textarea>
                     <button class="btn btn-primary" onclick="postReply()" style="margin-top: 16px;">
@@ -474,9 +481,14 @@
                 </div>
                 <div class="card-body">
                     <textarea class="form-input" id="ticketReplyContent" rows="4" placeholder="Write your reply..."></textarea>
-                    <button class="btn btn-primary" onclick="replyToTicket()" style="margin-top: 16px;">
-                        <i class="fas fa-paper-plane"></i> Send Reply
-                    </button>
+                    <div style="display: flex; gap: 12px; margin-top: 16px;">
+                        <button class="btn btn-primary" onclick="replyToTicket()">
+                            <i class="fas fa-paper-plane"></i> Send Reply
+                        </button>
+                        <button class="btn btn-danger" onclick="closeTicket()">
+                            <i class="fas fa-times"></i> Close Ticket
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -626,6 +638,10 @@
                         <div class="bbcode-divider"></div>
                         <button type="button" class="bbcode-btn" onclick="insertBBCodeUrl('newThreadContent')" title="Link"><i class="fas fa-link"></i></button>
                         <button type="button" class="bbcode-btn" onclick="insertBBCodeImg('newThreadContent')" title="Image"><i class="fas fa-image"></i></button>
+                        <button type="button" class="bbcode-btn" onclick="insertBBCode('newThreadContent', 'list')" title="List"><i class="fas fa-list-ul"></i></button>
+                        <div class="bbcode-divider"></div>
+                        <button type="button" class="bbcode-btn" onclick="insertBBCodeSize('newThreadContent')" title="Text Size"><i class="fas fa-text-height"></i></button>
+                        <button type="button" class="bbcode-btn" onclick="insertBBCodeColor('newThreadContent')" title="Text Color"><i class="fas fa-palette"></i></button>
                     </div>
                     <textarea class="form-input" id="newThreadContent" rows="8" placeholder="Write your message..."></textarea>
                 </div>
