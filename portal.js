@@ -21,6 +21,7 @@ let currentParentReplyId = null;
 let currentParentReplyAuthor = null;
 let subscriptionsCache = null; // Cache for subscriptions fetched from API
 let cachedCategories = []; // Cache for forum categories (for reordering)
+let oauthProviders = []; // OAuth providers enabled for this portal
 
 // ==================== SUBSCRIPTION CONFIGURATION ====================
 // Fallback config used when API fails to load subscriptions
@@ -64,6 +65,10 @@ async function fetchSubscriptionsConfig() {
 
 // ==================== INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', async () => {
+    // Handle OAuth callback first (before other initialization)
+    // This handles oauth_session, oauth_error, oauth_link_required query params
+    const oauthHandled = await handleOAuthCallback();
+
     // Setup navigation
     document.querySelectorAll('.nav-tab').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -76,8 +81,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load portal info first
     await loadPortalInfo();
 
-    // Check session
-    if (sessionToken) {
+    // Check session (skip if OAuth callback already handled it)
+    if (sessionToken && !oauthHandled) {
         await validateSession();
     }
 
@@ -154,6 +159,13 @@ async function loadPortalInfo() {
         if (socialLinks.length > 0) {
             socialContainer.innerHTML = socialLinks.join('');
             socialContainer.style.display = 'flex';
+        }
+
+        // Store OAuth providers and render buttons
+        oauthProviders = portal.oauth_providers || [];
+        if (oauthProviders.length > 0) {
+            renderOAuthButtons('loginOAuthButtons', 'loginOAuthDivider', 'login');
+            renderOAuthButtons('registerOAuthButtons', 'registerOAuthDivider', 'register');
         }
     }
 }
@@ -647,6 +659,321 @@ function updateUIForGuest() {
     document.getElementById('navMessages').style.display = 'none';
     document.getElementById('notificationBell').style.display = 'none';
     document.getElementById('notificationsPanel').style.display = 'none';
+}
+
+// ==================== OAUTH ====================
+
+/**
+ * Render OAuth provider buttons in a container
+ * @param {string} containerId - ID of the container element
+ * @param {string} dividerId - ID of the divider element
+ * @param {string} action - 'login', 'register', or 'link'
+ */
+function renderOAuthButtons(containerId, dividerId, action) {
+    const container = document.getElementById(containerId);
+    const divider = document.getElementById(dividerId);
+
+    if (!container || !oauthProviders || oauthProviders.length === 0) {
+        return;
+    }
+
+    const buttons = oauthProviders.map(provider => {
+        const actionText = action === 'login' ? 'Sign in' : action === 'register' ? 'Sign up' : 'Link';
+        return `
+            <button class="btn-oauth" onclick="startOAuth('${escapeHtml(provider.name)}', '${action}')" style="--provider-color: ${escapeHtml(provider.color)}">
+                <i class="${escapeHtml(provider.icon)}"></i>
+                <span>${actionText} with ${escapeHtml(provider.display_name)}</span>
+            </button>
+        `;
+    }).join('');
+
+    container.innerHTML = buttons;
+    container.style.display = 'flex';
+
+    if (divider) {
+        divider.style.display = 'flex';
+    }
+}
+
+/**
+ * Initiate OAuth flow by redirecting to the authorize endpoint
+ * @param {string} provider - Provider name (e.g., 'discord', 'google')
+ * @param {string} action - 'login', 'register', or 'link'
+ */
+function startOAuth(provider, action) {
+    const portalKey = document.getElementById('portalKey').value;
+    let base = document.getElementById('apiUrl').value.trim();
+    if (base.endsWith('/')) base = base.slice(0, -1);
+
+    // Build redirect URI to return to current page
+    const currentUrl = window.location.href.split('?')[0].split('#')[0];
+    const redirectUri = encodeURIComponent(currentUrl + '?portal_key=' + portalKey);
+
+    // Build authorize URL
+    let authUrl = `${base}/api/portal/v1/${portalKey}/auth/oauth/${provider}/authorize?action=${action}&redirect_uri=${redirectUri}`;
+
+    // For link action, include session token
+    if (action === 'link' && sessionToken) {
+        authUrl += `&session_token=${encodeURIComponent(sessionToken)}`;
+    }
+
+    // Redirect to OAuth provider
+    window.location.href = authUrl;
+}
+
+/**
+ * Handle OAuth callback by processing URL query parameters
+ * Called on page load to handle oauth_session, oauth_error, oauth_link_required
+ * @returns {boolean} True if OAuth callback was handled
+ */
+async function handleOAuthCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Check for OAuth session token (successful OAuth login)
+    const oauthSession = urlParams.get('oauth_session');
+    if (oauthSession) {
+        // Store session and validate
+        sessionToken = oauthSession;
+        localStorage.setItem('portalSessionToken', sessionToken);
+
+        // Clean URL
+        cleanOAuthParams();
+
+        // Validate session and update UI
+        await validateSession();
+        showToast('Successfully signed in', 'success');
+        showPage('forum');
+        return true;
+    }
+
+    // Check for OAuth error
+    const oauthError = urlParams.get('oauth_error');
+    if (oauthError) {
+        cleanOAuthParams();
+        showToast(decodeURIComponent(oauthError), 'error');
+        showPage('login');
+        return true;
+    }
+
+    // Check for OAuth success message (e.g., account linked)
+    const oauthSuccess = urlParams.get('oauth_success');
+    if (oauthSuccess) {
+        cleanOAuthParams();
+        showToast(decodeURIComponent(oauthSuccess), 'success');
+        return true;
+    }
+
+    // Check for OAuth link required (email matches existing account)
+    const linkRequired = urlParams.get('oauth_link_required');
+    if (linkRequired === 'true') {
+        const linkToken = urlParams.get('link_token');
+        const provider = urlParams.get('provider');
+        const email = urlParams.get('email');
+
+        if (linkToken && provider) {
+            cleanOAuthParams();
+            showOAuthLinkModal(provider, email, linkToken);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Clean OAuth-related query parameters from URL
+ */
+function cleanOAuthParams() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('oauth_session');
+    url.searchParams.delete('oauth_error');
+    url.searchParams.delete('oauth_success');
+    url.searchParams.delete('oauth_link_required');
+    url.searchParams.delete('link_token');
+    url.searchParams.delete('provider');
+    url.searchParams.delete('email');
+    window.history.replaceState({}, document.title, url.toString());
+}
+
+/**
+ * Show the OAuth link confirmation modal
+ * @param {string} provider - Provider name
+ * @param {string} email - Email address from OAuth
+ * @param {string} linkToken - Token for confirming the link
+ */
+function showOAuthLinkModal(provider, email, linkToken) {
+    document.getElementById('oauthLinkProvider').textContent = provider;
+    document.getElementById('oauthLinkToken').value = linkToken;
+    document.getElementById('oauthLinkPassword').value = '';
+    document.getElementById('oauthLinkAlert').innerHTML = '';
+
+    const message = email
+        ? `An account with email <strong>${escapeHtml(decodeURIComponent(email))}</strong> already exists. Enter your password to link your ${escapeHtml(provider)} account.`
+        : `An account with this email already exists. Enter your password to link your ${escapeHtml(provider)} account.`;
+    document.getElementById('oauthLinkMessage').innerHTML = message;
+
+    document.getElementById('oauthLinkModal').classList.add('active');
+    document.getElementById('oauthLinkPassword').focus();
+}
+
+/**
+ * Close the OAuth link confirmation modal
+ */
+function closeOAuthLinkModal() {
+    document.getElementById('oauthLinkModal').classList.remove('active');
+}
+
+/**
+ * Confirm OAuth account link with password
+ */
+async function confirmOAuthLink() {
+    const linkToken = document.getElementById('oauthLinkToken').value;
+    const password = document.getElementById('oauthLinkPassword').value;
+
+    if (!password) {
+        showAlert('oauthLinkAlert', 'Please enter your password', 'error');
+        return;
+    }
+
+    const result = await api('POST', '/auth/oauth/link', {
+        link_token: linkToken,
+        password: password
+    });
+
+    if (result.ok) {
+        closeOAuthLinkModal();
+
+        // Store session token
+        if (result.data.session?.token) {
+            sessionToken = result.data.session.token;
+            localStorage.setItem('portalSessionToken', sessionToken);
+        }
+
+        // Update current user
+        if (result.data.customer) {
+            currentUser = result.data.customer;
+            updateUIForUser();
+        }
+
+        showToast('Account linked successfully', 'success');
+        showPage('forum');
+    } else {
+        showAlert('oauthLinkAlert', result.data.message || 'Failed to link account', 'error');
+    }
+}
+
+/**
+ * Get OAuth status for current user
+ * @returns {Promise<Object>} OAuth status with links and available providers
+ */
+async function getOAuthStatus() {
+    const result = await api('GET', '/auth/oauth/status');
+    if (result.ok) {
+        return result.data;
+    }
+    return { links: [], available_providers: [], has_password: true, can_unlink: true };
+}
+
+/**
+ * Link a new OAuth provider to current account
+ * @param {string} provider - Provider name to link
+ */
+function linkOAuthAccount(provider) {
+    startOAuth(provider, 'link');
+}
+
+/**
+ * Unlink an OAuth provider from current account
+ * @param {string} provider - Provider name to unlink
+ */
+async function unlinkOAuthAccount(provider) {
+    if (!confirm(`Are you sure you want to unlink your ${provider} account?`)) {
+        return;
+    }
+
+    const result = await api('POST', '/auth/oauth/unlink', { provider });
+
+    if (result.ok) {
+        showToast(`${provider} account unlinked`, 'success');
+        // Refresh OAuth status display if on profile page
+        if (document.getElementById('page-profile').classList.contains('active')) {
+            loadOAuthStatusForProfile();
+        }
+    } else {
+        showToast(result.data.message || 'Failed to unlink account', 'error');
+    }
+}
+
+/**
+ * Load and display OAuth status in profile page
+ */
+async function loadOAuthStatusForProfile() {
+    const container = document.getElementById('profileOAuthStatus');
+    if (!container) return;
+
+    const status = await getOAuthStatus();
+
+    if (oauthProviders.length === 0 && status.links.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'block';
+
+    // Build linked accounts list
+    const linkedProviders = new Set(status.links.map(l => l.provider));
+    const allProviders = [...new Set([...oauthProviders.map(p => p.name), ...linkedProviders])];
+
+    let html = '<div class="oauth-status-list">';
+
+    for (const providerName of allProviders) {
+        const link = status.links.find(l => l.provider === providerName);
+        const providerInfo = oauthProviders.find(p => p.name === providerName) || {
+            name: providerName,
+            display_name: providerName.charAt(0).toUpperCase() + providerName.slice(1),
+            icon: 'fas fa-link',
+            color: '#666'
+        };
+
+        if (link) {
+            // Provider is linked
+            html += `
+                <div class="oauth-status-item oauth-linked">
+                    <div class="oauth-provider-info">
+                        <i class="${escapeHtml(providerInfo.icon)}" style="color: ${escapeHtml(providerInfo.color)}"></i>
+                        <span>${escapeHtml(providerInfo.display_name)}</span>
+                    </div>
+                    <div class="oauth-link-info">
+                        <span class="oauth-linked-badge"><i class="fas fa-check"></i> Linked</span>
+                        ${status.can_unlink ? `<button class="btn btn-sm btn-secondary" onclick="unlinkOAuthAccount('${escapeHtml(providerName)}')">Unlink</button>` : ''}
+                    </div>
+                </div>
+            `;
+        } else if (oauthProviders.find(p => p.name === providerName)) {
+            // Provider is available but not linked
+            html += `
+                <div class="oauth-status-item">
+                    <div class="oauth-provider-info">
+                        <i class="${escapeHtml(providerInfo.icon)}" style="color: ${escapeHtml(providerInfo.color)}"></i>
+                        <span>${escapeHtml(providerInfo.display_name)}</span>
+                    </div>
+                    <div class="oauth-link-info">
+                        <button class="btn btn-sm btn-primary" onclick="linkOAuthAccount('${escapeHtml(providerName)}')">
+                            <i class="fas fa-link"></i> Link
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    html += '</div>';
+
+    if (!status.has_password && status.links.length === 1) {
+        html += '<p class="oauth-warning"><i class="fas fa-exclamation-triangle"></i> Set a password before unlinking your only OAuth account.</p>';
+    }
+
+    container.innerHTML = html;
 }
 
 // ==================== FORUM - CATEGORIES ====================
@@ -1920,6 +2247,9 @@ async function loadProfile() {
 
     // Load HWID state
     loadHwidState();
+
+    // Load OAuth status
+    loadOAuthStatusForProfile();
 }
 
 async function loadSubscriptions() {
