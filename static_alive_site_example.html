@@ -1,0 +1,4410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --xf-primary: #2b6cb0;
+            --xf-primary-dark: #1a4971;
+            --xf-primary-light: #3182ce;
+            --xf-accent: #38b2ac;
+            --xf-bg: #f4f4f4;
+            --xf-bg-alt: #e8e8e8;
+            --xf-content-bg: #ffffff;
+            --xf-header-bg: #1a1a2e;
+            --xf-header-text: #ffffff;
+            --xf-text: #333333;
+            --xf-text-muted: #666666;
+            --xf-text-light: #999999;
+            --xf-border: #d4d4d4;
+            --xf-border-light: #e5e5e5;
+            --xf-success: #38a169;
+            --xf-danger: #e53e3e;
+            --xf-warning: #d69e2e;
+            --xf-link: #2b6cb0;
+            --xf-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            --xf-shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+            --xf-radius: 4px;
+            --xf-radius-lg: 8px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--xf-bg);
+            color: var(--xf-text);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        a {
+            color: var(--xf-link);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Header */
+        .header {
+            background: var(--xf-header-bg);
+            box-shadow: var(--xf-shadow-lg);
+        }
+
+        .header-top {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--xf-header-text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--xf-accent);
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            color: var(--xf-header-text);
+            font-size: 16px;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        .social-link .fa-discord:hover { color: #5865F2; }
+        .social-link .fa-twitter:hover { color: #1DA1F2; }
+        .social-link .fa-youtube:hover { color: #FF0000; }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-btn {
+            padding: 8px 16px;
+            border-radius: var(--xf-radius);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: none;
+        }
+
+        .header-btn-login {
+            background: transparent;
+            color: var(--xf-header-text);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .header-btn-login:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .header-btn-register {
+            background: var(--xf-accent);
+            color: white;
+        }
+
+        .header-btn-register:hover {
+            background: #319795;
+        }
+
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: var(--xf-radius);
+            cursor: pointer;
+            color: var(--xf-header-text);
+            transition: background 0.15s;
+        }
+
+        .user-dropdown:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--xf-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+            color: white;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            background: var(--xf-primary);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+        }
+
+        .nav-tab {
+            padding: 14px 20px;
+            color: rgba(255,255,255,0.85);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border-bottom: 3px solid transparent;
+            text-decoration: none;
+        }
+
+        .nav-tab:hover {
+            color: white;
+            background: rgba(0,0,0,0.1);
+            text-decoration: none;
+        }
+
+        .nav-tab.active {
+            color: white;
+            border-bottom-color: var(--xf-accent);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .nav-tab i {
+            margin-right: 6px;
+        }
+
+        /* Main Container */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Page Views */
+        .page-view {
+            display: none;
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        /* Cards & Containers */
+        .content-card {
+            background: var(--xf-content-bg);
+            border-radius: var(--xf-radius-lg);
+            box-shadow: var(--xf-shadow);
+            border: 1px solid var(--xf-border-light);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 12px 15px;
+            background: linear-gradient(to bottom, #fafafa, #f0f0f0);
+            border-bottom: 1px solid var(--xf-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h2 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--xf-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h2 i {
+            color: var(--xf-primary);
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            padding: 12px 0;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .breadcrumbs a {
+            color: var(--xf-link);
+        }
+
+        .breadcrumbs span {
+            color: var(--xf-text-muted);
+            margin: 0 8px;
+        }
+
+        .breadcrumbs .current {
+            color: var(--xf-text);
+        }
+
+        /* Page Title */
+        .page-title {
+            margin-bottom: 20px;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--xf-text);
+            margin-bottom: 4px;
+        }
+
+        .page-title p {
+            color: var(--xf-text-muted);
+            font-size: 14px;
+        }
+
+        /* Category/Node List */
+        .node-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .node-category {
+            margin-bottom: 20px;
+        }
+
+        .node-category:last-child {
+            margin-bottom: 0;
+        }
+
+        .node-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--xf-border-light);
+            transition: background 0.1s;
+        }
+
+        .node-item:last-child {
+            border-bottom: none;
+        }
+
+        .node-item:hover {
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .node-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--xf-radius);
+            background: var(--xf-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .node-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .node-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--xf-link);
+            margin-bottom: 2px;
+        }
+
+        .node-description {
+            font-size: 13px;
+            color: var(--xf-text-muted);
+        }
+
+        .node-stats {
+            display: flex;
+            gap: 25px;
+            text-align: right;
+            color: var(--xf-text-muted);
+            font-size: 13px;
+        }
+
+        .node-stat-value {
+            font-weight: 600;
+            color: var(--xf-text);
+            display: block;
+        }
+
+        /* Thread List */
+        .thread-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--xf-border-light);
+            transition: background 0.1s;
+        }
+
+        .thread-row:last-child {
+            border-bottom: none;
+        }
+
+        .thread-row:hover {
+            background: #f8f9fa;
+        }
+
+        .thread-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--xf-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .thread-author-clickable {
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .thread-author-clickable:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .thread-author-link {
+            cursor: pointer;
+            color: var(--xf-link);
+        }
+
+        .thread-author-link:hover {
+            text-decoration: underline;
+        }
+
+        .thread-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .thread-title-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--xf-link);
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .thread-title-link:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .thread-meta {
+            font-size: 12px;
+            color: var(--xf-text-muted);
+        }
+
+        .thread-meta a {
+            color: var(--xf-text-muted);
+            font-weight: 500;
+        }
+
+        .thread-stats {
+            display: flex;
+            gap: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--xf-text-muted);
+            margin: 0 20px;
+        }
+
+        .thread-stats strong {
+            display: block;
+            font-size: 14px;
+            color: var(--xf-text);
+        }
+
+        .thread-latest {
+            text-align: right;
+            font-size: 12px;
+            color: var(--xf-text-muted);
+            min-width: 140px;
+        }
+
+        .thread-latest a {
+            color: var(--xf-text);
+            font-weight: 500;
+        }
+
+        /* Post/Message */
+        .message {
+            display: flex;
+            border-bottom: 1px solid var(--xf-border-light);
+        }
+
+        .message:last-child {
+            border-bottom: none;
+        }
+
+        .message-user {
+            width: 140px;
+            padding: 20px 15px;
+            background: #fafafa;
+            border-right: 1px solid var(--xf-border-light);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .message-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--xf-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 26px;
+            font-weight: 600;
+            margin: 0 auto 10px;
+        }
+
+        .message-user-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--xf-link);
+            margin-bottom: 4px;
+        }
+
+        .message-user-title {
+            font-size: 11px;
+            color: var(--xf-primary);
+            background: rgba(43, 108, 176, 0.1);
+            padding: 2px 8px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .message-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-body {
+            flex: 1;
+            line-height: 1.7;
+            color: var(--xf-text);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .message-body img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .message-body ul, .message-body ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        .message-body li {
+            margin: 5px 0;
+        }
+
+        .message-body blockquote {
+            margin: 10px 0;
+        }
+
+        .message-body pre {
+            margin: 10px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .message-body code {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .message-body a {
+            color: var(--xf-link);
+        }
+
+        .message-body a:hover {
+            text-decoration: underline;
+        }
+
+        .message-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 1px solid var(--xf-border-light);
+        }
+
+        .message-date {
+            font-size: 12px;
+            color: var(--xf-text-muted);
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: 1px solid var(--xf-border);
+            border-radius: var(--xf-radius);
+            background: var(--xf-content-bg);
+            color: var(--xf-text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--xf-primary);
+            color: var(--xf-primary);
+        }
+
+        .action-btn.liked {
+            border-color: var(--xf-danger);
+            color: var(--xf-danger);
+            background: rgba(229, 62, 62, 0.05);
+        }
+
+        /* Reply Box */
+        .reply-box {
+            padding: 20px;
+            background: #fafafa;
+            border-top: 1px solid var(--xf-border-light);
+        }
+
+        .reply-box h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--xf-text);
+        }
+
+        .reply-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid var(--xf-border);
+            border-radius: var(--xf-radius);
+            background: var(--xf-content-bg);
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            margin-bottom: 12px;
+        }
+
+        .reply-textarea:focus {
+            outline: none;
+            border-color: var(--xf-primary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: var(--xf-radius);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-primary {
+            background: var(--xf-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--xf-primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--xf-bg-alt);
+            color: var(--xf-text);
+            border: 1px solid var(--xf-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--xf-border);
+        }
+
+        .btn-danger {
+            background: var(--xf-danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* Auth Forms */
+        .auth-wrapper {
+            max-width: 420px;
+            margin: 40px auto;
+        }
+
+        .auth-card {
+            background: var(--xf-content-bg);
+            border-radius: var(--xf-radius-lg);
+            box-shadow: var(--xf-shadow-lg);
+            overflow: hidden;
+        }
+
+        .auth-header {
+            padding: 30px 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--xf-border-light);
+            background: linear-gradient(to bottom, #fafafa, #ffffff);
+        }
+
+        .auth-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--xf-text);
+            margin-bottom: 6px;
+        }
+
+        .auth-header p {
+            color: var(--xf-text-muted);
+            font-size: 14px;
+        }
+
+        .auth-body {
+            padding: 25px 30px;
+        }
+
+        .form-row {
+            margin-bottom: 18px;
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--xf-text);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--xf-border);
+            border-radius: var(--xf-radius);
+            font-size: 14px;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--xf-primary);
+        }
+
+        .auth-footer {
+            padding: 15px 30px;
+            background: #fafafa;
+            border-top: 1px solid var(--xf-border-light);
+            text-align: center;
+            font-size: 13px;
+            color: var(--xf-text-muted);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--xf-text-muted);
+            font-size: 12px;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--xf-border);
+        }
+
+        .auth-divider span {
+            padding: 0 12px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px 15px;
+            border-radius: var(--xf-radius);
+            margin-bottom: 15px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            color: #276749;
+        }
+
+        .alert-info {
+            background: #ebf8ff;
+            border: 1px solid #90cdf4;
+            color: #2b6cb0;
+        }
+
+        /* Profile */
+        .profile-banner {
+            background: linear-gradient(135deg, var(--xf-primary) 0%, var(--xf-primary-dark) 100%);
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            color: white;
+        }
+
+        .profile-avatar-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 600;
+            border: 3px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+        }
+
+        .profile-avatar-lg:hover #profileAvatarOverlay {
+            display: flex !important;
+        }
+
+        .profile-avatar-lg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .profile-info .role {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .profile-stats-row {
+            display: flex;
+            gap: 25px;
+        }
+
+        .profile-stat {
+            text-align: center;
+        }
+
+        .profile-stat-value {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .profile-stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .profile-content {
+            padding: 20px;
+        }
+
+        .profile-bio {
+            color: var(--xf-text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Friends Grid */
+        .friends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--xf-bg);
+            border-radius: var(--xf-radius);
+        }
+
+        .friend-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--xf-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--xf-link);
+        }
+
+        .friend-status {
+            font-size: 12px;
+            color: var(--xf-text-muted);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--xf-border);
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: var(--xf-text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.15s;
+        }
+
+        .tab-btn:hover {
+            color: var(--xf-text);
+        }
+
+        .tab-btn.active {
+            color: var(--xf-primary);
+            border-bottom-color: var(--xf-primary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--xf-content-bg);
+            border-radius: var(--xf-radius-lg);
+            width: 100%;
+            max-width: 550px;
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: var(--xf-shadow-lg);
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--xf-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fafafa;
+        }
+
+        .modal-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--xf-text-muted);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--xf-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: #fafafa;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--xf-text-muted);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            color: var(--xf-text);
+            margin-bottom: 8px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--xf-text-muted);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--xf-border);
+            border-top-color: var(--xf-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--xf-content-bg);
+            border: 1px solid var(--xf-border);
+            border-radius: var(--xf-radius);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--xf-shadow-lg);
+            animation: slideIn 0.25s ease;
+            font-size: 13px;
+        }
+
+        .toast.success {
+            border-left: 3px solid var(--xf-success);
+        }
+
+        .toast.error {
+            border-left: 3px solid var(--xf-danger);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-top {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .message {
+                flex-direction: column;
+            }
+
+            .message-user {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--xf-border-light);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                text-align: left;
+                padding: 15px;
+            }
+
+            .message-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+                margin: 0;
+            }
+
+            .node-stats {
+                display: none;
+            }
+
+            .thread-stats {
+                display: none;
+            }
+
+            .thread-latest {
+                display: none;
+            }
+
+            .profile-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-stats-row {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="logo">
+                <i class="fas fa-comments"></i>
+                <span id="portalName">Community</span>
+            </div>
+            <div id="socialLinks" style="display: none; gap: 8px; align-items: center;"></div>
+            <div class="header-actions">
+                <div id="guestActions">
+                    <button class="header-btn header-btn-login" onclick="showPage('login')">Log in</button>
+                    <button class="header-btn header-btn-register" onclick="showPage('register')">Register</button>
+                </div>
+                <div id="userActions" style="display: none;">
+                    <div class="user-dropdown" onclick="showPage('profile')">
+                        <div class="user-avatar" id="headerAvatar">U</div>
+                        <span id="headerUsername">User</span>
+                        <i class="fas fa-caret-down" style="font-size: 12px; opacity: 0.7;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-bar">
+            <div class="nav-container">
+                <div class="nav-tabs" id="mainNav">
+                    <a class="nav-tab active" data-page="forum"><i class="fas fa-comments"></i>Forums</a>
+                    <a class="nav-tab" data-page="chat"><i class="fas fa-comment-dots"></i>Chat</a>
+                    <a class="nav-tab" data-page="messages"><i class="fas fa-envelope"></i>Messages<span id="unreadBadge" style="display: none; background: var(--xf-danger); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px;"></span></a>
+                    <a class="nav-tab" data-page="support" id="navSupport" style="display: none;"><i class="fas fa-life-ring"></i>Support</a>
+                    <a class="nav-tab" data-page="members"><i class="fas fa-users"></i>Members</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Banner (shown if configured) -->
+    <div id="portalBanner" style="display: none;">
+        <div style="position: relative; background: linear-gradient(135deg, var(--xf-primary) 0%, var(--xf-primary-dark) 100%); color: white; overflow: hidden;">
+            <div id="bannerImage" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-size: cover; background-position: center; opacity: 0.3;"></div>
+            <div style="position: relative; max-width: 1200px; margin: 0 auto; padding: 40px 20px; text-align: center;">
+                <h1 id="bannerTitle" style="font-size: 32px; font-weight: 600; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);"></h1>
+                <p id="bannerSubtitle" style="font-size: 16px; opacity: 0.9; max-width: 600px; margin: 0 auto;"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Config -->
+    <input type="hidden" id="apiUrl" value="https://proudlyauthentication.com/">
+    <input type="hidden" id="portalKey" value="pk_A7kqO9xACqQhpI3nzNlh8c6boI8gUUIn">
+
+    <!-- Main Content -->
+    <main class="main-wrapper">
+        <!-- Toast Container -->
+        <div class="toast-container" id="toastContainer"></div>
+
+        <!-- LOGIN PAGE -->
+        <div class="page-view" id="page-login">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>Welcome Back</h1>
+                        <p>Sign in to your account</p>
+                    </div>
+                    <div class="auth-body">
+                        <div id="loginAlert"></div>
+                        <form id="loginForm" onsubmit="handleLogin(event)">
+                            <div class="form-row">
+                                <label>Username</label>
+                                <input type="text" class="form-input" id="loginUsername" placeholder="Enter your username" required>
+                            </div>
+                            <div class="form-row">
+                                <label>Password</label>
+                                <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+                        </form>
+                        <div class="auth-divider"><span>or</span></div>
+                        <p style="text-align: center; font-size: 13px; color: var(--xf-text-muted);">
+                            <a href="#" onclick="showPage('forgot-password')">Forgot your password?</a>
+                        </p>
+                    </div>
+                    <div class="auth-footer">
+                        Don't have an account? <a href="#" onclick="showPage('register')">Register now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGISTER PAGE -->
+        <div class="page-view" id="page-register">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>Create Account</h1>
+                        <p>Join our community</p>
+                    </div>
+                    <div class="auth-body">
+                        <div id="registerAlert"></div>
+                        <form id="registerForm" onsubmit="handleRegister(event)">
+                            <div class="form-row">
+                                <label>Username</label>
+                                <input type="text" class="form-input" id="regUsername" placeholder="Choose a username" required>
+                            </div>
+                            <div class="form-row">
+                                <label>Email</label>
+                                <input type="email" class="form-input" id="regEmail" placeholder="Enter your email" required>
+                            </div>
+                            <div class="form-row">
+                                <label>Password</label>
+                                <input type="password" class="form-input" id="regPassword" placeholder="Create a password" required>
+                            </div>
+                            <div class="form-row">
+                                <label>License Key <span style="color: var(--xf-text-muted); font-weight: normal;">(optional)</span></label>
+                                <input type="text" class="form-input" id="regKey" placeholder="Enter license key if you have one">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Register</button>
+                        </form>
+                    </div>
+                    <div class="auth-footer">
+                        Already have an account? <a href="#" onclick="showPage('login')">Log in</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VERIFY EMAIL PAGE -->
+        <div class="page-view" id="page-verify">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <i class="fas fa-envelope" style="font-size: 40px; color: var(--xf-primary); margin-bottom: 15px;"></i>
+                        <h1>Verify Email</h1>
+                        <p>Enter the code sent to <strong id="verifyEmail">your email</strong></p>
+                    </div>
+                    <div class="auth-body">
+                        <div id="verifyAlert"></div>
+                        <form onsubmit="handleVerify(event)">
+                            <div class="form-row">
+                                <input type="text" class="form-input" id="verifyCode" placeholder="Enter verification code" maxlength="8" style="text-align: center; font-size: 18px; letter-spacing: 4px;">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Verify</button>
+                        </form>
+                    </div>
+                    <div class="auth-footer">
+                        Didn't receive the code? <a href="#" onclick="resendVerification()">Resend</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORGOT PASSWORD PAGE -->
+        <div class="page-view" id="page-forgot-password">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>Reset Password</h1>
+                        <p>We'll send you a reset code</p>
+                    </div>
+                    <div class="auth-body">
+                        <div id="forgotAlert"></div>
+                        <form onsubmit="handleForgotPassword(event)">
+                            <div class="form-row">
+                                <label>Email or Username</label>
+                                <input type="text" class="form-input" id="forgotEmail" placeholder="Enter your email or username" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Send Reset Code</button>
+                        </form>
+                    </div>
+                    <div class="auth-footer">
+                        <a href="#" onclick="showPage('login')"><i class="fas fa-arrow-left"></i> Back to login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESET PASSWORD PAGE -->
+        <div class="page-view" id="page-reset-password">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>New Password</h1>
+                        <p>Enter your reset code and new password</p>
+                    </div>
+                    <div class="auth-body">
+                        <div id="resetAlert"></div>
+                        <form onsubmit="handleResetPassword(event)">
+                            <div class="form-row">
+                                <label>Reset Code</label>
+                                <input type="text" class="form-input" id="resetCode" placeholder="Enter reset code" required>
+                            </div>
+                            <div class="form-row">
+                                <label>New Password</label>
+                                <input type="password" class="form-input" id="resetNewPassword" placeholder="Enter new password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Reset Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORUM PAGE -->
+        <div class="page-view active" id="page-forum">
+            <div class="page-title">
+                <h1>Forums</h1>
+                <p>Join the discussion with our community</p>
+            </div>
+
+            <div id="categoriesContainer">
+                <div class="content-card">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading forums...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORY VIEW -->
+        <div class="page-view" id="page-category">
+            <div class="breadcrumbs">
+                <a href="#" onclick="showPage('forum')">Forums</a>
+                <span>&rsaquo;</span>
+                <span class="current" id="categoryBreadcrumb">Category</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="page-title" style="margin-bottom: 0;">
+                    <h1 id="categoryTitle">Category Name</h1>
+                    <p id="categoryDescription">Category description</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary btn-sm" onclick="copyLinkToClipboard('category/' + currentCategoryId)" title="Copy link">
+                        <i class="fas fa-link"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="showCreateThreadModal()" id="newThreadBtn" style="display: none;">
+                        <i class="fas fa-plus"></i> Post Thread
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-list"></i> Threads</h2>
+                </div>
+                <div id="threadsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading threads...
+                    </div>
+                </div>
+            </div>
+
+            <div id="threadsPagination" style="margin-top: 15px; display: flex; justify-content: center; gap: 8px;"></div>
+        </div>
+
+        <!-- THREAD VIEW -->
+        <div class="page-view" id="page-thread">
+            <div class="breadcrumbs">
+                <a href="#" onclick="showPage('forum')">Forums</a>
+                <span>&rsaquo;</span>
+                <a href="#" id="threadCategoryLink">Category</a>
+                <span>&rsaquo;</span>
+                <span class="current" id="threadBreadcrumb">Thread</span>
+            </div>
+
+            <div class="content-card" style="margin-bottom: 20px;">
+                <div class="card-header">
+                    <h2 id="threadTitle">Thread Title</h2>
+                </div>
+                <div style="padding: 10px 15px; background: #fafafa; border-bottom: 1px solid var(--xf-border-light); font-size: 13px; color: var(--xf-text-muted); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span><i class="fas fa-user"></i> <span id="threadAuthor">Author</span></span>
+                        <span style="margin-left: 15px;"><i class="fas fa-clock"></i> <span id="threadDate">Date</span></span>
+                        <span style="margin-left: 15px;"><i class="fas fa-eye"></i> <span id="threadViews">0</span> views</span>
+                        <span style="margin-left: 15px;"><i class="fas fa-comment"></i> <span id="threadReplies">0</span> replies</span>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="copyLinkToClipboard('thread/' + currentThreadId)" title="Copy link">
+                        <i class="fas fa-link"></i> Share
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div id="postsContainer"></div>
+                <div id="replyEditor" style="display: none;">
+                    <div class="reply-box">
+                        <h3>Post a Reply</h3>
+                        <div class="bbcode-toolbar" style="margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px;">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('replyContent', 'b')" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('replyContent', 'i')" title="Italic"><i class="fas fa-italic"></i></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('replyContent', 'u')" title="Underline"><i class="fas fa-underline"></i></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('replyContent', 's')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+                            <span style="border-left: 1px solid var(--xf-border); margin: 0 4px;"></span>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('replyContent', 'code')" title="Code"><i class="fas fa-code"></i></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('replyContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('replyContent', 'spoiler')" title="Spoiler"><i class="fas fa-eye-slash"></i></button>
+                            <span style="border-left: 1px solid var(--xf-border); margin: 0 4px;"></span>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCodeUrl('replyContent')" title="Link"><i class="fas fa-link"></i></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCodeImg('replyContent')" title="Image"><i class="fas fa-image"></i></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('replyContent', 'list')" title="List"><i class="fas fa-list-ul"></i></button>
+                            <span style="border-left: 1px solid var(--xf-border); margin: 0 4px;"></span>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCodeSize('replyContent')" title="Text Size"><i class="fas fa-text-height"></i></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCodeColor('replyContent')" title="Text Color"><i class="fas fa-palette"></i></button>
+                        </div>
+                        <textarea class="reply-textarea" id="replyContent" placeholder="Write your reply... Use BBCode: [b]bold[/b] [i]italic[/i] [size=lg]large[/size] [color=red]red[/color] [img]url[/img]"></textarea>
+                        <button class="btn btn-primary" onclick="postReply()">
+                            <i class="fas fa-paper-plane"></i> Post Reply
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE PAGE -->
+        <div class="page-view" id="page-profile">
+            <div class="content-card">
+                <div class="profile-banner">
+                    <div class="profile-avatar-lg" id="profileAvatar" onclick="showAvatarModal()" style="cursor: pointer; position: relative;" title="Click to change avatar">
+                        <span id="profileAvatarInitial">U</span>
+                        <div id="profileAvatarOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); border-radius: 50%; display: none; align-items: center; justify-content: center; color: white; font-size: 20px;">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h1 id="profileName">Username</h1>
+                        <span class="role" id="profileRole">Member</span>
+                        <div class="profile-stats-row">
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="profilePosts">0</span>
+                                <span class="profile-stat-label">Messages</span>
+                            </div>
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="profileFriends">0</span>
+                                <span class="profile-stat-label">Friends</span>
+                            </div>
+                            <div class="profile-stat">
+                                <span class="profile-stat-value" id="profileRep">0</span>
+                                <span class="profile-stat-label">Reaction score</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-content">
+                    <p class="profile-bio" id="profileBio">No bio yet.</p>
+
+                    <!-- HWID Section -->
+                    <div id="hwidSection" style="display: none; margin-bottom: 20px; padding: 15px; background: var(--xf-bg); border-radius: var(--xf-radius); border: 1px solid var(--xf-border-light);">
+                        <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--xf-text);"><i class="fas fa-desktop" style="margin-right: 6px; color: var(--xf-primary);"></i>Hardware ID</h4>
+                        <div style="font-size: 13px; color: var(--xf-text-muted);">
+                            <p id="hwidStatus" style="margin-bottom: 8px;">Status: Unknown</p>
+                            <p id="hwidResets" style="margin-bottom: 8px;">Resets: -</p>
+                            <p id="hwidCooldown" style="margin-bottom: 12px;"></p>
+                            <button class="btn btn-secondary btn-sm" id="hwidResetBtn" onclick="resetHwid()" style="display: none;">
+                                <i class="fas fa-sync-alt"></i> Reset HWID
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="showPage('edit-profile')">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="showPage('friends')">
+                            <i class="fas fa-users"></i> Friends
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="showRedeemKeyModal()">
+                            <i class="fas fa-key"></i> Redeem Key
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Log out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDIT PROFILE PAGE -->
+        <div class="page-view" id="page-edit-profile">
+            <div class="breadcrumbs">
+                <a href="#" onclick="showPage('profile')">Profile</a>
+                <span>&rsaquo;</span>
+                <span class="current">Edit Profile</span>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+                </div>
+                <div class="card-body">
+                    <div id="editProfileAlert"></div>
+                    <form onsubmit="handleUpdateProfile(event)" style="max-width: 500px;">
+                        <div class="form-row">
+                            <label>Username</label>
+                            <input type="text" class="form-input" id="editUsername" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <label>Location</label>
+                            <input type="text" class="form-input" id="editLocation" placeholder="Your location">
+                        </div>
+                        <div class="form-row">
+                            <label>Custom Title</label>
+                            <input type="text" class="form-input" id="editStatus" placeholder="Custom title">
+                        </div>
+                        <div class="form-row">
+                            <label>About</label>
+                            <textarea class="form-input" id="editBio" rows="4" placeholder="Tell us about yourself..." style="resize: vertical;"></textarea>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary" onclick="showPage('profile')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRIENDS PAGE -->
+        <div class="page-view" id="page-friends">
+            <div class="breadcrumbs">
+                <a href="#" onclick="showPage('profile')">Profile</a>
+                <span>&rsaquo;</span>
+                <span class="current">Friends</span>
+            </div>
+
+            <div class="page-title">
+                <h1>Friends</h1>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showFriendsTab('list')">Friends</button>
+                <button class="tab-btn" onclick="showFriendsTab('requests')">Requests <span id="requestsBadge"></span></button>
+            </div>
+
+            <div id="friendsListTab">
+                <div id="friendsContainer" class="friends-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading friends...
+                    </div>
+                </div>
+            </div>
+
+            <div id="friendsRequestsTab" style="display: none;">
+                <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--xf-text);">Incoming Requests</h3>
+                <div id="incomingRequestsContainer" class="friends-grid" style="margin-bottom: 25px;"></div>
+
+                <h3 style="margin-bottom: 12px; font-size: 14px; color: var(--xf-text);">Sent Requests</h3>
+                <div id="outgoingRequestsContainer" class="friends-grid"></div>
+            </div>
+        </div>
+
+        <!-- CHAT PAGE -->
+        <div class="page-view" id="page-chat">
+            <div class="page-title">
+                <h1>Global Chat</h1>
+                <p>Chat with other community members in real-time</p>
+            </div>
+
+            <div class="content-card" id="chatContainer">
+                <div id="chatLoginPrompt" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <h3>Login Required</h3>
+                        <p>Please log in to use the chat.</p>
+                        <button class="btn btn-primary" onclick="showPage('login')" style="margin-top: 15px;">
+                            <i class="fas fa-sign-in-alt"></i> Log In
+                        </button>
+                    </div>
+                </div>
+                <div id="chatContent" style="display: none;">
+                    <div id="chatMessages" style="height: 400px; overflow-y: auto; padding: 15px; border-bottom: 1px solid var(--xf-border-light);">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading messages...
+                        </div>
+                    </div>
+                    <div style="padding: 15px; background: #fafafa;">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="form-input" id="chatInput" placeholder="Type a message..." style="flex: 1;" onkeypress="if(event.key==='Enter')sendChatMessage()">
+                            <button class="btn btn-primary" onclick="sendChatMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUPPORT PAGE -->
+        <div class="page-view" id="page-support">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="page-title" style="margin-bottom: 0;">
+                    <h1>Support</h1>
+                    <p>Get help from our support team</p>
+                </div>
+                <button class="btn btn-primary" onclick="showCreateTicketModal()" id="newTicketBtn" style="display: none;">
+                    <i class="fas fa-plus"></i> New Ticket
+                </button>
+            </div>
+
+            <div id="supportLoginPrompt" style="display: none;">
+                <div class="content-card">
+                    <div class="empty-state">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <h3>Login Required</h3>
+                        <p>Please log in to access support.</p>
+                        <button class="btn btn-primary" onclick="showPage('login')" style="margin-top: 15px;">
+                            <i class="fas fa-sign-in-alt"></i> Log In
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ticketsContainer" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-ticket-alt"></i> Your Tickets</h2>
+                    </div>
+                    <div id="ticketsList">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading tickets...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TICKET DETAIL PAGE -->
+        <div class="page-view" id="page-ticket">
+            <div class="breadcrumbs">
+                <a href="#" onclick="showPage('support')">Support</a>
+                <span>&rsaquo;</span>
+                <span class="current" id="ticketBreadcrumb">Ticket</span>
+            </div>
+
+            <div class="content-card" style="margin-bottom: 20px;">
+                <div class="card-header">
+                    <h2 id="ticketSubject">Ticket Subject</h2>
+                    <span id="ticketStatusBadge" style="padding: 4px 10px; border-radius: 3px; font-size: 12px; font-weight: 500;"></span>
+                </div>
+                <div style="padding: 10px 15px; background: #fafafa; border-bottom: 1px solid var(--xf-border-light); font-size: 13px; color: var(--xf-text-muted);">
+                    <span><i class="fas fa-calendar"></i> Created: <span id="ticketCreated">-</span></span>
+                    <span style="margin-left: 15px;"><i class="fas fa-clock"></i> Updated: <span id="ticketUpdated">-</span></span>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div id="ticketMessagesContainer" style="padding: 0;"></div>
+                <div id="ticketReplyBox" style="display: none;">
+                    <div class="reply-box">
+                        <h3>Reply to Ticket</h3>
+                        <textarea class="reply-textarea" id="ticketReplyContent" placeholder="Write your reply..."></textarea>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" onclick="replyToTicket()">
+                                <i class="fas fa-paper-plane"></i> Send Reply
+                            </button>
+                            <button class="btn btn-danger" onclick="closeTicket()">
+                                <i class="fas fa-times"></i> Close Ticket
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MESSAGES PAGE -->
+        <div class="page-view" id="page-messages">
+            <div class="page-title">
+                <h1>Messages</h1>
+                <p>Your private conversations</p>
+            </div>
+
+            <div id="messagesLoginPrompt" style="display: none;">
+                <div class="content-card">
+                    <div class="empty-state">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <h3>Login Required</h3>
+                        <p>Please log in to view your messages.</p>
+                        <button class="btn btn-primary" onclick="showPage('login')" style="margin-top: 15px;">
+                            <i class="fas fa-sign-in-alt"></i> Log In
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="messagesContent" style="display: none;">
+                <div class="content-card">
+                    <div id="conversationsList">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading conversations...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONVERSATION DETAIL PAGE -->
+        <div class="page-view" id="page-conversation">
+            <div class="breadcrumbs">
+                <a href="#" onclick="showPage('messages')">Messages</a>
+                <span>&rsaquo;</span>
+                <span class="current" id="conversationBreadcrumb">Conversation</span>
+            </div>
+
+            <div class="content-card">
+                <div style="display: flex; align-items: center; gap: 12px; padding: 15px; border-bottom: 1px solid var(--xf-border-light);">
+                    <div id="convParticipantAvatar" style="width: 48px; height: 48px; border-radius: 50%; background: var(--xf-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 18px; flex-shrink: 0;"></div>
+                    <div style="flex: 1;">
+                        <div id="convParticipantName" style="font-weight: 600; font-size: 16px;"></div>
+                        <div id="convParticipantRole" style="font-size: 12px; color: var(--xf-text-muted);"></div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="showUserCard(currentConvParticipant)">
+                        <i class="fas fa-user"></i> View Profile
+                    </button>
+                </div>
+
+                <div id="conversationMessages" style="height: 400px; overflow-y: auto; padding: 15px;">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading messages...
+                    </div>
+                </div>
+
+                <div style="padding: 15px; background: #fafafa; border-top: 1px solid var(--xf-border-light);">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" class="form-input" id="dmInput" placeholder="Type a message..." style="flex: 1;" onkeypress="if(event.key==='Enter')sendDM()">
+                        <button class="btn btn-primary" onclick="sendDM()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEMBERS PAGE -->
+        <div class="page-view" id="page-members">
+            <div class="page-title">
+                <h1>Members</h1>
+                <p>Browse community members</p>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="content-card" style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 12px; height: 12px; background: var(--xf-success); border-radius: 50%;"></div>
+                        <span style="font-size: 16px;"><strong id="membersOnlineCount">0</strong> Members Online</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" class="form-input" id="memberSearchInput" placeholder="Search (min 3 chars)..." style="width: 200px;" oninput="onMemberSearchInput()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Members List -->
+            <div class="content-card">
+                <div id="membersList">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading online members...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create Thread Modal -->
+    <div class="modal-overlay" id="createThreadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Create Thread</h2>
+                <button class="modal-close" onclick="hideCreateThreadModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <label>Title</label>
+                    <input type="text" class="form-input" id="newThreadTitle" placeholder="Thread title">
+                </div>
+                <div class="form-row">
+                    <label>Message</label>
+                    <div class="bbcode-toolbar" style="margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 4px;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('newThreadContent', 'b')" title="Bold"><i class="fas fa-bold"></i></button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('newThreadContent', 'i')" title="Italic"><i class="fas fa-italic"></i></button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('newThreadContent', 'u')" title="Underline"><i class="fas fa-underline"></i></button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('newThreadContent', 's')" title="Strikethrough"><i class="fas fa-strikethrough"></i></button>
+                        <span style="border-left: 1px solid var(--xf-border); margin: 0 4px;"></span>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('newThreadContent', 'code')" title="Code"><i class="fas fa-code"></i></button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('newThreadContent', 'quote')" title="Quote"><i class="fas fa-quote-right"></i></button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('newThreadContent', 'spoiler')" title="Spoiler"><i class="fas fa-eye-slash"></i></button>
+                        <span style="border-left: 1px solid var(--xf-border); margin: 0 4px;"></span>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCodeUrl('newThreadContent')" title="Link"><i class="fas fa-link"></i></button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCodeImg('newThreadContent')" title="Image"><i class="fas fa-image"></i></button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCode('newThreadContent', 'list')" title="List"><i class="fas fa-list-ul"></i></button>
+                        <span style="border-left: 1px solid var(--xf-border); margin: 0 4px;"></span>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCodeSize('newThreadContent')" title="Text Size"><i class="fas fa-text-height"></i></button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertBBCodeColor('newThreadContent')" title="Text Color"><i class="fas fa-palette"></i></button>
+                    </div>
+                    <textarea class="form-input" id="newThreadContent" rows="8" placeholder="Write your message... Use BBCode: [b]bold[/b] [i]italic[/i] [size=lg]large[/size] [color=red]red[/color]" style="resize: vertical;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideCreateThreadModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="createThread()">Create Thread</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Redeem License Key Modal -->
+    <div class="modal-overlay" id="redeemKeyModal">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-key" style="margin-right: 8px; color: var(--xf-primary);"></i>Redeem License Key</h2>
+                <button class="modal-close" onclick="hideRedeemKeyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="redeemKeyAlert"></div>
+                <p style="color: var(--xf-text-muted); font-size: 13px; margin-bottom: 15px;">
+                    Enter your license key to activate your membership.
+                </p>
+                <div class="form-row">
+                    <label>License Key</label>
+                    <input type="text" class="form-input" id="redeemKeyInput" placeholder="XXXX-XXXX-XXXX-XXXX" style="font-family: monospace; letter-spacing: 1px;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideRedeemKeyModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="redeemLicenseKey()">
+                    <i class="fas fa-check"></i> Redeem Key
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Ticket Modal -->
+    <div class="modal-overlay" id="createTicketModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-life-ring" style="margin-right: 8px; color: var(--xf-primary);"></i>New Support Ticket</h2>
+                <button class="modal-close" onclick="hideCreateTicketModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="createTicketAlert"></div>
+                <div class="form-row">
+                    <label>Subject</label>
+                    <input type="text" class="form-input" id="ticketSubjectInput" placeholder="Brief description of your issue">
+                </div>
+                <div class="form-row">
+                    <label>Category</label>
+                    <select class="form-input" id="ticketCategoryInput">
+                        <option value="">Select a category...</option>
+                        <option value="general">General Question</option>
+                        <option value="technical">Technical Issue</option>
+                        <option value="billing">Billing</option>
+                        <option value="account">Account</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Message</label>
+                    <textarea class="form-input" id="ticketBodyInput" rows="6" placeholder="Describe your issue in detail..." style="resize: vertical;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideCreateTicketModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="createTicket()">
+                    <i class="fas fa-paper-plane"></i> Submit Ticket
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Card Modal -->
+    <div class="modal-overlay" id="userCardModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-user" style="margin-right: 8px; color: var(--xf-primary);"></i>User Profile</h2>
+                <button class="modal-close" onclick="hideUserCardModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 25px;">
+                <div id="userCardAvatar" style="width: 80px; height: 80px; border-radius: 50%; background: var(--xf-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 28px; margin: 0 auto 15px;"></div>
+                <h3 id="userCardName" style="margin: 0 0 5px; font-size: 20px;"></h3>
+                <div id="userCardUsername" style="color: var(--xf-text-muted); font-size: 14px; margin-bottom: 5px;"></div>
+                <div id="userCardRole" style="display: inline-block; background: var(--xf-success); color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; text-transform: uppercase; margin-bottom: 15px;"></div>
+                <div id="userCardBio" style="color: var(--xf-text-muted); font-size: 13px; margin-bottom: 20px; display: none;"></div>
+                <div id="userCardActions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-sm" id="userCardMessageBtn" onclick="startConversationWithUser()">
+                        <i class="fas fa-envelope"></i> Send Message
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="userCardFriendBtn" onclick="toggleFriendFromCard()">
+                        <i class="fas fa-user-plus"></i> Add Friend
+                    </button>
+                </div>
+                <div id="userCardSelfNote" style="display: none; color: var(--xf-text-muted); font-size: 13px; margin-top: 10px;">
+                    <i class="fas fa-info-circle"></i> This is your profile
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Message Modal -->
+    <div class="modal-overlay" id="sendMessageModal">
+        <div class="modal" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-envelope" style="margin-right: 8px; color: var(--xf-primary);"></i>Send Message</h2>
+                <button class="modal-close" onclick="hideSendMessageModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="sendMessageAlert"></div>
+                <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--xf-bg-alt); border-radius: var(--xf-radius); margin-bottom: 15px;">
+                    <div id="sendMsgRecipientAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--xf-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;"></div>
+                    <div>
+                        <div id="sendMsgRecipientName" style="font-weight: 600;"></div>
+                        <div id="sendMsgRecipientUsername" style="font-size: 12px; color: var(--xf-text-muted);"></div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label>Message</label>
+                    <textarea class="form-input" id="newMessageContent" rows="4" placeholder="Type your message..." style="resize: vertical;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideSendMessageModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="sendNewMessage()">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Change Modal -->
+    <div class="modal-overlay" id="avatarModal">
+        <div class="modal" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-camera" style="margin-right: 8px; color: var(--xf-primary);"></i>Change Avatar</h2>
+                <button class="modal-close" onclick="hideAvatarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="avatarModalAlert"></div>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div id="avatarPreview" style="width: 120px; height: 120px; border-radius: 50%; background: var(--xf-primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px; font-weight: 600; margin: 0 auto; overflow: hidden;">
+                        <span id="avatarPreviewInitial">U</span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label>Image URL</label>
+                    <input type="text" class="form-input" id="avatarUrlInput" placeholder="https://example.com/image.jpg" oninput="previewAvatar()">
+                    <small style="color: var(--xf-text-muted); display: block; margin-top: 5px;">Enter a direct link to an image (JPG, PNG, GIF)</small>
+                </div>
+                <div style="text-align: center; margin: 15px 0; color: var(--xf-text-muted);">- or -</div>
+                <div style="text-align: center;">
+                    <button class="btn btn-secondary" onclick="clearAvatar()">
+                        <i class="fas fa-trash"></i> Remove Avatar
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideAvatarModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveAvatar()">
+                    <i class="fas fa-save"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== STATE ====================
+        let currentUser = null;
+        let sessionToken = localStorage.getItem('portalSessionToken') || '';
+        let currentCategoryId = null;
+        let currentThreadId = null;
+        let currentTicketId = null;
+        let pendingVerificationEmail = '';
+        let chatRefreshInterval = null;
+        let currentConversationId = null;
+        let currentConvParticipant = null;
+        let currentUserCardUser = null;
+        let messagesRefreshInterval = null;
+        let currentAvatarUrl = '';
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Setup navigation
+            document.querySelectorAll('.nav-tab').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = e.currentTarget.dataset.page;
+                    showPage(page);
+                });
+            });
+
+            // Load portal info first (banner, name, settings, etc.)
+            await loadPortalInfo();
+
+            // Check session
+            if (sessionToken) {
+                await validateSession();
+            }
+
+            // Handle initial hash route (this will load the appropriate page)
+            handleHashRoute();
+
+            // Listen for hash changes
+            window.addEventListener('hashchange', handleHashRoute);
+        });
+
+        async function loadPortalInfo() {
+            const result = await api('GET', '/info');
+
+            if (result.ok && result.data.portal) {
+                const portal = result.data.portal;
+
+                // Update portal name
+                if (portal.name) {
+                    document.getElementById('portalName').textContent = portal.name;
+                    document.title = portal.name;
+                }
+
+                // Show banner if configured
+                if (portal.banner && (portal.banner.title || portal.banner.image_url)) {
+                    const bannerEl = document.getElementById('portalBanner');
+                    const titleEl = document.getElementById('bannerTitle');
+                    const subtitleEl = document.getElementById('bannerSubtitle');
+                    const imageEl = document.getElementById('bannerImage');
+
+                    if (portal.banner.title) {
+                        titleEl.textContent = portal.banner.title;
+                        titleEl.style.display = 'block';
+                    } else {
+                        titleEl.style.display = 'none';
+                    }
+
+                    if (portal.banner.subtitle) {
+                        subtitleEl.textContent = portal.banner.subtitle;
+                        subtitleEl.style.display = 'block';
+                    } else {
+                        subtitleEl.style.display = 'none';
+                    }
+
+                    if (portal.banner.image_url) {
+                        imageEl.style.backgroundImage = `url(${portal.banner.image_url})`;
+                    }
+
+                    bannerEl.style.display = 'block';
+                }
+
+                // Store settings for later use
+                window.portalSettings = portal.settings || {};
+
+                // Show/hide Support tab based on tickets_enabled setting
+                const supportNav = document.getElementById('navSupport');
+                if (portal.settings?.tickets_enabled !== false) {
+                    supportNav.style.display = '';
+                }
+
+                // Show social links if configured
+                const socialContainer = document.getElementById('socialLinks');
+                const socialLinks = [];
+
+                if (portal.settings?.discord_link) {
+                    socialLinks.push(`<a href="${escapeHtml(portal.settings.discord_link)}" target="_blank" rel="noopener" class="social-link" title="Discord"><i class="fab fa-discord"></i></a>`);
+                }
+                if (portal.settings?.twitter_link) {
+                    socialLinks.push(`<a href="${escapeHtml(portal.settings.twitter_link)}" target="_blank" rel="noopener" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>`);
+                }
+                if (portal.settings?.youtube_link) {
+                    socialLinks.push(`<a href="${escapeHtml(portal.settings.youtube_link)}" target="_blank" rel="noopener" class="social-link" title="YouTube"><i class="fab fa-youtube"></i></a>`);
+                }
+
+                if (socialLinks.length > 0) {
+                    socialContainer.innerHTML = socialLinks.join('');
+                    socialContainer.style.display = 'flex';
+                }
+            }
+        }
+
+        // ==================== API HELPERS ====================
+        function getApiUrl(endpoint) {
+            const portalKey = document.getElementById('portalKey').value;
+            let base = document.getElementById('apiUrl').value.trim();
+            if (base.endsWith('/')) base = base.slice(0, -1);
+            return `${base}/api/portal/v1/${portalKey}${endpoint}`;
+        }
+
+        function getHeaders() {
+            const headers = { 'Content-Type': 'application/json' };
+            if (sessionToken) {
+                headers['Authorization'] = `Bearer ${sessionToken}`;
+            }
+            return headers;
+        }
+
+        async function api(method, endpoint, body = null) {
+            const url = getApiUrl(endpoint);
+            const options = {
+                method,
+                headers: getHeaders()
+            };
+            if (body && method !== 'GET') {
+                options.body = JSON.stringify(body);
+            }
+
+            console.log(`API ${method} ${url}`, body || '');
+
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                return { ok: response.ok, status: response.status, data };
+            } catch (error) {
+                console.error(`API error: ${error.message}`);
+                return { ok: false, status: 0, data: { message: error.message } };
+            }
+        }
+
+        // ==================== HASH ROUTING ====================
+        let skipHashUpdate = false;
+
+        function handleHashRoute() {
+            const hash = window.location.hash.slice(1); // Remove #
+            if (!hash) {
+                showPage('forum', false);
+                return;
+            }
+
+            const parts = hash.split('/');
+            const route = parts[0];
+            const id = parts[1];
+
+            skipHashUpdate = true;
+
+            switch (route) {
+                case 'forum':
+                    showPage('forum', false);
+                    break;
+                case 'category':
+                    if (id) {
+                        currentCategoryId = parseInt(id);
+                        showPage('category', false);
+                        loadCategoryThreads(currentCategoryId);
+                    }
+                    break;
+                case 'thread':
+                    if (id) {
+                        currentThreadId = parseInt(id);
+                        showPage('thread', false);
+                        loadThread(currentThreadId);
+                    }
+                    break;
+                case 'profile':
+                    if (id) {
+                        showUserCardById(parseInt(id));
+                    } else {
+                        showPage('profile', false);
+                    }
+                    break;
+                case 'user':
+                    if (id) {
+                        showUserCardById(parseInt(id));
+                    }
+                    break;
+                case 'chat':
+                    showPage('chat', false);
+                    break;
+                case 'messages':
+                    showPage('messages', false);
+                    break;
+                case 'conversation':
+                    if (id) {
+                        currentConversationId = id;
+                        showPage('conversation', false);
+                    }
+                    break;
+                case 'support':
+                    if (window.portalSettings?.tickets_enabled === false) {
+                        showPage('forum', false);
+                    } else {
+                        showPage('support', false);
+                    }
+                    break;
+                case 'ticket':
+                    if (window.portalSettings?.tickets_enabled === false) {
+                        showPage('forum', false);
+                    } else if (id) {
+                        currentTicketId = parseInt(id);
+                        showPage('ticket', false);
+                        loadTicketDetail(currentTicketId);
+                    }
+                    break;
+                case 'members':
+                    showPage('members', false);
+                    break;
+                case 'login':
+                    showPage('login', false);
+                    break;
+                case 'register':
+                    showPage('register', false);
+                    break;
+                default:
+                    showPage('forum', false);
+            }
+
+            skipHashUpdate = false;
+        }
+
+        function updateHash(hash) {
+            if (!skipHashUpdate) {
+                history.pushState(null, '', '#' + hash);
+            }
+        }
+
+        function copyLinkToClipboard(hash) {
+            const url = window.location.origin + window.location.pathname + '#' + hash;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Link copied to clipboard!', 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('Link copied to clipboard!', 'success');
+            });
+        }
+
+        // ==================== UI HELPERS ====================
+        function showPage(pageId, updateUrl = true) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+
+            // Update nav
+            document.querySelectorAll('.nav-tab').forEach(link => {
+                link.classList.toggle('active', link.dataset.page === pageId);
+            });
+
+            // Update hash for main pages
+            if (updateUrl && !skipHashUpdate) {
+                const hashMap = {
+                    'forum': 'forum',
+                    'chat': 'chat',
+                    'messages': 'messages',
+                    'support': 'support',
+                    'members': 'members',
+                    'profile': 'profile',
+                    'login': 'login',
+                    'register': 'register'
+                };
+                if (hashMap[pageId]) {
+                    updateHash(hashMap[pageId]);
+                }
+            }
+
+            // Load page data
+            if (pageId === 'forum') loadCategories();
+            if (pageId === 'profile') loadProfile();
+            if (pageId === 'friends') loadFriends();
+            if (pageId === 'edit-profile') loadProfileForEdit();
+            if (pageId === 'chat') loadChat();
+            if (pageId === 'messages') loadMessages();
+            if (pageId === 'conversation') loadConversation(currentConversationId);
+            if (pageId === 'support') loadSupport();
+            if (pageId === 'members') loadMembers();
+
+            // Stop chat refresh when leaving chat page
+            if (pageId !== 'chat' && chatRefreshInterval) {
+                clearInterval(chatRefreshInterval);
+                chatRefreshInterval = null;
+            }
+
+            // Stop messages refresh when leaving messages/conversation pages
+            if (pageId !== 'messages' && pageId !== 'conversation' && messagesRefreshInterval) {
+                clearInterval(messagesRefreshInterval);
+                messagesRefreshInterval = null;
+            }
+
+            // Update unread count periodically when logged in
+            if (currentUser) {
+                updateUnreadBadge();
+            }
+        }
+
+        function showAlert(containerId, message, type = 'error') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}"><i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}</div>`;
+        }
+
+        function clearAlert(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}" style="color: var(--xf-${type === 'success' ? 'success' : 'danger'})"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        function updateUI() {
+            const guestActions = document.getElementById('guestActions');
+            const userActions = document.getElementById('userActions');
+
+            if (currentUser) {
+                guestActions.style.display = 'none';
+                userActions.style.display = 'block';
+                document.getElementById('headerUsername').textContent = currentUser.username;
+                document.getElementById('headerAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            } else {
+                guestActions.style.display = 'block';
+                userActions.style.display = 'none';
+            }
+        }
+
+        function formatDate(isoString) {
+            if (!isoString) return 'Unknown';
+            const date = new Date(isoString);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) return 'A moment ago';
+            if (diff < 3600000) return Math.floor(diff / 60000) + ' minutes ago';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + ' hours ago';
+            if (diff < 604800000) return Math.floor(diff / 86400000) + ' days ago';
+
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function getInitial(name) {
+            return name ? name.charAt(0).toUpperCase() : '?';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // BBCode parser - converts BBCode tags to HTML
+        function parseBBCode(text) {
+            if (!text) return '';
+
+            // First escape HTML to prevent XSS
+            let html = escapeHtml(text);
+
+            // Convert line breaks to <br>
+            html = html.replace(/\n/g, '<br>');
+
+            // Bold: [b]text[/b]
+            html = html.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '<strong>$1</strong>');
+
+            // Italic: [i]text[/i]
+            html = html.replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '<em>$1</em>');
+
+            // Underline: [u]text[/u]
+            html = html.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '<u>$1</u>');
+
+            // Strikethrough: [s]text[/s]
+            html = html.replace(/\[s\]([\s\S]*?)\[\/s\]/gi, '<s>$1</s>');
+
+            // Code inline: [code]text[/code]
+            html = html.replace(/\[code\]([\s\S]*?)\[\/code\]/gi, '<code style="background: var(--xf-bg-alt); padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 13px;">$1</code>');
+
+            // Code block: [pre]text[/pre]
+            html = html.replace(/\[pre\]([\s\S]*?)\[\/pre\]/gi, '<pre style="background: var(--xf-bg-alt); padding: 12px; border-radius: 6px; overflow-x: auto; font-family: monospace; font-size: 13px; margin: 10px 0;">$1</pre>');
+
+            // Quote: [quote]text[/quote]
+            html = html.replace(/\[quote\]([\s\S]*?)\[\/quote\]/gi, '<blockquote style="border-left: 3px solid var(--xf-primary); padding: 10px 15px; margin: 10px 0; background: var(--xf-bg-alt); border-radius: 0 6px 6px 0; font-style: italic;">$1</blockquote>');
+
+            // Quote with author: [quote=Author]text[/quote]
+            html = html.replace(/\[quote=([^\]]+)\]([\s\S]*?)\[\/quote\]/gi, '<blockquote style="border-left: 3px solid var(--xf-primary); padding: 10px 15px; margin: 10px 0; background: var(--xf-bg-alt); border-radius: 0 6px 6px 0;"><div style="font-weight: 600; margin-bottom: 5px; color: var(--xf-muted);">$1 wrote:</div><div style="font-style: italic;">$2</div></blockquote>');
+
+            // URL: [url]link[/url]
+            html = html.replace(/\[url\](https?:\/\/[^\s\[]+)\[\/url\]/gi, '<a href="$1" target="_blank" rel="noopener noreferrer" style="color: var(--xf-link);">$1</a>');
+
+            // URL with text: [url=link]text[/url]
+            html = html.replace(/\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi, function(match, url, text) {
+                // Only allow http/https URLs
+                if (url.match(/^https?:\/\//i)) {
+                    return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" style="color: var(--xf-link);">' + text + '</a>';
+                }
+                return text;
+            });
+
+            // Image: [img]url[/img] - more permissive URL matching
+            html = html.replace(/\[img\](https?:\/\/[^\[\]]+?)\[\/img\]/gi, '<img src="$1" style="max-width: 100%; height: auto; border-radius: 6px; margin: 5px 0; display: block;" alt="Image" onerror="this.style.display=\'none\'">');
+
+            // Color: [color=red]text[/color]
+            html = html.replace(/\[color=([a-zA-Z]+|#[0-9a-fA-F]{3,6})\]([\s\S]*?)\[\/color\]/gi, '<span style="color: $1;">$2</span>');
+
+            // Size with named values: [size=lg]text[/size]
+            const sizeMap = {
+                'xs': 10, 'xsmall': 10,
+                'sm': 12, 'small': 12,
+                'md': 14, 'medium': 14,
+                'lg': 18, 'large': 18,
+                'xl': 22, 'xlarge': 22,
+                'xxl': 26, 'xxlarge': 26,
+                'huge': 30
+            };
+            html = html.replace(/\[size=([^\]]+)\]([\s\S]*?)\[\/size\]/gi, function(match, size, text) {
+                let fontSize;
+                const sizeLower = size.toLowerCase().trim();
+                if (sizeMap[sizeLower]) {
+                    fontSize = sizeMap[sizeLower];
+                } else if (/^\d+$/.test(size)) {
+                    fontSize = Math.min(36, Math.max(8, parseInt(size)));
+                } else {
+                    fontSize = 14; // default
+                }
+                return '<span style="font-size: ' + fontSize + 'px;">' + text + '</span>';
+            });
+
+            // Center: [center]text[/center]
+            html = html.replace(/\[center\]([\s\S]*?)\[\/center\]/gi, '<div style="text-align: center;">$1</div>');
+
+            // List: [list][*]item1[*]item2[/list]
+            html = html.replace(/\[list\]([\s\S]*?)\[\/list\]/gi, function(match, content) {
+                const items = content.split(/\[\*\]/).filter(item => item.trim());
+                if (items.length === 0) return '';
+                return '<ul style="margin: 10px 0; padding-left: 25px;">' + items.map(item => '<li>' + item.trim() + '</li>').join('') + '</ul>';
+            });
+
+            // Numbered list: [olist][*]item1[*]item2[/olist]
+            html = html.replace(/\[olist\]([\s\S]*?)\[\/olist\]/gi, function(match, content) {
+                const items = content.split(/\[\*\]/).filter(item => item.trim());
+                if (items.length === 0) return '';
+                return '<ol style="margin: 10px 0; padding-left: 25px;">' + items.map(item => '<li>' + item.trim() + '</li>').join('') + '</ol>';
+            });
+
+            // Horizontal rule: [hr]
+            html = html.replace(/\[hr\]/gi, '<hr style="border: none; border-top: 1px solid var(--xf-border); margin: 15px 0;">');
+
+            // Spoiler: [spoiler]text[/spoiler]
+            html = html.replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi, '<div class="spoiler-box" style="background: var(--xf-bg-alt); border: 1px solid var(--xf-border); border-radius: 6px; margin: 10px 0;"><div class="spoiler-header" style="padding: 8px 12px; cursor: pointer; font-weight: 500;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === \'none\' ? \'block\' : \'none\'; this.querySelector(\'i\').classList.toggle(\'fa-chevron-down\'); this.querySelector(\'i\').classList.toggle(\'fa-chevron-up\');"><i class="fas fa-chevron-down"></i> Spoiler (click to reveal)</div><div class="spoiler-content" style="display: none; padding: 12px; border-top: 1px solid var(--xf-border);">$1</div></div>');
+
+            // Spoiler with title: [spoiler=Title]text[/spoiler]
+            html = html.replace(/\[spoiler=([^\]]+)\]([\s\S]*?)\[\/spoiler\]/gi, '<div class="spoiler-box" style="background: var(--xf-bg-alt); border: 1px solid var(--xf-border); border-radius: 6px; margin: 10px 0;"><div class="spoiler-header" style="padding: 8px 12px; cursor: pointer; font-weight: 500;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === \'none\' ? \'block\' : \'none\'; this.querySelector(\'i\').classList.toggle(\'fa-chevron-down\'); this.querySelector(\'i\').classList.toggle(\'fa-chevron-up\');"><i class="fas fa-chevron-down"></i> $1 (click to reveal)</div><div class="spoiler-content" style="display: none; padding: 12px; border-top: 1px solid var(--xf-border);">$2</div></div>');
+
+            // Convert dashes line to hr (-----------------------------------------)
+            html = html.replace(/^-{5,}$/gm, '<hr style="border: none; border-top: 1px solid var(--xf-border); margin: 15px 0;">');
+            html = html.replace(/<br>-{5,}<br>/g, '<hr style="border: none; border-top: 1px solid var(--xf-border); margin: 15px 0;">');
+
+            // Auto-embed image URLs (URLs ending with image extensions) that aren't already in img tags
+            html = html.replace(/(?<!src="|href=")(https?:\/\/[^\s<>"]+\.(?:jpg|jpeg|png|gif|webp|bmp|svg))(?![^<]*<\/(?:a|img)>)/gi, '<img src="$1" style="max-width: 100%; height: auto; border-radius: 6px; margin: 5px 0; display: block;" alt="Image" onerror="this.style.display=\'none\'">');
+
+            return html;
+        }
+
+        // Format content with BBCode support (use this for thread/reply content)
+        function formatContent(text) {
+            return parseBBCode(text);
+        }
+
+        // BBCode toolbar helper functions
+        function insertBBCode(textareaId, tag) {
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            const before = textarea.value.substring(0, start);
+            const after = textarea.value.substring(end);
+
+            let insertText;
+            if (tag === 'list') {
+                if (selectedText) {
+                    // Convert selected lines to list items
+                    const items = selectedText.split('\n').map(line => '[*]' + line.trim()).join('\n');
+                    insertText = '[list]\n' + items + '\n[/list]';
+                } else {
+                    insertText = '[list]\n[*]Item 1\n[*]Item 2\n[/list]';
+                }
+            } else {
+                insertText = '[' + tag + ']' + (selectedText || '') + '[/' + tag + ']';
+            }
+
+            textarea.value = before + insertText + after;
+            textarea.focus();
+
+            // Position cursor appropriately
+            if (selectedText) {
+                textarea.selectionStart = start;
+                textarea.selectionEnd = start + insertText.length;
+            } else {
+                const cursorPos = start + tag.length + 2;
+                textarea.selectionStart = cursorPos;
+                textarea.selectionEnd = cursorPos;
+            }
+        }
+
+        function insertBBCodeUrl(textareaId) {
+            const url = prompt('Enter URL:', 'https://');
+            if (!url) return;
+
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            const before = textarea.value.substring(0, start);
+            const after = textarea.value.substring(end);
+
+            const linkText = selectedText || prompt('Enter link text:', 'Click here') || url;
+            const insertText = '[url=' + url + ']' + linkText + '[/url]';
+
+            textarea.value = before + insertText + after;
+            textarea.focus();
+            textarea.selectionStart = start + insertText.length;
+            textarea.selectionEnd = start + insertText.length;
+        }
+
+        function insertBBCodeImg(textareaId) {
+            const url = prompt('Enter image URL:', 'https://');
+            if (!url) return;
+
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const before = textarea.value.substring(0, start);
+            const after = textarea.value.substring(textarea.selectionEnd);
+
+            const insertText = '[img]' + url + '[/img]';
+
+            textarea.value = before + insertText + after;
+            textarea.focus();
+            textarea.selectionStart = start + insertText.length;
+            textarea.selectionEnd = start + insertText.length;
+        }
+
+        function insertBBCodeSize(textareaId) {
+            const sizes = ['sm (Small)', 'md (Medium)', 'lg (Large)', 'xl (Extra Large)', 'xxl (Huge)'];
+            const sizeChoice = prompt('Choose size:\\n1. sm (Small)\\n2. md (Medium)\\n3. lg (Large)\\n4. xl (Extra Large)\\n5. xxl (Huge)\\n\\nEnter size name or number:', 'lg');
+            if (!sizeChoice) return;
+
+            let size = sizeChoice.trim().toLowerCase();
+            // Handle numeric choices
+            if (size === '1') size = 'sm';
+            else if (size === '2') size = 'md';
+            else if (size === '3') size = 'lg';
+            else if (size === '4') size = 'xl';
+            else if (size === '5') size = 'xxl';
+            // Clean up if they entered full text
+            size = size.split(' ')[0];
+
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            const before = textarea.value.substring(0, start);
+            const after = textarea.value.substring(end);
+
+            const insertText = '[size=' + size + ']' + (selectedText || 'text') + '[/size]';
+
+            textarea.value = before + insertText + after;
+            textarea.focus();
+            if (selectedText) {
+                textarea.selectionStart = start;
+                textarea.selectionEnd = start + insertText.length;
+            } else {
+                const cursorPos = start + 7 + size.length;
+                textarea.selectionStart = cursorPos;
+                textarea.selectionEnd = cursorPos + 4;
+            }
+        }
+
+        function insertBBCodeColor(textareaId) {
+            const colorChoice = prompt('Enter color name or hex code:\\n\\nExamples: red, blue, green, orange, purple, #ff0000, #3b82f6', 'red');
+            if (!colorChoice) return;
+
+            const color = colorChoice.trim();
+
+            const textarea = document.getElementById(textareaId);
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            const before = textarea.value.substring(0, start);
+            const after = textarea.value.substring(end);
+
+            const insertText = '[color=' + color + ']' + (selectedText || 'text') + '[/color]';
+
+            textarea.value = before + insertText + after;
+            textarea.focus();
+            if (selectedText) {
+                textarea.selectionStart = start;
+                textarea.selectionEnd = start + insertText.length;
+            } else {
+                const cursorPos = start + 8 + color.length;
+                textarea.selectionStart = cursorPos;
+                textarea.selectionEnd = cursorPos + 4;
+            }
+        }
+
+        // ==================== AUTH ====================
+        async function validateSession() {
+            const result = await api('GET', '/auth/session');
+            if (result.ok && result.data.valid) {
+                currentUser = result.data.customer;
+                updateUI();
+                loadCategories();
+                updateUnreadBadge();
+            } else {
+                sessionToken = '';
+                localStorage.removeItem('portalSessionToken');
+                updateUI();
+                loadCategories();
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            clearAlert('loginAlert');
+
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const result = await api('POST', '/auth/login', { username, password });
+
+            if (result.ok) {
+                sessionToken = result.data.session.token;
+                currentUser = result.data.customer;
+                localStorage.setItem('portalSessionToken', sessionToken);
+                updateUI();
+                updateUnreadBadge();
+                showToast('Welcome back, ' + currentUser.username + '!');
+                showPage('forum');
+            } else {
+                if (result.data.error_code === 'EMAIL_NOT_VERIFIED') {
+                    pendingVerificationEmail = username;
+                    document.getElementById('verifyEmail').textContent = username;
+                    showPage('verify');
+                } else {
+                    showAlert('loginAlert', result.data.message || 'Login failed');
+                }
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            clearAlert('registerAlert');
+
+            const body = {
+                username: document.getElementById('regUsername').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value
+            };
+
+            const key = document.getElementById('regKey').value;
+            if (key) body.key = key;
+
+            const result = await api('POST', '/auth/register', body);
+
+            if (result.ok) {
+                pendingVerificationEmail = body.email;
+                document.getElementById('verifyEmail').textContent = body.email;
+                showToast('Account created! Please verify your email.', 'success');
+                showPage('verify');
+
+                if (result.data.debug_code) {
+                    setTimeout(() => {
+                        showAlert('verifyAlert', 'Dev mode - Code: ' + result.data.debug_code, 'info');
+                    }, 500);
+                }
+            } else {
+                showAlert('registerAlert', result.data.message || 'Registration failed');
+            }
+        }
+
+        async function handleVerify(e) {
+            e.preventDefault();
+            clearAlert('verifyAlert');
+
+            const code = document.getElementById('verifyCode').value;
+
+            // Send as email if it contains @, otherwise as username
+            const verifyBody = { code };
+            if (pendingVerificationEmail.includes('@')) {
+                verifyBody.email = pendingVerificationEmail;
+            } else {
+                verifyBody.username = pendingVerificationEmail;
+            }
+            const result = await api('POST', '/auth/register/verify', verifyBody);
+
+            if (result.ok) {
+                showToast('Email verified! You can now log in.', 'success');
+                showPage('login');
+            } else {
+                showAlert('verifyAlert', result.data.message || 'Verification failed');
+            }
+        }
+
+        async function resendVerification() {
+            // Send as email if it contains @, otherwise as username
+            const resendBody = {};
+            if (pendingVerificationEmail.includes('@')) {
+                resendBody.email = pendingVerificationEmail;
+            } else {
+                resendBody.username = pendingVerificationEmail;
+            }
+            const result = await api('POST', '/auth/register/resend', resendBody);
+
+            if (result.ok) {
+                showToast('Verification email sent!', 'success');
+                if (result.data.debug_code) {
+                    showAlert('verifyAlert', 'Dev mode - Code: ' + result.data.debug_code, 'info');
+                }
+            } else {
+                showAlert('verifyAlert', result.data.message || 'Failed to resend');
+            }
+        }
+
+        async function handleForgotPassword(e) {
+            e.preventDefault();
+            clearAlert('forgotAlert');
+
+            const identifier = document.getElementById('forgotEmail').value;
+            const body = identifier.includes('@') ? { email: identifier } : { username: identifier };
+
+            const result = await api('POST', '/auth/password-reset/request', body);
+
+            if (result.ok) {
+                pendingVerificationEmail = identifier;
+                showToast('Reset code sent!', 'success');
+                showPage('reset-password');
+
+                if (result.data.debug_code) {
+                    setTimeout(() => {
+                        showAlert('resetAlert', 'Dev mode - Code: ' + result.data.debug_code, 'info');
+                    }, 500);
+                }
+            } else {
+                showAlert('forgotAlert', result.data.message || 'Request failed');
+            }
+        }
+
+        async function handleResetPassword(e) {
+            e.preventDefault();
+            clearAlert('resetAlert');
+
+            const code = document.getElementById('resetCode').value;
+            const new_password = document.getElementById('resetNewPassword').value;
+
+            const body = {
+                code,
+                new_password,
+                email: pendingVerificationEmail.includes('@') ? pendingVerificationEmail : undefined,
+                username: !pendingVerificationEmail.includes('@') ? pendingVerificationEmail : undefined
+            };
+
+            const result = await api('POST', '/auth/password-reset/confirm', body);
+
+            if (result.ok) {
+                showToast('Password reset!', 'success');
+                showPage('login');
+            } else {
+                showAlert('resetAlert', result.data.message || 'Reset failed');
+            }
+        }
+
+        async function handleLogout() {
+            await api('POST', '/auth/logout');
+            sessionToken = '';
+            currentUser = null;
+            localStorage.removeItem('portalSessionToken');
+            updateUI();
+            showToast('Logged out');
+            showPage('forum');
+        }
+
+        // ==================== FORUM ====================
+        async function loadCategories() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '<div class="content-card"><div class="loading"><div class="spinner"></div>Loading forums...</div></div>';
+
+            const result = await api('GET', '/forum/categories');
+
+            if (result.ok) {
+                const categories = result.data.categories || [];
+                if (categories.length === 0) {
+                    container.innerHTML = '<div class="content-card"><div class="empty-state"><i class="fas fa-folder-open"></i><h3>No Forums</h3><p>No forum categories have been created yet.</p></div></div>';
+                    return;
+                }
+
+                container.innerHTML = '<div class="content-card"><div class="node-list">' + categories.map(cat => `
+                    <div class="node-item" onclick="openCategory(${cat.id}, '${escapeHtml(cat.name)}', '${escapeHtml(cat.description || '')}')">
+                        <div class="node-icon"><i class="fas fa-comments"></i></div>
+                        <div class="node-main">
+                            <div class="node-title">${escapeHtml(cat.name)}</div>
+                            ${cat.description ? `<div class="node-description">${escapeHtml(cat.description)}</div>` : ''}
+                        </div>
+                        <div class="node-stats">
+                            <div>
+                                <span class="node-stat-value">${cat.thread_count || 0}</span>
+                                threads
+                            </div>
+                            <div>
+                                <span class="node-stat-value">${cat.post_count || 0}</span>
+                                messages
+                            </div>
+                        </div>
+                    </div>
+                `).join('') + '</div></div>';
+            } else {
+                // Check for login/membership required errors
+                const errorCode = result.data.error_code;
+                if (errorCode === 'LOGIN_REQUIRED') {
+                    container.innerHTML = `
+                        <div class="content-card">
+                            <div class="empty-state">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <h3>Login Required</h3>
+                                <p>Please log in to browse the forums.</p>
+                                <button class="btn btn-primary" onclick="showPage('login')" style="margin-top: 15px;">
+                                    <i class="fas fa-sign-in-alt"></i> Log In
+                                </button>
+                                <p style="margin-top: 10px; font-size: 13px;">Don't have an account? <a href="#" onclick="showPage('register')">Register now</a></p>
+                            </div>
+                        </div>`;
+                } else if (errorCode === 'MEMBERSHIP_REQUIRED') {
+                    // User is logged in but doesn't have active membership - show redeem option
+                    container.innerHTML = `
+                        <div class="content-card">
+                            <div class="empty-state">
+                                <i class="fas fa-id-card"></i>
+                                <h3>Membership Required</h3>
+                                <p>An active membership is required to browse the forums.</p>
+                                <button class="btn btn-primary" onclick="showRedeemKeyModal()" style="margin-top: 15px;">
+                                    <i class="fas fa-key"></i> Redeem License Key
+                                </button>
+                            </div>
+                        </div>`;
+                } else {
+                    container.innerHTML = '<div class="content-card"><div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>' + escapeHtml(result.data.message || 'Failed to load forums') + '</p></div></div>';
+                }
+            }
+        }
+
+        async function openCategory(id, name, description) {
+            currentCategoryId = id;
+            document.getElementById('categoryBreadcrumb').textContent = name;
+            document.getElementById('categoryTitle').textContent = name;
+            document.getElementById('categoryDescription').textContent = description || '';
+
+            showPage('category', false);
+            updateHash('category/' + id);
+            loadThreads(id);
+        }
+
+        // Load category by ID (used when navigating via hash URL)
+        async function loadCategoryThreads(categoryId) {
+            // First try to get category info from the categories API
+            const catResult = await api('GET', '/forum/categories');
+            if (catResult.ok) {
+                const categories = catResult.data.categories || [];
+                const cat = categories.find(c => c.id === categoryId);
+                if (cat) {
+                    document.getElementById('categoryBreadcrumb').textContent = cat.name;
+                    document.getElementById('categoryTitle').textContent = cat.name;
+                    document.getElementById('categoryDescription').textContent = cat.description || '';
+                } else {
+                    document.getElementById('categoryBreadcrumb').textContent = 'Category';
+                    document.getElementById('categoryTitle').textContent = 'Category';
+                    document.getElementById('categoryDescription').textContent = '';
+                }
+            }
+            loadThreads(categoryId);
+        }
+
+        async function loadThreads(categoryId, page = 1) {
+            const container = document.getElementById('threadsContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading threads...</div>';
+
+            const result = await api('GET', `/forum/categories/${categoryId}/threads?page=${page}&limit=20`);
+
+            // Show new thread button if logged in (or if API says can_post)
+            const canPost = currentUser || (result.ok && result.data && result.data.can_post);
+            document.getElementById('newThreadBtn').style.display = canPost ? 'inline-flex' : 'none';
+
+            if (result.ok) {
+                const threads = result.data.threads || [];
+                if (threads.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><h3>No Threads</h3><p>Be the first to start a discussion!</p></div>';
+                    return;
+                }
+
+                container.innerHTML = threads.map(thread => `
+                    <div class="thread-row" onclick="openThread(${thread.id}, '${escapeHtml(thread.title)}')">
+                        <div class="thread-icon thread-author-clickable" onclick="event.stopPropagation(); showAuthorProfile('${escapeHtml(thread.author_id || thread.author)}', '${escapeHtml(thread.author_name || thread.author)}', '${escapeHtml(thread.author_avatar || '')}')">
+                            ${thread.author_avatar
+                                ? `<img src="${escapeHtml(thread.author_avatar)}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" onerror="this.parentElement.innerHTML='${getInitial(thread.author_name || thread.author)}'">`
+                                : getInitial(thread.author_name || thread.author)}
+                        </div>
+                        <div class="thread-main">
+                            <a class="thread-title-link">${escapeHtml(thread.title)}</a>
+                            <div class="thread-meta">
+                                <a class="thread-author-link" onclick="event.stopPropagation(); showAuthorProfile('${escapeHtml(thread.author_id || thread.author)}', '${escapeHtml(thread.author_name || thread.author)}', '${escapeHtml(thread.author_avatar || '')}')">${escapeHtml(thread.author_name || thread.author)}</a> &middot; ${formatDate(thread.created_at)}
+                            </div>
+                        </div>
+                        <div class="thread-stats">
+                            <div>
+                                <strong>${thread.replies_count || 0}</strong>
+                                replies
+                            </div>
+                            <div>
+                                <strong>${thread.view_count || 0}</strong>
+                                views
+                            </div>
+                        </div>
+                        <div class="thread-latest">
+                            ${thread.last_post_date ? `<a>${formatDate(thread.last_post_date)}</a>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+
+                const pagination = result.data.pagination;
+                if (pagination && pagination.pages > 1) {
+                    let paginationHtml = '';
+                    for (let i = 1; i <= pagination.pages; i++) {
+                        paginationHtml += `<button class="btn ${i === pagination.page ? 'btn-primary' : 'btn-secondary'} btn-sm" onclick="loadThreads(${categoryId}, ${i})">${i}</button>`;
+                    }
+                    document.getElementById('threadsPagination').innerHTML = paginationHtml;
+                } else {
+                    document.getElementById('threadsPagination').innerHTML = '';
+                }
+            } else {
+                // Check for login/membership required errors
+                const errorCode = result.data.error_code;
+                if (errorCode === 'LOGIN_REQUIRED' || errorCode === 'MEMBERSHIP_REQUIRED') {
+                    showPage('forum');
+                    loadCategories();
+                    return;
+                }
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>' + escapeHtml(result.data.message || 'Failed to load threads') + '</p></div>';
+            }
+        }
+
+        async function openThread(id, title) {
+            currentThreadId = id;
+            document.getElementById('threadBreadcrumb').textContent = title;
+            document.getElementById('threadCategoryLink').onclick = () => openCategory(currentCategoryId, document.getElementById('categoryTitle').textContent, '');
+
+            showPage('thread', false);
+            updateHash('thread/' + id);
+            loadThread(id);
+        }
+
+        async function loadThread(threadId) {
+            const result = await api('GET', `/forum/threads/${threadId}`);
+
+            if (result.ok) {
+                const thread = result.data.thread;
+                document.getElementById('threadTitle').textContent = thread.title;
+                document.getElementById('threadBreadcrumb').textContent = thread.title;
+                document.getElementById('threadAuthor').textContent = thread.author_name || thread.author;
+
+                // Set category link for breadcrumb navigation
+                if (thread.category_id) {
+                    currentCategoryId = thread.category_id;
+                    document.getElementById('threadCategoryLink').textContent = thread.category_name || 'Category';
+                    document.getElementById('threadCategoryLink').onclick = () => openCategory(thread.category_id, thread.category_name || 'Category', '');
+                }
+                document.getElementById('threadDate').textContent = formatDate(thread.created_at);
+                document.getElementById('threadViews').textContent = thread.view_count || 0;
+                document.getElementById('threadReplies').textContent = thread.replies_count || 0;
+
+                const threadAuthorAvatar = thread.author_avatar || '';
+                const threadAuthorId = thread.author_id || thread.author;
+                const threadAuthorName = thread.author_name || thread.author;
+
+                let postsHtml = `
+                    <div class="message">
+                        <div class="message-user">
+                            <div class="message-avatar thread-author-clickable" onclick="showAuthorProfile('${escapeHtml(threadAuthorId)}', '${escapeHtml(threadAuthorName)}', '${escapeHtml(threadAuthorAvatar)}')">
+                                ${threadAuthorAvatar
+                                    ? `<img src="${escapeHtml(threadAuthorAvatar)}" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;" onerror="this.parentElement.innerHTML='${getInitial(threadAuthorName)}'">`
+                                    : getInitial(threadAuthorName)}
+                            </div>
+                            <div class="message-user-name thread-author-link" onclick="showAuthorProfile('${escapeHtml(threadAuthorId)}', '${escapeHtml(threadAuthorName)}', '${escapeHtml(threadAuthorAvatar)}')">${escapeHtml(threadAuthorName)}</div>
+                            <div class="message-user-title">${escapeHtml(thread.author_role || 'Member')}</div>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-body">${formatContent(thread.content)}</div>
+                            <div class="message-footer">
+                                <div class="message-date">${formatDate(thread.created_at)}</div>
+                                <div class="message-actions">
+                                    <button class="action-btn ${thread.liked_by_user ? 'liked' : ''}" onclick="likeThread(${threadId})">
+                                        <i class="fas fa-heart"></i> ${thread.like_count || 0}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('postsContainer').innerHTML = postsHtml;
+                loadReplies(threadId);
+
+                // Hide reply editor if not logged in or if thread is locked
+                const canReply = currentUser && !thread.is_locked;
+                document.getElementById('replyEditor').style.display = canReply ? 'block' : 'none';
+
+                // Show locked notice if thread is locked
+                if (thread.is_locked && currentUser) {
+                    const lockedNotice = document.createElement('div');
+                    lockedNotice.className = 'alert alert-info';
+                    lockedNotice.style.margin = '15px';
+                    lockedNotice.innerHTML = '<i class="fas fa-lock"></i> This thread is locked. No new replies can be posted.';
+                    document.getElementById('postsContainer').parentElement.appendChild(lockedNotice);
+                }
+            } else {
+                // Check for login/membership required errors
+                const errorCode = result.data.error_code;
+                if (errorCode === 'LOGIN_REQUIRED' || errorCode === 'MEMBERSHIP_REQUIRED') {
+                    showPage('forum');
+                    loadCategories();
+                    return;
+                }
+                document.getElementById('postsContainer').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>' + escapeHtml(result.data.message || 'Failed to load thread') + '</p></div>';
+            }
+        }
+
+        async function loadReplies(threadId, page = 1) {
+            const result = await api('GET', `/forum/threads/${threadId}/replies?page=${page}`);
+
+            if (result.ok) {
+                const replies = result.data.replies || [];
+                if (replies.length > 0) {
+                    const repliesHtml = replies.map(reply => {
+                        const replyAuthorAvatar = reply.author_avatar || '';
+                        const replyAuthorId = reply.author_id || reply.author;
+                        const replyAuthorName = reply.author_name || reply.author;
+                        return `
+                        <div class="message">
+                            <div class="message-user">
+                                <div class="message-avatar thread-author-clickable" onclick="showAuthorProfile('${escapeHtml(replyAuthorId)}', '${escapeHtml(replyAuthorName)}', '${escapeHtml(replyAuthorAvatar)}')">
+                                    ${replyAuthorAvatar
+                                        ? `<img src="${escapeHtml(replyAuthorAvatar)}" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;" onerror="this.parentElement.innerHTML='${getInitial(replyAuthorName)}'">`
+                                        : getInitial(replyAuthorName)}
+                                </div>
+                                <div class="message-user-name thread-author-link" onclick="showAuthorProfile('${escapeHtml(replyAuthorId)}', '${escapeHtml(replyAuthorName)}', '${escapeHtml(replyAuthorAvatar)}')">${escapeHtml(replyAuthorName)}</div>
+                            </div>
+                            <div class="message-content">
+                                <div class="message-body">${formatContent(reply.content)}</div>
+                                <div class="message-footer">
+                                    <div class="message-date">${formatDate(reply.created_at)}</div>
+                                    <div class="message-actions">
+                                        <button class="action-btn" onclick="likeReply(${threadId}, ${reply.id})">
+                                            <i class="fas fa-heart"></i> ${reply.like_count || 0}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `}).join('');
+
+                    document.getElementById('postsContainer').innerHTML += repliesHtml;
+                }
+            }
+        }
+
+        async function postReply() {
+            const content = document.getElementById('replyContent').value.trim();
+            if (!content) {
+                showToast('Please enter a reply', 'error');
+                return;
+            }
+
+            const result = await api('POST', `/forum/threads/${currentThreadId}/replies`, { content });
+
+            if (result.ok) {
+                document.getElementById('replyContent').value = '';
+                showToast('Reply posted!', 'success');
+                loadThread(currentThreadId);
+            } else {
+                showToast(result.data.message || 'Failed to post reply', 'error');
+            }
+        }
+
+        async function likeThread(threadId) {
+            if (!currentUser) {
+                showToast('Please log in to like posts', 'error');
+                return;
+            }
+            const result = await api('POST', `/forum/threads/${threadId}/like`);
+            if (result.ok) loadThread(threadId);
+        }
+
+        async function likeReply(threadId, replyId) {
+            if (!currentUser) {
+                showToast('Please log in to like posts', 'error');
+                return;
+            }
+            await api('POST', `/forum/threads/${threadId}/replies/${replyId}/like`);
+            loadThread(threadId);
+        }
+
+        function showCreateThreadModal() {
+            if (!currentUser) {
+                showToast('Please log in to create threads', 'error');
+                showPage('login');
+                return;
+            }
+            document.getElementById('createThreadModal').classList.add('active');
+        }
+
+        function hideCreateThreadModal() {
+            document.getElementById('createThreadModal').classList.remove('active');
+        }
+
+        async function createThread() {
+            if (!currentUser) {
+                showToast('Please log in to create threads', 'error');
+                hideCreateThreadModal();
+                showPage('login');
+                return;
+            }
+
+            const title = document.getElementById('newThreadTitle').value.trim();
+            const content = document.getElementById('newThreadContent').value.trim();
+
+            if (!title || !content) {
+                showToast('Please enter title and content', 'error');
+                return;
+            }
+
+            const result = await api('POST', `/forum/categories/${currentCategoryId}/threads`, { title, content });
+
+            console.log('Create thread result:', result);
+
+            if (result.ok) {
+                hideCreateThreadModal();
+                document.getElementById('newThreadTitle').value = '';
+                document.getElementById('newThreadContent').value = '';
+                showToast('Thread created!', 'success');
+                loadThreads(currentCategoryId);
+            } else {
+                const errorMsg = (result.data && result.data.message) ? result.data.message : `Failed to create thread (${result.status})`;
+                showToast(errorMsg, 'error');
+                console.error('Create thread failed:', result);
+            }
+        }
+
+        // ==================== REDEEM LICENSE KEY ====================
+        function showRedeemKeyModal() {
+            document.getElementById('redeemKeyInput').value = '';
+            document.getElementById('redeemKeyAlert').innerHTML = '';
+            document.getElementById('redeemKeyModal').classList.add('active');
+        }
+
+        function hideRedeemKeyModal() {
+            document.getElementById('redeemKeyModal').classList.remove('active');
+        }
+
+        async function redeemLicenseKey() {
+            const key = document.getElementById('redeemKeyInput').value.trim();
+            const alertContainer = document.getElementById('redeemKeyAlert');
+
+            if (!key) {
+                alertContainer.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Please enter a license key</div>';
+                return;
+            }
+
+            alertContainer.innerHTML = '';
+
+            const result = await api('POST', '/auth/redeem-key', { key });
+
+            if (result.ok) {
+                hideRedeemKeyModal();
+                showToast('License key redeemed successfully!', 'success');
+                // Refresh session to get updated subscriptions
+                await validateSession();
+                // Reload current page content
+                loadCategories();
+            } else {
+                alertContainer.innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${escapeHtml(result.data.message || 'Failed to redeem key')}</div>`;
+            }
+        }
+
+        // ==================== PROFILE ====================
+        async function loadProfile() {
+            if (!currentUser) {
+                showPage('login');
+                return;
+            }
+
+            const result = await api('GET', '/profile');
+
+            if (result.ok) {
+                const profile = result.data.profile;
+
+                // Set avatar
+                const avatarEl = document.getElementById('profileAvatar');
+                const avatarInitialEl = document.getElementById('profileAvatarInitial');
+                if (profile.profile_picture) {
+                    avatarInitialEl.innerHTML = `<img src="${escapeHtml(profile.profile_picture)}" alt="Avatar" onerror="this.parentElement.textContent='${getInitial(profile.username)}'">`;
+                } else {
+                    avatarInitialEl.textContent = getInitial(profile.username);
+                }
+
+                document.getElementById('profileName').textContent = profile.username;
+                document.getElementById('profileRole').textContent = profile.role || 'Member';
+                document.getElementById('profileBio').textContent = profile.bio || 'No bio yet.';
+                document.getElementById('profileFriends').textContent = profile.friend_count || 0;
+                document.getElementById('profilePosts').textContent = profile.post_count || 0;
+                document.getElementById('profileRep').textContent = profile.reputation || 0;
+
+                // Store current avatar URL
+                currentAvatarUrl = profile.profile_picture || '';
+
+                // Load HWID state
+                loadHwidState();
+            }
+        }
+
+        async function loadHwidState() {
+            const result = await api('GET', '/auth/session');
+
+            if (result.ok && result.data.customer) {
+                const hwidState = result.data.customer.hwid_state;
+                const hwidPolicy = result.data.customer.hwid_policy;
+
+                if (hwidPolicy && hwidPolicy.enabled) {
+                    document.getElementById('hwidSection').style.display = 'block';
+
+                    // Status
+                    const status = hwidState ? hwidState.status : 'unknown';
+                    let statusText = 'Status: ';
+                    if (status === 'locked') statusText += '<span style="color: var(--xf-success);">Locked</span>';
+                    else if (status === 'unlocked') statusText += '<span style="color: var(--xf-warning);">Unlocked</span>';
+                    else if (status === 'cooldown') statusText += '<span style="color: var(--xf-danger);">On Cooldown</span>';
+                    else statusText += status;
+                    document.getElementById('hwidStatus').innerHTML = statusText;
+
+                    // Resets
+                    if (hwidState) {
+                        const used = hwidState.resets_used || 0;
+                        const max = hwidPolicy.max_resets;
+                        if (max === null || max === undefined) {
+                            document.getElementById('hwidResets').textContent = `Resets used: ${used} (unlimited)`;
+                        } else {
+                            document.getElementById('hwidResets').textContent = `Resets: ${used} / ${max}`;
+                        }
+                    }
+
+                    // Cooldown
+                    if (hwidState && hwidState.cooldown_remaining_seconds > 0) {
+                        const hours = Math.ceil(hwidState.cooldown_remaining_seconds / 3600);
+                        document.getElementById('hwidCooldown').textContent = `Cooldown: ${hours} hour(s) remaining`;
+                    } else {
+                        document.getElementById('hwidCooldown').textContent = '';
+                    }
+
+                    // Reset button
+                    const canReset = hwidState && hwidState.can_reset;
+                    document.getElementById('hwidResetBtn').style.display = canReset ? 'inline-flex' : 'none';
+                } else {
+                    document.getElementById('hwidSection').style.display = 'none';
+                }
+            }
+        }
+
+        async function resetHwid() {
+            if (!confirm('Are you sure you want to reset your HWID? This will allow you to login from a different device.')) {
+                return;
+            }
+
+            const result = await api('POST', '/auth/hwid/reset');
+
+            if (result.ok) {
+                showToast('HWID reset successful!', 'success');
+                loadHwidState();
+            } else {
+                showToast(result.data.message || 'Failed to reset HWID', 'error');
+            }
+        }
+
+        async function loadProfileForEdit() {
+            if (!currentUser) return;
+
+            const result = await api('GET', '/profile');
+            if (result.ok) {
+                const profile = result.data.profile;
+                document.getElementById('editUsername').value = profile.username || '';
+                document.getElementById('editLocation').value = profile.location || '';
+                document.getElementById('editStatus').value = profile.status || '';
+                document.getElementById('editBio').value = profile.bio || '';
+            }
+        }
+
+        async function handleUpdateProfile(e) {
+            e.preventDefault();
+            clearAlert('editProfileAlert');
+
+            const body = {
+                username: document.getElementById('editUsername').value,
+                location: document.getElementById('editLocation').value,
+                status: document.getElementById('editStatus').value,
+                bio: document.getElementById('editBio').value
+            };
+
+            const result = await api('PUT', '/profile', body);
+
+            if (result.ok) {
+                currentUser = { ...currentUser, ...body };
+                updateUI();
+                showToast('Profile updated!', 'success');
+                showPage('profile');
+            } else {
+                showAlert('editProfileAlert', result.data.message || 'Update failed');
+            }
+        }
+
+        // ==================== FRIENDS ====================
+        async function loadFriends() {
+            if (!currentUser) {
+                showPage('login');
+                return;
+            }
+
+            const container = document.getElementById('friendsContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading friends...</div>';
+
+            const result = await api('GET', '/friends');
+
+            if (result.ok) {
+                const friends = result.data.friends || [];
+                if (friends.length === 0) {
+                    container.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><i class="fas fa-user-friends"></i><h3>No Friends Yet</h3><p>Start connecting with other members!</p></div>';
+                    return;
+                }
+
+                container.innerHTML = friends.map(friend => `
+                    <div class="friend-item">
+                        <div class="friend-avatar">${getInitial(friend.username)}</div>
+                        <div class="friend-info">
+                            <div class="friend-name">${escapeHtml(friend.username)}</div>
+                            <div class="friend-status">${escapeHtml(friend.status || 'Member')}</div>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="removeFriend(${friend.id})">
+                            <i class="fas fa-user-minus"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            loadFriendRequests();
+        }
+
+        async function loadFriendRequests() {
+            const result = await api('GET', '/friends/requests');
+
+            if (result.ok) {
+                const incoming = result.data.incoming || [];
+                const outgoing = result.data.outgoing || [];
+
+                const badge = document.getElementById('requestsBadge');
+                badge.textContent = incoming.length > 0 ? `(${incoming.length})` : '';
+
+                const incomingContainer = document.getElementById('incomingRequestsContainer');
+                if (incoming.length === 0) {
+                    incomingContainer.innerHTML = '<p style="color: var(--xf-text-muted); grid-column: 1/-1;">No incoming requests</p>';
+                } else {
+                    incomingContainer.innerHTML = incoming.map(req => `
+                        <div class="friend-item">
+                            <div class="friend-avatar">${getInitial(req.username)}</div>
+                            <div class="friend-info">
+                                <div class="friend-name">${escapeHtml(req.username)}</div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="acceptFriend(${req.id})">Accept</button>
+                            <button class="btn btn-secondary btn-sm" onclick="rejectFriend(${req.id})">Decline</button>
+                        </div>
+                    `).join('');
+                }
+
+                const outgoingContainer = document.getElementById('outgoingRequestsContainer');
+                if (outgoing.length === 0) {
+                    outgoingContainer.innerHTML = '<p style="color: var(--xf-text-muted); grid-column: 1/-1;">No pending requests</p>';
+                } else {
+                    outgoingContainer.innerHTML = outgoing.map(req => `
+                        <div class="friend-item">
+                            <div class="friend-avatar">${getInitial(req.username)}</div>
+                            <div class="friend-info">
+                                <div class="friend-name">${escapeHtml(req.username)}</div>
+                                <div class="friend-status">Pending</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function showFriendsTab(tab) {
+            document.querySelectorAll('.tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('friendsListTab').style.display = tab === 'list' ? 'block' : 'none';
+            document.getElementById('friendsRequestsTab').style.display = tab === 'requests' ? 'block' : 'none';
+        }
+
+        async function acceptFriend(userId) {
+            const result = await api('POST', '/friends/accept', { user_id: userId });
+            if (result.ok) {
+                showToast('Friend added!', 'success');
+                loadFriends();
+            } else {
+                showToast(result.data.message || 'Failed', 'error');
+            }
+        }
+
+        async function rejectFriend(userId) {
+            const result = await api('POST', '/friends/reject', { user_id: userId });
+            if (result.ok) {
+                showToast('Request declined');
+                loadFriendRequests();
+            }
+        }
+
+        async function removeFriend(userId) {
+            if (!confirm('Remove this friend?')) return;
+
+            const result = await api('DELETE', `/friends/${userId}`);
+            if (result.ok) {
+                showToast('Friend removed');
+                loadFriends();
+            } else {
+                showToast(result.data.message || 'Failed', 'error');
+            }
+        }
+
+        // ==================== CHAT ====================
+        async function loadChat() {
+            if (!currentUser) {
+                document.getElementById('chatLoginPrompt').style.display = 'block';
+                document.getElementById('chatContent').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('chatLoginPrompt').style.display = 'none';
+            document.getElementById('chatContent').style.display = 'block';
+
+            await refreshChatMessages();
+
+            // Auto-refresh every 5 seconds
+            if (chatRefreshInterval) clearInterval(chatRefreshInterval);
+            chatRefreshInterval = setInterval(refreshChatMessages, 5000);
+        }
+
+        async function refreshChatMessages() {
+            const result = await api('GET', '/chat/messages?limit=50');
+
+            if (result.ok) {
+                const messages = result.data.messages || [];
+                const container = document.getElementById('chatMessages');
+
+                if (messages.length === 0) {
+                    container.innerHTML = '<div class="empty-state" style="padding: 40px;"><i class="fas fa-comment-slash"></i><h3>No Messages</h3><p>Be the first to say something!</p></div>';
+                    return;
+                }
+
+                container.innerHTML = messages.map(msg => {
+                    const senderName = (msg.sender && (msg.sender.display_name || msg.sender.username)) || 'Unknown';
+                    const senderAvatar = msg.sender && msg.sender.avatar;
+                    const senderId = msg.sender_id;
+
+                    // Cache user data for later access
+                    chatUsersCache[senderId] = {
+                        id: senderId,
+                        username: msg.sender?.username || '',
+                        display_name: msg.sender?.display_name || senderName,
+                        avatar: senderAvatar || '',
+                        role: msg.sender?.role || ''
+                    };
+
+                    const avatarHtml = senderAvatar
+                        ? `<img src="${escapeHtml(senderAvatar)}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; cursor: pointer;" onclick="showUserCardById(${senderId})" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                           <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--xf-primary); display: none; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px; flex-shrink: 0; cursor: pointer;" onclick="showUserCardById(${senderId})">${getInitial(senderName)}</div>`
+                        : `<div style="width: 36px; height: 36px; border-radius: 50%; background: var(--xf-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px; flex-shrink: 0; cursor: pointer;" onclick="showUserCardById(${senderId})">${getInitial(senderName)}</div>`;
+                    return `
+                    <div style="display: flex; gap: 10px; margin-bottom: 12px; padding: 8px; border-radius: var(--xf-radius); ${msg.sender_id == currentUser.id ? 'background: rgba(43,108,176,0.05);' : ''}">
+                        ${avatarHtml}
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 13px; margin-bottom: 2px;">
+                                <a href="#" onclick="event.preventDefault(); showUserCardById(${senderId})" style="color: var(--xf-link); font-weight: 600; text-decoration: none;">${escapeHtml(senderName)}</a>
+                                <span style="color: var(--xf-text-muted); font-size: 11px; margin-left: 8px;">${formatDate(msg.created_at)}</span>
+                            </div>
+                            <div style="font-size: 14px; color: var(--xf-text); word-break: break-word;">${escapeHtml(msg.content)}</div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Scroll to bottom
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const content = input.value.trim();
+
+            if (!content) return;
+            if (!currentUser) {
+                showToast('Please log in to chat', 'error');
+                return;
+            }
+
+            input.disabled = true;
+            const result = await api('POST', '/chat/messages', { content });
+            input.disabled = false;
+
+            if (result.ok) {
+                input.value = '';
+                await refreshChatMessages();
+            } else {
+                showToast(result.data.message || 'Failed to send message', 'error');
+            }
+        }
+
+        // ==================== SUPPORT TICKETS ====================
+        async function loadSupport() {
+            if (!currentUser) {
+                document.getElementById('supportLoginPrompt').style.display = 'block';
+                document.getElementById('ticketsContainer').style.display = 'none';
+                document.getElementById('newTicketBtn').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('supportLoginPrompt').style.display = 'none';
+            document.getElementById('ticketsContainer').style.display = 'block';
+            document.getElementById('newTicketBtn').style.display = 'inline-flex';
+
+            await loadTickets();
+        }
+
+        let isStaffUser = false;
+
+        async function loadTickets() {
+            const container = document.getElementById('ticketsList');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading tickets...</div>';
+
+            const result = await api('GET', '/support/tickets');
+
+            if (result.ok) {
+                const tickets = result.data.tickets || [];
+                isStaffUser = result.data.is_staff || false;
+
+                if (tickets.length === 0) {
+                    const emptyMsg = isStaffUser ? 'No support tickets submitted yet.' : 'You haven\'t submitted any support tickets yet.';
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-ticket-alt"></i><h3>No Tickets</h3><p>${emptyMsg}</p></div>`;
+                    return;
+                }
+
+                container.innerHTML = tickets.map(ticket => `
+                    <div class="node-item" onclick="openTicket(${ticket.id})" style="cursor: pointer;">
+                        <div class="node-icon" style="background: ${getTicketStatusColor(ticket.status)};">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <div class="node-main">
+                            <div class="node-title">#${ticket.id} - ${escapeHtml(ticket.subject)}</div>
+                            <div class="node-description">
+                                ${isStaffUser ? '<strong>' + escapeHtml(ticket.customer_name || 'Unknown') + '</strong> &middot; ' : ''}${getTicketStatusLabel(ticket.status)} &middot; ${formatDate(ticket.updated_at)}
+                            </div>
+                        </div>
+                        ${isStaffUser && ticket.unread_by_staff ? '<span style="background: var(--xf-danger); color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Needs Response</span>' : ''}
+                        ${!isStaffUser && ticket.unread_by_customer ? '<span style="background: var(--xf-danger); color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px;">New Reply</span>' : ''}
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>' + escapeHtml(result.data.message || 'Failed to load tickets') + '</p></div>';
+            }
+        }
+
+        function getTicketStatusColor(status) {
+            switch(status) {
+                case 'open': return 'var(--xf-success)';
+                case 'waiting': return 'var(--xf-warning)';
+                case 'closed': return 'var(--xf-text-muted)';
+                default: return 'var(--xf-primary)';
+            }
+        }
+
+        function getTicketStatusLabel(status) {
+            switch(status) {
+                case 'open': return '<span style="color: var(--xf-success);">Open</span>';
+                case 'waiting': return '<span style="color: var(--xf-warning);">Awaiting Reply</span>';
+                case 'closed': return '<span style="color: var(--xf-text-muted);">Closed</span>';
+                default: return status;
+            }
+        }
+
+        async function openTicket(ticketId) {
+            currentTicketId = ticketId;
+            document.getElementById('ticketBreadcrumb').textContent = `Ticket #${ticketId}`;
+            showPage('ticket', false);
+            updateHash('ticket/' + ticketId);
+            await loadTicketDetail(ticketId);
+        }
+
+        async function loadTicketDetail(ticketId) {
+            const result = await api('GET', `/support/tickets/${ticketId}`);
+
+            if (result.ok) {
+                const ticket = result.data.ticket;
+                const viewingAsStaff = result.data.is_staff || false;
+
+                document.getElementById('ticketSubject').textContent = `#${ticket.id} - ${ticket.subject}`;
+                document.getElementById('ticketCreated').textContent = formatDate(ticket.created_at);
+                document.getElementById('ticketUpdated').textContent = formatDate(ticket.updated_at);
+
+                const statusBadge = document.getElementById('ticketStatusBadge');
+                statusBadge.textContent = ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1);
+                statusBadge.style.background = getTicketStatusColor(ticket.status);
+                statusBadge.style.color = 'white';
+
+                // Render messages
+                const messages = ticket.messages || [];
+                const container = document.getElementById('ticketMessagesContainer');
+                container.innerHTML = messages.map(msg => {
+                    const isStaffMessage = msg.author_type === 'staff';
+                    let authorLabel;
+                    if (isStaffMessage) {
+                        authorLabel = viewingAsStaff ? 'Staff' : 'Support';
+                    } else {
+                        authorLabel = viewingAsStaff ? 'Customer' : 'You';
+                    }
+                    return `
+                    <div class="message">
+                        <div class="message-user" style="${isStaffMessage ? 'background: rgba(43,108,176,0.05);' : ''}">
+                            <div class="message-avatar" style="${isStaffMessage ? 'background: var(--xf-accent);' : ''}">${getInitial(msg.author_name || 'S')}</div>
+                            <div class="message-user-name">${escapeHtml(msg.author_name || 'Unknown')}</div>
+                            <div class="message-user-title">${authorLabel}</div>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-body">${escapeHtml(msg.content)}</div>
+                            <div class="message-footer">
+                                <div class="message-date">${formatDate(msg.created_at)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                // Show/hide reply box based on status
+                document.getElementById('ticketReplyBox').style.display = ticket.status !== 'closed' ? 'block' : 'none';
+            } else {
+                showToast(result.data.message || 'Failed to load ticket', 'error');
+                showPage('support');
+            }
+        }
+
+        function showCreateTicketModal() {
+            document.getElementById('ticketSubjectInput').value = '';
+            document.getElementById('ticketCategoryInput').value = '';
+            document.getElementById('ticketBodyInput').value = '';
+            document.getElementById('createTicketAlert').innerHTML = '';
+            document.getElementById('createTicketModal').classList.add('active');
+        }
+
+        function hideCreateTicketModal() {
+            document.getElementById('createTicketModal').classList.remove('active');
+        }
+
+        async function createTicket() {
+            const subject = document.getElementById('ticketSubjectInput').value.trim();
+            const category = document.getElementById('ticketCategoryInput').value;
+            const body = document.getElementById('ticketBodyInput').value.trim();
+            const alertContainer = document.getElementById('createTicketAlert');
+
+            if (!subject) {
+                alertContainer.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Please enter a subject</div>';
+                return;
+            }
+            if (!body) {
+                alertContainer.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Please enter a message</div>';
+                return;
+            }
+
+            const result = await api('POST', '/support/tickets', { subject, category, body });
+
+            if (result.ok) {
+                hideCreateTicketModal();
+                showToast('Ticket created!', 'success');
+                loadTickets();
+            } else {
+                alertContainer.innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${escapeHtml(result.data.message || 'Failed to create ticket')}</div>`;
+            }
+        }
+
+        async function replyToTicket() {
+            const content = document.getElementById('ticketReplyContent').value.trim();
+
+            if (!content) {
+                showToast('Please enter a reply', 'error');
+                return;
+            }
+
+            const result = await api('POST', `/support/tickets/${currentTicketId}/reply`, { body: content });
+
+            if (result.ok) {
+                document.getElementById('ticketReplyContent').value = '';
+                showToast('Reply sent!', 'success');
+                await loadTicketDetail(currentTicketId);
+            } else {
+                showToast(result.data.message || 'Failed to send reply', 'error');
+            }
+        }
+
+        async function closeTicket() {
+            if (!confirm('Are you sure you want to close this ticket?')) return;
+
+            const result = await api('POST', `/support/tickets/${currentTicketId}/close`);
+
+            if (result.ok) {
+                showToast('Ticket closed', 'success');
+                showPage('support');
+            } else {
+                showToast(result.data.message || 'Failed to close ticket', 'error');
+            }
+        }
+
+        // ==================== MESSAGES / DMs ====================
+        let chatUsersCache = {};
+
+        function cacheChatUser(user) {
+            if (user && user.id) {
+                chatUsersCache[user.id] = user;
+            }
+        }
+
+        async function updateUnreadBadge() {
+            if (!currentUser) {
+                document.getElementById('unreadBadge').style.display = 'none';
+                return;
+            }
+
+            const result = await api('GET', '/messages/unread-count');
+            if (result.ok) {
+                const count = result.data.unread_count || 0;
+                const badge = document.getElementById('unreadBadge');
+                if (count > 0) {
+                    badge.textContent = count > 99 ? '99+' : count;
+                    badge.style.display = 'inline';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        async function loadMessages() {
+            if (!currentUser) {
+                document.getElementById('messagesLoginPrompt').style.display = 'block';
+                document.getElementById('messagesContent').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('messagesLoginPrompt').style.display = 'none';
+            document.getElementById('messagesContent').style.display = 'block';
+
+            const container = document.getElementById('conversationsList');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading conversations...</div>';
+
+            const result = await api('GET', '/messages/conversations');
+
+            if (result.ok) {
+                const conversations = result.data.conversations || [];
+
+                if (conversations.length === 0) {
+                    container.innerHTML = '<div class="empty-state" style="padding: 40px;"><i class="fas fa-inbox"></i><h3>No Messages</h3><p>Start a conversation by clicking on a user in chat!</p></div>';
+                    return;
+                }
+
+                container.innerHTML = conversations.map(conv => {
+                    const p = conv.participant;
+                    const avatarHtml = p.avatar
+                        ? `<img src="${escapeHtml(p.avatar)}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                           <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--xf-primary); display: none; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 18px;">${getInitial(p.display_name || p.username)}</div>`
+                        : `<div style="width: 48px; height: 48px; border-radius: 50%; background: var(--xf-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 18px;">${getInitial(p.display_name || p.username)}</div>`;
+
+                    const lastMsg = conv.last_message;
+                    const preview = lastMsg ? (lastMsg.sender_id == currentUser.id ? 'You: ' : '') + lastMsg.content : 'No messages yet';
+
+                    return `
+                    <div class="node-item" onclick="openConversation('${escapeHtml(conv.conversation_id)}', ${JSON.stringify(p).replace(/"/g, '&quot;')})" style="cursor: pointer;">
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            ${avatarHtml}
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 600; margin-bottom: 3px;">${escapeHtml(p.display_name || p.username)}</div>
+                                <div style="font-size: 13px; color: var(--xf-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(preview.substring(0, 50))}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 11px; color: var(--xf-text-muted);">${lastMsg ? formatDate(lastMsg.created_at) : ''}</div>
+                                ${conv.unread_count > 0 ? `<span style="display: inline-block; background: var(--xf-danger); color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-top: 5px;">${conv.unread_count}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+
+                updateUnreadBadge();
+            } else {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>' + escapeHtml(result.data.message || 'Failed to load messages') + '</p></div>';
+            }
+        }
+
+        function openConversation(conversationId, participant) {
+            currentConversationId = conversationId;
+            currentConvParticipant = participant;
+            showPage('conversation', false);
+            updateHash('conversation/' + conversationId);
+        }
+
+        async function loadConversation(conversationId) {
+            if (!conversationId || !currentUser) {
+                showPage('messages');
+                return;
+            }
+
+            const result = await api('GET', `/messages/conversations/${conversationId}`);
+
+            if (result.ok) {
+                const conv = result.data;
+                const p = conv.participant;
+                currentConvParticipant = p;
+
+                document.getElementById('conversationBreadcrumb').textContent = p.display_name || p.username;
+
+                // Set participant info
+                if (p.avatar) {
+                    document.getElementById('convParticipantAvatar').innerHTML = `<img src="${escapeHtml(p.avatar)}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" onerror="this.outerHTML='${getInitial(p.display_name || p.username)}'">`;
+                } else {
+                    document.getElementById('convParticipantAvatar').textContent = getInitial(p.display_name || p.username);
+                }
+                document.getElementById('convParticipantName').textContent = p.display_name || p.username;
+                document.getElementById('convParticipantRole').textContent = p.role || 'Member';
+
+                // Render messages
+                const messages = conv.messages || [];
+                const container = document.getElementById('conversationMessages');
+
+                if (messages.length === 0) {
+                    container.innerHTML = '<div class="empty-state" style="padding: 40px;"><i class="fas fa-comment-slash"></i><h3>No Messages</h3><p>Send the first message!</p></div>';
+                } else {
+                    container.innerHTML = messages.map(msg => {
+                        const isMe = msg.is_mine;
+                        const sender = msg.sender || {};
+                        const name = isMe ? 'You' : (sender.display_name || sender.username || 'Unknown');
+                        const avatar = sender.avatar;
+
+                        const avatarHtml = avatar
+                            ? `<img src="${escapeHtml(avatar)}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                               <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--xf-primary); display: none; align-items: center; justify-content: center; color: white; font-weight: 600;">${getInitial(name)}</div>`
+                            : `<div style="width: 36px; height: 36px; border-radius: 50%; background: var(--xf-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">${getInitial(name)}</div>`;
+
+                        return `
+                        <div style="display: flex; gap: 10px; margin-bottom: 12px; padding: 8px; border-radius: var(--xf-radius); ${isMe ? 'background: rgba(43,108,176,0.05);' : ''}">
+                            ${avatarHtml}
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-size: 13px; margin-bottom: 2px;">
+                                    <strong style="color: var(--xf-link);">${escapeHtml(name)}</strong>
+                                    <span style="color: var(--xf-text-muted); font-size: 11px; margin-left: 8px;">${formatDate(msg.created_at)}</span>
+                                </div>
+                                <div style="font-size: 14px; color: var(--xf-text); word-break: break-word;">${escapeHtml(msg.content)}</div>
+                            </div>
+                        </div>
+                    `}).join('');
+
+                    container.scrollTop = container.scrollHeight;
+                }
+
+                // Mark as read
+                await api('POST', `/messages/conversations/${conversationId}/read`);
+                updateUnreadBadge();
+            } else {
+                showToast(result.data.message || 'Failed to load conversation', 'error');
+                showPage('messages');
+            }
+        }
+
+        async function sendDM() {
+            const input = document.getElementById('dmInput');
+            const content = input.value.trim();
+
+            if (!content || !currentConversationId) return;
+
+            input.disabled = true;
+            const result = await api('POST', '/messages', {
+                recipient_id: currentConvParticipant.id,
+                content: content
+            });
+            input.disabled = false;
+
+            if (result.ok) {
+                input.value = '';
+                await loadConversation(currentConversationId);
+            } else {
+                showToast(result.data.message || 'Failed to send message', 'error');
+            }
+        }
+
+        // ==================== USER CARD ====================
+        function showUserCardById(userId) {
+            const user = chatUsersCache[userId];
+            if (user) {
+                showUserCard(user);
+            } else {
+                showToast('User data not available', 'error');
+            }
+        }
+
+        function showUserCard(user) {
+            if (!user || !user.id) {
+                showToast('User data not available', 'error');
+                return;
+            }
+
+            currentUserCardUser = user;
+
+            // Set avatar
+            const avatarEl = document.getElementById('userCardAvatar');
+            if (user.avatar) {
+                avatarEl.innerHTML = `<img src="${escapeHtml(user.avatar)}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.outerHTML='${getInitial(user.display_name || user.username)}'">`;
+            } else {
+                avatarEl.textContent = getInitial(user.display_name || user.username);
+            }
+
+            document.getElementById('userCardName').textContent = user.display_name || user.username;
+            document.getElementById('userCardUsername').textContent = '@' + (user.username || '');
+            document.getElementById('userCardRole').textContent = user.role || 'Member';
+
+            // Set role color
+            const roleEl = document.getElementById('userCardRole');
+            if (user.role === 'admin') {
+                roleEl.style.background = 'var(--xf-danger)';
+            } else if (user.role === 'moderator') {
+                roleEl.style.background = 'var(--xf-warning)';
+            } else {
+                roleEl.style.background = 'var(--xf-success)';
+            }
+
+            // Check if self
+            const isSelf = currentUser && currentUser.id == user.id;
+            document.getElementById('userCardActions').style.display = isSelf ? 'none' : 'flex';
+            document.getElementById('userCardSelfNote').style.display = isSelf ? 'block' : 'none';
+
+            // Show modal
+            document.getElementById('userCardModal').classList.add('active');
+
+            // Fetch full profile for friendship status
+            if (!isSelf && currentUser) {
+                fetchUserProfile(user.id);
+            }
+        }
+
+        async function fetchUserProfile(userId) {
+            const result = await api('GET', `/users/${userId}`);
+            if (result.ok) {
+                const profile = result.data.profile;
+                const friendshipStatus = result.data.friendship_status;
+
+                // Update user card with fetched profile data
+                const displayName = profile.display_name || profile.username || '';
+                const username = profile.username || '';
+
+                document.getElementById('userCardName').textContent = displayName;
+                document.getElementById('userCardUsername').textContent = '@' + username;
+                document.getElementById('userCardRole').textContent = profile.role || 'Member';
+
+                // Update avatar
+                const avatarEl = document.getElementById('userCardAvatar');
+                if (profile.avatar) {
+                    avatarEl.innerHTML = `<img src="${escapeHtml(profile.avatar)}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.outerHTML='${getInitial(displayName)}'">`;
+                } else {
+                    avatarEl.textContent = getInitial(displayName);
+                }
+
+                // Update role color
+                const roleEl = document.getElementById('userCardRole');
+                if (profile.role === 'admin') {
+                    roleEl.style.background = 'var(--xf-danger)';
+                } else if (profile.role === 'moderator') {
+                    roleEl.style.background = 'var(--xf-warning)';
+                } else {
+                    roleEl.style.background = 'var(--xf-success)';
+                }
+
+                // Update bio if available
+                if (profile.bio) {
+                    document.getElementById('userCardBio').textContent = profile.bio;
+                    document.getElementById('userCardBio').style.display = 'block';
+                } else {
+                    document.getElementById('userCardBio').style.display = 'none';
+                }
+
+                // Update currentUserCardUser with fetched data
+                currentUserCardUser = {
+                    id: userId,
+                    username: username,
+                    display_name: displayName,
+                    avatar: profile.avatar || '',
+                    role: profile.role || 'member'
+                };
+
+                // Update friend button based on friendship_status
+                // API returns: 'friends', 'request_sent', 'request_received', 'none', 'self'
+                const friendBtn = document.getElementById('userCardFriendBtn');
+                friendBtn.disabled = false;
+                if (friendshipStatus === 'friends') {
+                    friendBtn.innerHTML = '<i class="fas fa-user-check"></i> Friends';
+                    friendBtn.className = 'btn btn-success btn-sm';
+                } else if (friendshipStatus === 'request_sent') {
+                    friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Sent';
+                    friendBtn.className = 'btn btn-secondary btn-sm';
+                    friendBtn.disabled = true;
+                } else if (friendshipStatus === 'request_received') {
+                    friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Accept Request';
+                    friendBtn.className = 'btn btn-primary btn-sm';
+                } else {
+                    friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
+                    friendBtn.className = 'btn btn-secondary btn-sm';
+                }
+            }
+        }
+
+        function hideUserCardModal() {
+            document.getElementById('userCardModal').classList.remove('active');
+            currentUserCardUser = null;
+        }
+
+        function startConversationWithUser() {
+            if (!currentUser) {
+                showToast('Please log in to send messages', 'error');
+                return;
+            }
+
+            if (!currentUserCardUser) return;
+
+            const user = currentUserCardUser; // Save before hiding modal clears it
+            hideUserCardModal();
+            showSendMessageModal(user);
+        }
+
+        async function toggleFriendFromCard() {
+            if (!currentUser) {
+                showToast('Please log in to add friends', 'error');
+                return;
+            }
+
+            if (!currentUserCardUser) return;
+
+            const friendBtn = document.getElementById('userCardFriendBtn');
+            friendBtn.disabled = true;
+
+            const result = await api('POST', '/friends/request', { user_id: currentUserCardUser.id });
+            if (result.ok) {
+                showToast(result.data.message || 'Friend request sent!', 'success');
+                // Update button immediately
+                friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Sent';
+                friendBtn.className = 'btn btn-secondary btn-sm';
+            } else {
+                showToast(result.data.message || 'Failed to send request', 'error');
+                friendBtn.disabled = false;
+            }
+        }
+
+        // ==================== SEND MESSAGE MODAL ====================
+        let sendMessageRecipient = null;
+
+        function showSendMessageModal(user) {
+            if (!currentUser) {
+                showToast('Please log in to send messages', 'error');
+                return;
+            }
+
+            sendMessageRecipient = user;
+
+            // Set recipient info
+            const avatarEl = document.getElementById('sendMsgRecipientAvatar');
+            if (user.avatar) {
+                avatarEl.innerHTML = `<img src="${escapeHtml(user.avatar)}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`;
+            } else {
+                avatarEl.textContent = getInitial(user.display_name || user.username);
+            }
+
+            document.getElementById('sendMsgRecipientName').textContent = user.display_name || user.username;
+            document.getElementById('sendMsgRecipientUsername').textContent = '@' + (user.username || '');
+            document.getElementById('newMessageContent').value = '';
+            document.getElementById('sendMessageAlert').innerHTML = '';
+
+            document.getElementById('sendMessageModal').classList.add('active');
+        }
+
+        function hideSendMessageModal() {
+            document.getElementById('sendMessageModal').classList.remove('active');
+            sendMessageRecipient = null;
+        }
+
+        async function sendNewMessage() {
+            if (!sendMessageRecipient) return;
+
+            const content = document.getElementById('newMessageContent').value.trim();
+            const alertEl = document.getElementById('sendMessageAlert');
+
+            if (!content) {
+                alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Please enter a message</div>';
+                return;
+            }
+
+            const result = await api('POST', '/messages', {
+                recipient_id: sendMessageRecipient.id,
+                content: content
+            });
+
+            if (result.ok) {
+                hideSendMessageModal();
+                showToast('Message sent!', 'success');
+
+                // Open the conversation
+                currentConversationId = result.data.conversation_id;
+                currentConvParticipant = sendMessageRecipient;
+                showPage('conversation');
+            } else {
+                alertEl.innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${escapeHtml(result.data.message || 'Failed to send message')}</div>`;
+            }
+        }
+
+        // ==================== AUTHOR PROFILE POPUP ====================
+        function showAuthorProfile(authorId, authorName, authorAvatar) {
+            // Don't show popup for own profile when clicking
+            if (currentUser && (authorId === currentUser.id || authorId === `customer_${currentUser.id}`)) {
+                showToast('This is your profile', 'info');
+                return;
+            }
+
+            // Create a simple profile popup with option to send message
+            const existingPopup = document.getElementById('authorProfilePopup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+
+            const popup = document.createElement('div');
+            popup.id = 'authorProfilePopup';
+            popup.className = 'modal-overlay active';
+            popup.onclick = (e) => { if (e.target === popup) popup.remove(); };
+
+            const avatarHtml = authorAvatar
+                ? `<img src="${escapeHtml(authorAvatar)}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;" onerror="this.parentElement.innerHTML='<div class=\\'message-avatar\\' style=\\'width:80px;height:80px;font-size:28px;\\'>${getInitial(authorName)}</div>'">`
+                : `<div class="message-avatar" style="width: 80px; height: 80px; font-size: 28px;">${getInitial(authorName)}</div>`;
+
+            popup.innerHTML = `
+                <div class="modal" style="max-width: 350px;">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-user"></i> Member Profile</h3>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
+                    </div>
+                    <div class="modal-body" style="text-align: center; padding: 30px 20px;">
+                        <div style="margin-bottom: 15px;">
+                            ${avatarHtml}
+                        </div>
+                        <h3 style="margin: 0 0 5px 0; font-size: 18px;">${escapeHtml(authorName)}</h3>
+                        <p style="color: var(--xf-muted); margin: 0 0 20px 0; font-size: 13px;">@${escapeHtml(authorName.toLowerCase().replace(/\s+/g, ''))}</p>
+                        ${currentUser ? `
+                            <button class="btn btn-primary" onclick="document.getElementById('authorProfilePopup').remove(); showSendMessageModal({id: '${escapeHtml(authorId)}', username: '${escapeHtml(authorName)}', display_name: '${escapeHtml(authorName)}', avatar: '${escapeHtml(authorAvatar || '')}'})">
+                                <i class="fas fa-envelope"></i> Send Message
+                            </button>
+                        ` : `
+                            <p style="color: var(--xf-muted); font-size: 13px;"><i class="fas fa-info-circle"></i> Log in to send messages</p>
+                        `}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(popup);
+        }
+
+        // ==================== AVATAR CHANGE ====================
+        function showAvatarModal() {
+            if (!currentUser) {
+                showToast('Please log in first', 'error');
+                return;
+            }
+
+            // Set current avatar in preview
+            const previewEl = document.getElementById('avatarPreview');
+            const previewInitialEl = document.getElementById('avatarPreviewInitial');
+            const urlInput = document.getElementById('avatarUrlInput');
+
+            if (currentAvatarUrl) {
+                previewInitialEl.innerHTML = `<img src="${escapeHtml(currentAvatarUrl)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.textContent='${getInitial(currentUser.username)}'">`;
+                urlInput.value = currentAvatarUrl;
+            } else {
+                previewInitialEl.textContent = getInitial(currentUser.username);
+                urlInput.value = '';
+            }
+
+            document.getElementById('avatarModalAlert').innerHTML = '';
+            document.getElementById('avatarModal').classList.add('active');
+        }
+
+        function hideAvatarModal() {
+            document.getElementById('avatarModal').classList.remove('active');
+        }
+
+        function previewAvatar() {
+            const url = document.getElementById('avatarUrlInput').value.trim();
+            const previewInitialEl = document.getElementById('avatarPreviewInitial');
+
+            if (url) {
+                previewInitialEl.innerHTML = `<img src="${escapeHtml(url)}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.textContent='${getInitial(currentUser?.username || 'U')}'">`;
+            } else {
+                previewInitialEl.textContent = getInitial(currentUser?.username || 'U');
+            }
+        }
+
+        function clearAvatar() {
+            document.getElementById('avatarUrlInput').value = '';
+            document.getElementById('avatarPreviewInitial').textContent = getInitial(currentUser?.username || 'U');
+        }
+
+        async function saveAvatar() {
+            const url = document.getElementById('avatarUrlInput').value.trim();
+            const alertEl = document.getElementById('avatarModalAlert');
+
+            // Validate URL if provided
+            if (url && !url.match(/^https?:\/\/.+/i)) {
+                alertEl.innerHTML = '<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Please enter a valid URL starting with http:// or https://</div>';
+                return;
+            }
+
+            const result = await api('PUT', '/profile', { profile_picture: url });
+
+            if (result.ok) {
+                hideAvatarModal();
+                showToast('Avatar updated!', 'success');
+                currentAvatarUrl = url;
+
+                // Update profile avatar display
+                const avatarInitialEl = document.getElementById('profileAvatarInitial');
+                if (url) {
+                    avatarInitialEl.innerHTML = `<img src="${escapeHtml(url)}" alt="Avatar" onerror="this.parentElement.textContent='${getInitial(currentUser.username)}'">`;
+                } else {
+                    avatarInitialEl.textContent = getInitial(currentUser.username);
+                }
+            } else {
+                alertEl.innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${escapeHtml(result.data.message || 'Failed to update avatar')}</div>`;
+            }
+        }
+
+        // ==================== MEMBERS ====================
+        let memberSearchTimeout = null;
+
+        async function loadMembers() {
+            const container = document.getElementById('membersList');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading online members...</div>';
+
+            const searchQuery = document.getElementById('memberSearchInput').value.trim();
+
+            // Default: show online members. If searching (3+ chars), search all members
+            let endpoint = '/members?online=true&limit=50';
+            if (searchQuery.length >= 3) {
+                endpoint = `/members?q=${encodeURIComponent(searchQuery)}&limit=30`;
+            }
+
+            const result = await api('GET', endpoint);
+
+            if (result.ok) {
+                const members = result.data.members || [];
+
+                document.getElementById('membersOnlineCount').textContent = result.data.online_count || 0;
+
+                if (members.length === 0) {
+                    if (searchQuery.length >= 3) {
+                        container.innerHTML = '<div class="empty-state" style="padding: 40px;"><i class="fas fa-search"></i><h3>No Results</h3><p>No members found matching "' + escapeHtml(searchQuery) + '"</p></div>';
+                    } else {
+                        container.innerHTML = '<div class="empty-state" style="padding: 40px;"><i class="fas fa-users"></i><h3>No One Online</h3><p>No members are currently online.</p></div>';
+                    }
+                    return;
+                }
+
+                container.innerHTML = members.map(member => {
+                    // Cache member for user card
+                    chatUsersCache[member.id] = {
+                        id: member.id,
+                        username: member.username,
+                        display_name: member.display_name,
+                        avatar: member.avatar,
+                        role: member.role
+                    };
+
+                    const avatarHtml = member.avatar
+                        ? `<img src="${escapeHtml(member.avatar)}" style="width: 44px; height: 44px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                           <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--xf-primary); display: none; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px;">${getInitial(member.display_name || member.username)}</div>`
+                        : `<div style="width: 44px; height: 44px; border-radius: 50%; background: var(--xf-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px;">${getInitial(member.display_name || member.username)}</div>`;
+
+                    const onlineIndicator = member.is_online
+                        ? '<span style="position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: var(--xf-success); border-radius: 50%; border: 2px solid white;"></span>'
+                        : '';
+
+                    const roleColor = member.role === 'admin' ? 'var(--xf-danger)' : member.role === 'moderator' ? 'var(--xf-warning)' : 'var(--xf-text-muted)';
+
+                    return `
+                    <div class="node-item" onclick="showUserCardById(${member.id})" style="cursor: pointer;">
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <div style="position: relative; flex-shrink: 0;">
+                                ${avatarHtml}
+                                ${onlineIndicator}
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 600;">${escapeHtml(member.display_name || member.username)}</div>
+                                <div style="font-size: 12px; color: ${roleColor}; text-transform: capitalize;">${escapeHtml(member.role || 'member')}</div>
+                            </div>
+                            ${member.is_online ? '<span style="color: var(--xf-success); font-size: 11px;"><i class="fas fa-circle" style="font-size: 8px;"></i> Online</span>' : '<span style="color: var(--xf-text-muted); font-size: 11px;">Offline</span>'}
+                        </div>
+                    </div>
+                `}).join('');
+            } else {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Error</h3><p>' + escapeHtml(result.data.message || 'Failed to load members') + '</p></div>';
+            }
+        }
+
+        function onMemberSearchInput() {
+            clearTimeout(memberSearchTimeout);
+            const query = document.getElementById('memberSearchInput').value.trim();
+
+            // Only search if 3+ characters or empty (to reset to online view)
+            if (query.length >= 3 || query.length === 0) {
+                memberSearchTimeout = setTimeout(() => loadMembers(), 300);
+            }
+        }
+    </script>
+</body>
+</html>
