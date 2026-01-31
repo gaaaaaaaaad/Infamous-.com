@@ -37,6 +37,23 @@
                     </button>
                 </div>
 
+                <!-- Notifications Bell -->
+                <div class="notification-bell" id="notificationBell" style="display: none;" onclick="toggleNotificationsPanel()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </div>
+
+                <!-- Notifications Panel -->
+                <div class="notifications-panel" id="notificationsPanel" style="display: none;">
+                    <div class="notifications-header">
+                        <span>Notifications</span>
+                        <button class="mark-all-read-btn" onclick="markAllNotificationsRead()">Mark all read</button>
+                    </div>
+                    <div class="notifications-list" id="notificationsList">
+                        <div class="notifications-empty">No notifications</div>
+                    </div>
+                </div>
+
                 <!-- User Dropdown -->
                 <div class="user-dropdown" id="userDropdown" style="display: none;">
                     <div class="user-avatar" id="headerAvatar">U</div>
@@ -257,11 +274,28 @@
                 <p>Discuss, share, and connect with other members</p>
             </div>
 
-            <div class="content-card">
-                <div id="categoryList">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        Loading forums...
+            <div class="forum-layout">
+                <div class="forum-main">
+                    <div class="content-card">
+                        <div id="categoryList">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                                Loading forums...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="forum-sidebar">
+                    <div class="sidebar-card">
+                        <div class="sidebar-header">
+                            <h3><i class="fas fa-clock"></i> Recent Activity</h3>
+                        </div>
+                        <div class="sidebar-body" id="recentActivityList">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -328,6 +362,7 @@
                     <h2><i class="fas fa-reply"></i> Post Reply</h2>
                 </div>
                 <div class="card-body">
+                    <div id="replyingToIndicator" class="replying-to-box" style="display: none;"></div>
                     <div class="bbcode-toolbar">
                         <button type="button" class="bbcode-btn" onclick="insertBBCode('replyContent', 'b')" title="Bold"><i class="fas fa-bold"></i></button>
                         <button type="button" class="bbcode-btn" onclick="insertBBCode('replyContent', 'i')" title="Italic"><i class="fas fa-italic"></i></button>
@@ -358,6 +393,21 @@
             <div class="page-title">
                 <h1>Global Chat</h1>
                 <p>Chat with the community in real-time</p>
+            </div>
+
+            <!-- Moderator Panel (hidden by default, shown via JS for moderators) -->
+            <div class="chat-mod-panel" id="chatModPanel" style="display: none;">
+                <div class="content-card" style="margin-bottom: 16px;">
+                    <div class="card-header" style="cursor: pointer;" onclick="toggleMutedUsersPanel()">
+                        <h3><i class="fas fa-user-slash"></i> Muted Users</h3>
+                        <span id="mutedUsersToggle"><i class="fas fa-chevron-down"></i></span>
+                    </div>
+                    <div class="card-body" id="mutedUsersPanel" style="display: none;">
+                        <div id="mutedUsersList">
+                            <div class="empty-state"><p>Click to load muted users</p></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="chat-container">
@@ -555,6 +605,21 @@
                 </div>
                 <div class="card-body">
                     <p id="profileBio" style="color: var(--muted-text);">No bio set.</p>
+                </div>
+            </div>
+
+            <!-- Subscriptions Section -->
+            <div class="content-card profile-section">
+                <div class="card-header">
+                    <h2><i class="fas fa-crown"></i> Subscriptions</h2>
+                </div>
+                <div class="card-body">
+                    <div id="subscriptionsList" class="subscriptions-grid">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading subscriptions...
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -829,6 +894,157 @@
                 <button class="btn btn-secondary" onclick="hideEditBioModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveBio()">
                     <i class="fas fa-save"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move Thread Modal -->
+    <div class="modal-overlay" id="moveThreadModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-arrows-alt"></i> Move Thread</h2>
+                <button class="modal-close" onclick="hideMoveThreadModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="moveThreadId">
+                <div class="form-row">
+                    <label>Move to Category</label>
+                    <select class="form-input" id="moveThreadCategory">
+                        <option value="">Select category...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideMoveThreadModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="moveThread()">
+                    <i class="fas fa-check"></i> Move Thread
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Category Modal -->
+    <div class="modal-overlay" id="createCategoryModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-folder-plus"></i> Create Category</h2>
+                <button class="modal-close" onclick="hideCreateCategoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <label>Category Name</label>
+                    <input type="text" class="form-input" id="newCategoryName" placeholder="Enter category name">
+                </div>
+                <div class="form-row">
+                    <label>Description</label>
+                    <textarea class="form-input" id="newCategoryDescription" rows="3" placeholder="Brief description (optional)"></textarea>
+                </div>
+                <div class="form-row">
+                    <label>Parent Category</label>
+                    <select class="form-input" id="newCategoryParent">
+                        <option value="">None (Top Level)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>View Permission</label>
+                    <select class="form-input" id="newCategoryViewPerm">
+                        <option value="view_all">Everyone</option>
+                        <option value="view_members">Members Only</option>
+                        <option value="view_moderators">Moderators Only</option>
+                        <option value="view_admins">Admins Only</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Post Permission</label>
+                    <select class="form-input" id="newCategoryPostPerm">
+                        <option value="post_members">Members</option>
+                        <option value="post_moderators">Moderators Only</option>
+                        <option value="post_admins">Admins Only</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideCreateCategoryModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="createCategory()">
+                    <i class="fas fa-plus"></i> Create Category
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div class="modal-overlay" id="editCategoryModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Category</h2>
+                <button class="modal-close" onclick="hideEditCategoryModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editCategoryId">
+                <div class="form-row">
+                    <label>Category Name</label>
+                    <input type="text" class="form-input" id="editCategoryName" placeholder="Enter category name">
+                </div>
+                <div class="form-row">
+                    <label>Description</label>
+                    <textarea class="form-input" id="editCategoryDescription" rows="3" placeholder="Brief description (optional)"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideEditCategoryModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="editCategory()">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mute User Modal -->
+    <div class="modal-overlay" id="muteUserModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-slash"></i> Mute User</h2>
+                <button class="modal-close" onclick="hideMuteUserModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="muteUserId">
+                <p style="margin-bottom: 16px;">
+                    Mute <strong id="muteUserName"></strong> from chat?
+                </p>
+                <div class="form-row">
+                    <label>Reason (optional)</label>
+                    <input type="text" class="form-input" id="muteUserReason" placeholder="Reason for mute">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideMuteUserModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmMuteUser()">
+                    <i class="fas fa-user-slash"></i> Mute User
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Reply Modal -->
+    <div class="modal-overlay" id="editReplyModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Reply</h2>
+                <button class="modal-close" onclick="hideEditReplyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editReplyThreadId">
+                <input type="hidden" id="editReplyId">
+                <div class="form-row">
+                    <label>Content</label>
+                    <textarea class="form-input" id="editReplyContent" rows="6" placeholder="Edit your reply..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideEditReplyModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditedReply()">
+                    <i class="fas fa-save"></i> Save Changes
                 </button>
             </div>
         </div>

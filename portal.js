@@ -17,6 +17,50 @@ let messagesRefreshInterval = null;
 let currentAvatarUrl = '';
 let memberSearchTimeout = null;
 let usersCache = {};
+let currentParentReplyId = null;
+let currentParentReplyAuthor = null;
+let subscriptionsCache = null; // Cache for subscriptions fetched from API
+let cachedCategories = []; // Cache for forum categories (for reordering)
+
+// ==================== SUBSCRIPTION CONFIGURATION ====================
+// Fallback config used when API fails to load subscriptions
+// Subscriptions are now fetched from the /subscriptions API endpoint
+const SUBSCRIPTIONS_FALLBACK = [
+    { key: '1', name: 'Subscription 1', description: 'Subscription type 1', image: '' },
+    { key: '2', name: 'Subscription 2', description: 'Subscription type 2', image: '' },
+    { key: '3', name: 'Subscription 3', description: 'Subscription type 3', image: '' },
+];
+
+// Fetch subscriptions from API and cache them
+async function fetchSubscriptionsConfig() {
+    // Return cached data if available
+    if (subscriptionsCache !== null) {
+        return subscriptionsCache;
+    }
+
+    try {
+        const result = await api('GET', '/subscriptions');
+        console.log('Subscriptions API response:', result);
+        if (result.ok && result.data?.subscriptions && result.data.subscriptions.length > 0) {
+            // Transform API response to match expected format
+            subscriptionsCache = result.data.subscriptions.map(sub => ({
+                key: sub.public_id,
+                name: sub.display_name || sub.name || `Subscription ${sub.public_id}`,
+                description: sub.description || '',
+                image: sub.image || ''
+            }));
+            console.log('Loaded subscriptions from API:', subscriptionsCache);
+            return subscriptionsCache;
+        } else {
+            console.warn('No subscriptions with public_id returned from API. Set public_id on subscriptions in admin panel.');
+        }
+    } catch (e) {
+        console.warn('Failed to fetch subscriptions from API:', e);
+    }
+
+    // Return empty array if no subscriptions configured
+    return [];
+}
 
 // ==================== INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', async () => {
@@ -578,6 +622,7 @@ function updateUIForUser() {
     document.getElementById('guestActions').style.display = 'none';
     document.getElementById('userDropdown').style.display = 'flex';
     document.getElementById('navMessages').style.display = '';
+    document.getElementById('notificationBell').style.display = '';
 
     if (window.portalSettings?.tickets_enabled !== false) {
         document.getElementById('navSupport').style.display = '';
@@ -591,12 +636,17 @@ function updateUIForUser() {
     } else {
         avatarEl.textContent = getInitials(currentUser.display_name || currentUser.username);
     }
+
+    // Load notification count
+    loadUnreadNotificationCount();
 }
 
 function updateUIForGuest() {
     document.getElementById('guestActions').style.display = 'flex';
     document.getElementById('userDropdown').style.display = 'none';
     document.getElementById('navMessages').style.display = 'none';
+    document.getElementById('notificationBell').style.display = 'none';
+    document.getElementById('notificationsPanel').style.display = 'none';
 }
 
 // ==================== FORUM - CATEGORIES ====================
@@ -608,13 +658,51 @@ async function loadCategories() {
 
     if (result.ok) {
         const categories = result.data.categories || [];
+        cachedCategories = categories; // Cache for reordering
+
+        let html = '';
+
+        // Admin toolbar for creating categories
+        if (isPortalAdmin()) {
+            html += `
+                <div class="admin-toolbar">
+                    <button class="btn btn-primary" onclick="showCreateCategoryModal()">
+                        <i class="fas fa-plus"></i> Create Category
+                    </button>
+                </div>
+            `;
+        }
+
         if (categories.length === 0) {
-            container.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><h3>No Forums</h3><p>No forum categories have been created yet.</p></div>';
+            html += '<div class="empty-state"><i class="fas fa-comments"></i><h3>No Forums</h3><p>No forum categories have been created yet.</p></div>';
+            container.innerHTML = html;
             return;
         }
 
-        let html = '<div class="node-list">';
-        for (const category of categories) {
+        html += '<div class="node-list">';
+        for (let i = 0; i < categories.length; i++) {
+            const category = categories[i];
+            const isFirst = i === 0;
+            const isLast = i === categories.length - 1;
+
+            // Admin edit/delete/move buttons (stopPropagation to prevent opening category)
+            const adminActions = isPortalAdmin() ? `
+                <div class="node-admin-actions" onclick="event.stopPropagation()">
+                    <button class="admin-action-btn" onclick="moveCategoryUp(${category.id})" title="Move Up" ${isFirst ? 'disabled' : ''}>
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <button class="admin-action-btn" onclick="moveCategoryDown(${category.id})" title="Move Down" ${isLast ? 'disabled' : ''}>
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                    <button class="admin-action-btn" onclick="showEditCategoryModal(${category.id}, '${escapeHtml(category.name).replace(/'/g, "\\'")}', '${escapeHtml(category.description || '').replace(/'/g, "\\'")}')" title="Edit Category">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="admin-action-btn" onclick="deleteCategory(${category.id})" title="Delete Category">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            ` : '';
+
             html += `
                 <div class="node-item" onclick="openCategory(${category.id})">
                     <div class="node-icon">
@@ -634,6 +722,7 @@ async function loadCategories() {
                             Posts
                         </div>
                     </div>
+                    ${adminActions}
                 </div>
             `;
         }
@@ -651,6 +740,80 @@ async function loadCategories() {
         }
         container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Error</h3><p>' + escapeHtml(result.data.message || 'Failed to load forums.') + '</p></div>';
     }
+
+    // Also load recent activity
+    loadRecentActivity();
+}
+
+async function loadRecentActivity() {
+    const container = document.getElementById('recentActivityList');
+    if (!container) return;
+
+    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const result = await api('GET', '/forum/recent-activity?limit=10');
+
+    if (result.ok && result.data.activities) {
+        const activities = result.data.activities;
+
+        if (activities.length === 0) {
+            container.innerHTML = '<div class="activity-empty">No recent activity</div>';
+            return;
+        }
+
+        let html = '<div class="activity-list">';
+        for (const activity of activities) {
+            const timeAgo = formatTimeAgo(activity.created_at);
+
+            if (activity.type === 'thread') {
+                html += `
+                    <div class="activity-item" onclick="openThread(${activity.id})">
+                        <div class="activity-icon thread-icon"><i class="fas fa-comment-alt"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">${escapeHtml(activity.title)}</div>
+                            <div class="activity-meta">
+                                <span class="activity-author">${escapeHtml(activity.author_name)}</span>
+                                <span class="activity-time">${timeAgo}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (activity.type === 'reply') {
+                html += `
+                    <div class="activity-item" onclick="openThread(${activity.thread_id})">
+                        <div class="activity-icon reply-icon"><i class="fas fa-reply"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">Re: ${escapeHtml(activity.thread_title)}</div>
+                            <div class="activity-meta">
+                                <span class="activity-author">${escapeHtml(activity.author_name)}</span>
+                                <span class="activity-time">${timeAgo}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        html += '</div>';
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '<div class="activity-empty">Failed to load activity</div>';
+    }
+}
+
+function formatTimeAgo(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
 }
 
 function openCategory(categoryId) {
@@ -791,6 +954,9 @@ async function likeReply(threadId, replyId) {
 }
 
 async function loadThread(threadId) {
+    // Clear any reply-to state from previous thread
+    cancelReplyTo();
+
     const container = document.getElementById('postList');
     container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading thread...</div>';
 
@@ -798,6 +964,7 @@ async function loadThread(threadId) {
 
     if (result.ok && result.data.thread) {
         const thread = result.data.thread;
+        console.log('Thread loaded:', thread, 'is_locked:', thread.is_locked, 'is_pinned:', thread.is_pinned);
         document.getElementById('threadTitle').textContent = thread.title;
         document.getElementById('threadBreadcrumb').textContent = thread.title;
 
@@ -821,11 +988,42 @@ async function loadThread(threadId) {
         // Render the main thread post first
         let html = '';
 
+        // Add moderation toolbar for moderators
+        const isPinned = thread.is_pinned || thread.pinned;
+        if (isPortalModerator()) {
+            html += `
+                <div class="thread-mod-toolbar">
+                    <span class="mod-toolbar-label"><i class="fas fa-shield-alt"></i> Moderation:</span>
+                    <button class="mod-btn ${isLocked ? 'active' : ''}" onclick="toggleThreadLock(${threadId})" title="${isLocked ? 'Unlock' : 'Lock'} Thread">
+                        <i class="fas fa-${isLocked ? 'unlock' : 'lock'}"></i> ${isLocked ? 'Unlock' : 'Lock'}
+                    </button>
+                    <button class="mod-btn ${isPinned ? 'active' : ''}" onclick="toggleThreadPin(${threadId})" title="${isPinned ? 'Unpin' : 'Pin'} Thread">
+                        <i class="fas fa-thumbtack"></i> ${isPinned ? 'Unpin' : 'Pin'}
+                    </button>
+                    <button class="mod-btn" onclick="showMoveThreadModal(${threadId})" title="Move Thread">
+                        <i class="fas fa-arrows-alt"></i> Move
+                    </button>
+                    <button class="mod-btn mod-btn-danger" onclick="deleteThreadMod(${threadId})" title="Delete Thread">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+        }
+
         // Show locked notice if thread is locked
         if (isLocked) {
             html += `
                 <div class="thread-locked-notice">
                     <i class="fas fa-lock"></i> This thread is locked. No new replies can be posted.
+                </div>
+            `;
+        }
+
+        // Show pinned notice if thread is pinned
+        if (isPinned) {
+            html += `
+                <div class="thread-pinned-notice">
+                    <i class="fas fa-thumbtack"></i> This thread is pinned.
                 </div>
             `;
         }
@@ -903,8 +1101,32 @@ async function loadThread(threadId) {
 
             const replyLikeCount = reply.like_count || 0;
             const replyLikedByUser = reply.liked_by_user || false;
+
+            // Check if user can edit/delete this reply
+            const isOwnReply = currentUser && authorId === `customer_${currentUser.id}`;
+            const canEditReply = isOwnReply || isPortalModerator();
+            const canDeleteReply = isOwnReply || isPortalModerator();
+
+            // Build edited info if reply was edited (only show if edited_by is set)
+            let editedInfo = '';
+            if (reply.edited_by) {
+                const editedByName = reply.edited_by_name || 'Staff';
+                const editedAt = reply.updated_at ? formatDate(reply.updated_at) : '';
+                const editorId = reply.edited_by;
+                editedInfo = `<div class="reply-edited-info"><i class="fas fa-pencil-alt"></i> Edited by <span class="edited-by-link" onclick="showUserCardById('${editorId}')">${escapeHtml(editedByName)}</span>${editedAt ? ' on ' + editedAt : ''}</div>`;
+            }
+
+            // Encode content for data attribute
+            const encodedContent = btoa(encodeURIComponent(reply.content || reply.body || ''));
+
+            // Check for reply-to-reply indicator
+            const replyMetadata = reply.metadata || {};
+            const parentReplyAuthor = reply.parent_reply_author || replyMetadata.parent_reply_author;
+            const parentReplyId = reply.parent_reply_id || replyMetadata.parent_reply_id;
+            const replyingToInfo = parentReplyAuthor ? `<div class="replying-to-indicator"><i class="fas fa-reply"></i> Replying to <span class="replying-to-name">${escapeHtml(parentReplyAuthor)}</span></div>` : '';
+
             html += `
-                <div class="message">
+                <div class="message" data-reply-id="${reply.id}" data-reply-content="${encodedContent}" data-reply-author="${escapeHtml(authorName)}">
                     <div class="message-user">
                         <div class="message-avatar" onclick="showUserCardById(${authorId})">
                             ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
@@ -913,14 +1135,24 @@ async function loadThread(threadId) {
                         <div class="message-role ${getRoleClass(authorRole)}">${escapeHtml(authorRole)}</div>
                     </div>
                     <div class="message-content">
+                        ${replyingToInfo}
                         <div class="message-header">
                             <div class="message-date">${formatDate(reply.created_at)}</div>
+                            ${canEditReply || canDeleteReply ? `
+                            <div class="reply-actions">
+                                ${canEditReply ? `<button class="reply-action-btn" onclick="showEditReplyModal(${threadId}, ${reply.id})"><i class="fas fa-edit"></i></button>` : ''}
+                                ${canDeleteReply ? `<button class="reply-action-btn reply-delete-btn" onclick="deleteReplyMod(${threadId}, ${reply.id})"><i class="fas fa-trash"></i></button>` : ''}
+                            </div>
+                            ` : ''}
                         </div>
                         <div class="message-body">${parseBBCode(reply.content || reply.body || '')}</div>
+                        ${editedInfo}
                         <div class="message-footer">
                             <button class="like-btn ${replyLikedByUser ? 'liked' : ''}" onclick="likeReply(${threadId}, ${reply.id})">
                                 <i class="fas fa-heart"></i> ${replyLikeCount}
                             </button>
+                            ${currentUser ? `<button class="reply-to-btn" onclick="replyToReply(${reply.id}, '${escapeHtml(authorName).replace(/'/g, "\\'")}')"><i class="fas fa-reply"></i> Reply</button>` : ''}
+                            ${currentUser ? `<button class="quote-btn" onclick="quoteReply(${reply.id})"><i class="fas fa-quote-right"></i> Quote</button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -1002,12 +1234,19 @@ async function postReply() {
     const btn = document.querySelector('#replySection .btn-primary');
     setButtonLoading(btn, true);
 
-    const result = await api('POST', `/forum/threads/${currentThreadId}/replies`, { content });
+    // Build request body with optional parent_reply_id
+    const requestBody = { content };
+    if (currentParentReplyId) {
+        requestBody.parent_reply_id = currentParentReplyId;
+    }
+
+    const result = await api('POST', `/forum/threads/${currentThreadId}/replies`, requestBody);
 
     setButtonLoading(btn, false, '<i class="fas fa-paper-plane"></i> Post Reply');
 
     if (result.ok) {
         document.getElementById('replyContent').value = '';
+        cancelReplyTo();  // Clear the reply-to state
         showToast('Reply posted!', 'success');
         loadThread(currentThreadId);
     } else {
@@ -1035,6 +1274,12 @@ async function loadChat() {
         chatSendBtn.disabled = true;
         chatInput.placeholder = 'Login to chat...';
         chatGuestNotice.style.display = 'flex';
+    }
+
+    // Show moderator panel for moderators
+    const modPanel = document.getElementById('chatModPanel');
+    if (modPanel) {
+        modPanel.style.display = isPortalModerator() ? '' : 'none';
     }
 
     await refreshChat();
@@ -1076,15 +1321,36 @@ async function refreshChat() {
                 ? `<img src="${escapeHtml(sender.avatar || sender.profile_picture)}" alt="Avatar">`
                 : getInitials(senderName);
 
+            // Check if user is muted (for visual indicator)
+            const isMuted = msg.sender_muted || false;
+            const mutedClass = isMuted ? 'chat-message-muted' : '';
+
+            // Mod actions (only for moderators)
+            const modActions = isPortalModerator() ? `
+                <div class="chat-mod-actions">
+                    <button class="chat-mod-btn" onclick="deleteChatMessage(${msg.id})" title="Delete Message">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="chat-mod-btn" onclick="deleteUserMessages(${senderId})" title="Delete All User Messages">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button class="chat-mod-btn" onclick="showMuteUserModal(${senderId}, '${escapeHtml(senderName)}')" title="Mute User">
+                        <i class="fas fa-user-slash"></i>
+                    </button>
+                </div>
+            ` : '';
+
             html += `
-                <div class="chat-message">
+                <div class="chat-message ${mutedClass}">
                     <div class="chat-avatar" onclick="showUserCardById(${senderId})">
                         ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
                     </div>
                     <div class="chat-content">
                         <div class="chat-header">
                             <span class="chat-username" onclick="showUserCardById(${senderId})">${escapeHtml(senderName)}</span>
+                            ${isMuted ? '<span class="chat-muted-badge"><i class="fas fa-volume-mute"></i></span>' : ''}
                             <span class="chat-time">${formatTime(msg.created_at)}</span>
+                            ${modActions}
                         </div>
                         <div class="chat-text">${escapeHtml(msg.content || msg.message)}</div>
                     </div>
@@ -1463,13 +1729,59 @@ async function loadTicketDetail(ticketId) {
         statusEl.textContent = ticket.status || 'Open';
         statusEl.className = `ticket-badge ${statusClass}`;
 
-        // Hide reply section if closed
-        document.getElementById('ticketReplySection').style.display =
-            ticket.status?.toLowerCase() === 'closed' ? 'none' : '';
+        // Show/hide reply section based on status
+        const replySection = document.getElementById('ticketReplySection');
+        const isClosed = ticket.status?.toLowerCase() === 'closed';
+        replySection.style.display = isClosed ? 'none' : '';
+
+        // Render staff controls if user is staff
+        let html = '';
+        if (isPortalStaff()) {
+            const priorityOptions = ['low', 'normal', 'high', 'urgent'].map(p =>
+                `<option value="${p}" ${ticket.priority === p ? 'selected' : ''}>${p.charAt(0).toUpperCase() + p.slice(1)}</option>`
+            ).join('');
+
+            const statusOptions = ['open', 'waiting', 'resolved', 'closed'].map(s =>
+                `<option value="${s}" ${ticket.status === s ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`
+            ).join('');
+
+            const categoryOptions = ['general', 'billing', 'technical', 'account', 'other'].map(c =>
+                `<option value="${c}" ${ticket.category === c ? 'selected' : ''}>${c.charAt(0).toUpperCase() + c.slice(1)}</option>`
+            ).join('');
+
+            html += `
+                <div class="ticket-staff-controls">
+                    <div class="form-row">
+                        <label>Priority</label>
+                        <select class="form-input" onchange="updateTicketPriority(${ticketId}, this.value)">
+                            ${priorityOptions}
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>Category</label>
+                        <select class="form-input" onchange="updateTicketCategory(${ticketId}, this.value)">
+                            ${categoryOptions}
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>Status</label>
+                        <select class="form-input" onchange="updateTicketStatus(${ticketId}, this.value)">
+                            ${statusOptions}
+                        </select>
+                    </div>
+                    ${isClosed ? `
+                        <div class="form-row" style="display: flex; align-items: flex-end;">
+                            <button class="btn btn-primary btn-sm" onclick="reopenTicket(${ticketId})">
+                                <i class="fas fa-redo"></i> Reopen Ticket
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
 
         // Render messages
         const messages = ticket.messages || [ticket];
-        let html = '';
 
         for (const msg of messages) {
             const author = msg.author || {};
@@ -1600,11 +1912,76 @@ async function loadProfile() {
     document.getElementById('profileJoined').textContent = formatDate(currentUser.created_at);
     document.getElementById('profileBio').textContent = currentUser.bio || 'No bio set.';
 
+    // Load subscriptions
+    loadSubscriptions();
+
     // Load friends
     loadFriends();
 
     // Load HWID state
     loadHwidState();
+}
+
+async function loadSubscriptions() {
+    const container = document.getElementById('subscriptionsList');
+    if (!container) return;
+
+    // Show loading state
+    container.innerHTML = '<p style="color: var(--muted-text);"><i class="fas fa-spinner fa-spin"></i> Loading subscriptions...</p>';
+
+    // Fetch available subscriptions from API
+    const subscriptionsConfig = await fetchSubscriptionsConfig();
+
+    // Get user's owned subscriptions (public_ids)
+    // subscription_types contains the public_ids the user owns
+    const subscriptionTypes = currentUser.subscription_types || currentUser.subscriptions || [];
+    const subscriptionGrants = currentUser.subscription_grants || [];
+
+    // Build list of owned subscription keys (from both subscription_types and active grants)
+    const ownedKeys = [
+        ...subscriptionTypes,
+        ...subscriptionGrants
+            .filter(grant => grant.status === 'active')
+            .map(grant => grant.public_id || grant.name)
+    ];
+
+    if (subscriptionsConfig.length === 0) {
+        container.innerHTML = '<p style="color: var(--muted-text);">No subscriptions configured for this portal.</p>';
+        return;
+    }
+
+    let html = '';
+    for (const sub of subscriptionsConfig) {
+        const isOwned = ownedKeys.some(key =>
+            String(key).toLowerCase() === String(sub.key).toLowerCase()
+        );
+
+        html += `
+            <div class="subscription-card ${isOwned ? 'owned' : 'locked'}" ${!isOwned ? 'onclick="showRedeemKeyModal()"' : ''}>
+                ${sub.image
+                    ? `<img src="${escapeHtml(sub.image)}" alt="${escapeHtml(sub.name)}" class="subscription-image" onerror="this.outerHTML='<div class=\\'subscription-image-placeholder\\'><i class=\\'fas fa-crown\\'></i></div>'">`
+                    : `<div class="subscription-image-placeholder"><i class="fas fa-crown"></i></div>`
+                }
+                <div class="subscription-info">
+                    <div class="subscription-name">${escapeHtml(sub.name)}</div>
+                    <div class="subscription-description">${escapeHtml(sub.description)}</div>
+                    <div class="subscription-status ${isOwned ? 'owned' : 'locked'}">
+                        <i class="fas fa-${isOwned ? 'check-circle' : 'lock'}"></i>
+                        ${isOwned ? 'Owned' : 'Locked'}
+                    </div>
+                </div>
+                ${!isOwned ? `
+                    <div class="subscription-overlay">
+                        <div class="subscription-overlay-text">
+                            <i class="fas fa-key"></i> Redeem Key
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
 }
 
 async function loadHwidState() {
@@ -1806,6 +2183,35 @@ async function fetchAndShowUserCard(userId) {
     }
 }
 
+async function showUserCardByUsername(username) {
+    // Try to find in cache first by username
+    for (const key in usersCache) {
+        const user = usersCache[key];
+        if (user.username && user.username.toLowerCase() === username.toLowerCase()) {
+            showUserCard(user);
+            return;
+        }
+    }
+
+    // Fetch by username
+    const result = await api('GET', `/users/by-username/${encodeURIComponent(username)}`);
+    if (result.ok && result.data.profile) {
+        const profile = result.data.profile;
+        const userId = profile.id || `customer_${profile.customer_id}`;
+        usersCache[userId] = {
+            id: userId,
+            username: profile.username || '',
+            display_name: profile.display_name || profile.username || '',
+            avatar: profile.avatar || profile.profile_picture || '',
+            role: profile.role || '',
+            bio: profile.bio || ''
+        };
+        showUserCard(usersCache[userId], result.data.friendship_status);
+    } else {
+        showToast('User not found', 'error');
+    }
+}
+
 function showUserCard(user, friendshipStatus) {
     if (!user || !user.id) {
         showToast('User data not available', 'error');
@@ -1844,10 +2250,10 @@ function showUserCard(user, friendshipStatus) {
     if (friendshipStatus === 'friends') {
         friendBtn.innerHTML = '<i class="fas fa-user-minus"></i> Remove Friend';
         friendBtn.className = 'btn btn-danger btn-sm';
-    } else if (friendshipStatus === 'pending_received') {
+    } else if (friendshipStatus === 'request_received') {
         friendBtn.innerHTML = '<i class="fas fa-check"></i> Accept Request';
         friendBtn.className = 'btn btn-success btn-sm';
-    } else if (friendshipStatus === 'pending_sent') {
+    } else if (friendshipStatus === 'request_sent') {
         friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
         friendBtn.className = 'btn btn-secondary btn-sm';
         friendBtn.disabled = true;
@@ -1874,10 +2280,10 @@ async function fetchUserFriendshipStatus(userId) {
         if (status === 'friends') {
             friendBtn.innerHTML = '<i class="fas fa-user-minus"></i> Remove Friend';
             friendBtn.className = 'btn btn-danger btn-sm';
-        } else if (status === 'pending_received') {
+        } else if (status === 'request_received') {
             friendBtn.innerHTML = '<i class="fas fa-check"></i> Accept Request';
             friendBtn.className = 'btn btn-success btn-sm';
-        } else if (status === 'pending_sent') {
+        } else if (status === 'request_sent') {
             friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
             friendBtn.className = 'btn btn-secondary btn-sm';
             friendBtn.disabled = true;
@@ -2159,7 +2565,9 @@ async function redeemLicenseKey() {
     if (result.ok) {
         hideRedeemKeyModal();
         showToast('License key redeemed successfully!', 'success');
-        validateSession();
+        // Refresh session and subscriptions
+        await validateSession();
+        loadSubscriptions();
     } else {
         showAlert('redeemKeyAlert', result.data.message || 'Invalid license key', 'danger');
     }
@@ -2271,8 +2679,10 @@ function parseBBCode(text) {
     // Code
     html = html.replace(/\[code\]([\s\S]*?)\[\/code\]/gi, '<pre class="bb-code">$1</pre>');
 
-    // Quote
-    html = html.replace(/\[quote\]([\s\S]*?)\[\/quote\]/gi, '<blockquote class="bb-quote">$1</blockquote>');
+    // Quote with author
+    html = html.replace(/\[quote=([^\]]+)\]([\s\S]*?)\[\/quote\]/gi, '<blockquote class="bb-quote"><div class="bb-quote-author"><i class="fas fa-quote-left"></i> $1 wrote:</div><div class="bb-quote-content">$2</div></blockquote>');
+    // Quote without author
+    html = html.replace(/\[quote\]([\s\S]*?)\[\/quote\]/gi, '<blockquote class="bb-quote"><div class="bb-quote-content">$1</div></blockquote>');
 
     // Spoiler
     html = html.replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi, '<span class="bb-spoiler">$1</span>');
@@ -2321,6 +2731,9 @@ function parseBBCode(text) {
 
     // Line breaks
     html = html.replace(/\n/g, '<br>');
+
+    // @mentions - make them clickable
+    html = html.replace(/@([a-zA-Z0-9_-]{3,30})/g, '<span class="mention-link" onclick="showUserCardByUsername(\'$1\')">@$1</span>');
 
     return html;
 }
@@ -2402,6 +2815,756 @@ function formatTime(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+// ==================== MODERATION HELPERS ====================
+function isPortalModerator() {
+    if (!currentUser) return false;
+    const role = (currentUser.role || '').toLowerCase();
+    return role === 'admin' || role === 'moderator';
+}
+
+function isPortalAdmin() {
+    if (!currentUser) return false;
+    const role = (currentUser.role || '').toLowerCase();
+    return role === 'admin';
+}
+
+function isPortalStaff() {
+    if (!currentUser) return false;
+    const role = (currentUser.role || '').toLowerCase();
+    return ['admin', 'moderator', 'support', 'staff'].includes(role);
+}
+
+// ==================== FORUM MODERATION ====================
+async function toggleThreadLock(threadId) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+
+    const result = await api('POST', `/forum/threads/${threadId}/lock`);
+    if (result.ok) {
+        showToast(result.data.message || 'Thread lock toggled', 'success');
+        loadThread(threadId);
+    } else {
+        showToast(result.data?.message || 'Failed to toggle lock', 'error');
+    }
+}
+
+async function toggleThreadPin(threadId) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+
+    const result = await api('POST', `/forum/threads/${threadId}/pin`);
+    if (result.ok) {
+        showToast(result.data.message || 'Thread pin toggled', 'success');
+        loadThread(threadId);
+    } else {
+        showToast(result.data?.message || 'Failed to toggle pin', 'error');
+    }
+}
+
+function showMoveThreadModal(threadId) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+    document.getElementById('moveThreadId').value = threadId;
+    loadCategoriesForMove();
+    document.getElementById('moveThreadModal').classList.add('active');
+}
+
+function hideMoveThreadModal() {
+    document.getElementById('moveThreadModal').classList.remove('active');
+}
+
+async function loadCategoriesForMove() {
+    const select = document.getElementById('moveThreadCategory');
+    select.innerHTML = '<option value="">Loading...</option>';
+
+    const result = await api('GET', '/forum/categories');
+    if (result.ok && result.data.categories) {
+        let html = '<option value="">Select category...</option>';
+        for (const cat of result.data.categories) {
+            html += `<option value="${cat.id}">${escapeHtml(cat.name)}</option>`;
+            if (cat.children) {
+                for (const child of cat.children) {
+                    html += `<option value="${child.id}">&nbsp;&nbsp;${escapeHtml(child.name)}</option>`;
+                }
+            }
+        }
+        select.innerHTML = html;
+    } else {
+        select.innerHTML = '<option value="">Failed to load categories</option>';
+    }
+}
+
+async function moveThread() {
+    const threadId = document.getElementById('moveThreadId').value;
+    const categoryId = document.getElementById('moveThreadCategory').value;
+
+    if (!categoryId) {
+        showToast('Please select a category', 'warning');
+        return;
+    }
+
+    const result = await api('POST', `/forum/threads/${threadId}/move`, { category_id: parseInt(categoryId) });
+    if (result.ok) {
+        showToast('Thread moved successfully', 'success');
+        hideMoveThreadModal();
+        loadThread(parseInt(threadId));
+    } else {
+        showToast(result.data?.message || 'Failed to move thread', 'error');
+    }
+}
+
+async function deleteThreadMod(threadId) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+    if (!confirm('Are you sure you want to delete this thread? This cannot be undone.')) {
+        return;
+    }
+    const result = await api('DELETE', `/forum/threads/${threadId}`);
+    if (result.ok) {
+        showToast('Thread deleted', 'success');
+        // Navigate back to category if we have one, otherwise forum
+        if (currentCategoryId) {
+            openCategory(currentCategoryId);
+        } else {
+            showPage('forum');
+        }
+    } else {
+        showToast(result.data?.message || 'Failed to delete thread', 'error');
+    }
+}
+
+// ==================== REPLY MODERATION ====================
+function showEditReplyModal(threadId, replyId) {
+    document.getElementById('editReplyThreadId').value = threadId;
+    document.getElementById('editReplyId').value = replyId;
+
+    // Get content from data attribute
+    const replyEl = document.querySelector(`.message[data-reply-id="${replyId}"]`);
+    let content = '';
+    if (replyEl) {
+        const encodedContent = replyEl.dataset.replyContent;
+        if (encodedContent) {
+            try {
+                content = decodeURIComponent(atob(encodedContent));
+            } catch (e) {
+                console.error('Failed to decode reply content:', e);
+            }
+        }
+    }
+
+    document.getElementById('editReplyContent').value = content;
+    document.getElementById('editReplyModal').classList.add('active');
+}
+
+function hideEditReplyModal() {
+    document.getElementById('editReplyModal').classList.remove('active');
+}
+
+async function saveEditedReply() {
+    const threadId = document.getElementById('editReplyThreadId').value;
+    const replyId = document.getElementById('editReplyId').value;
+    const content = document.getElementById('editReplyContent').value.trim();
+
+    if (!content) {
+        showToast('Content is required', 'warning');
+        return;
+    }
+
+    const result = await api('PUT', `/forum/threads/${threadId}/replies/${replyId}`, { content });
+    if (result.ok) {
+        showToast('Reply updated', 'success');
+        hideEditReplyModal();
+        // Reload the thread to show updated content
+        loadThread(parseInt(threadId));
+    } else {
+        showToast(result.data?.message || 'Failed to update reply', 'error');
+    }
+}
+
+async function deleteReplyMod(threadId, replyId) {
+    if (!confirm('Are you sure you want to delete this reply? This cannot be undone.')) {
+        return;
+    }
+
+    const result = await api('DELETE', `/forum/threads/${threadId}/replies/${replyId}`);
+    if (result.ok) {
+        showToast('Reply deleted', 'success');
+        // Remove the reply from the DOM or reload thread
+        const replyEl = document.querySelector(`.message[data-reply-id="${replyId}"]`);
+        if (replyEl) {
+            replyEl.remove();
+        } else {
+            loadThread(parseInt(threadId));
+        }
+    } else {
+        showToast(result.data?.message || 'Failed to delete reply', 'error');
+    }
+}
+
+function quoteReply(replyId) {
+    if (!currentUser) {
+        showToast('Please login to reply', 'warning');
+        return;
+    }
+
+    const replyEl = document.querySelector(`.message[data-reply-id="${replyId}"]`);
+    if (!replyEl) {
+        showToast('Reply not found', 'error');
+        return;
+    }
+
+    // Get content and author from data attributes
+    const encodedContent = replyEl.dataset.replyContent;
+    const author = replyEl.dataset.replyAuthor || 'Unknown';
+
+    let content = '';
+    if (encodedContent) {
+        try {
+            content = decodeURIComponent(atob(encodedContent));
+        } catch (e) {
+            console.error('Failed to decode reply content:', e);
+        }
+    }
+
+    // Build quote BBCode
+    const quoteText = `[quote=${author}]${content}[/quote]\n\n`;
+
+    // Insert into reply textarea
+    const textarea = document.getElementById('replyContent');
+    if (textarea) {
+        textarea.value = quoteText + textarea.value;
+        textarea.focus();
+        // Scroll to reply section
+        textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function replyToReply(replyId, authorName) {
+    if (!currentUser) {
+        showToast('Please login to reply', 'warning');
+        return;
+    }
+
+    currentParentReplyId = replyId;
+    currentParentReplyAuthor = authorName;
+
+    // Show the replying-to indicator above the textarea
+    const indicator = document.getElementById('replyingToIndicator');
+    if (indicator) {
+        indicator.innerHTML = `<i class="fas fa-reply"></i> Replying to <strong>${escapeHtml(authorName)}</strong> <button class="cancel-reply-to" onclick="cancelReplyTo()"><i class="fas fa-times"></i></button>`;
+        indicator.style.display = 'flex';
+    }
+
+    // Focus and scroll to reply textarea
+    const textarea = document.getElementById('replyContent');
+    if (textarea) {
+        textarea.focus();
+        textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function cancelReplyTo() {
+    currentParentReplyId = null;
+    currentParentReplyAuthor = null;
+
+    const indicator = document.getElementById('replyingToIndicator');
+    if (indicator) {
+        indicator.style.display = 'none';
+        indicator.innerHTML = '';
+    }
+}
+
+// ==================== CATEGORY MANAGEMENT ====================
+function showCreateCategoryModal() {
+    if (!isPortalAdmin()) {
+        showToast('Admin access required', 'error');
+        return;
+    }
+    document.getElementById('newCategoryName').value = '';
+    document.getElementById('newCategoryDescription').value = '';
+    document.getElementById('newCategoryParent').value = '';
+    document.getElementById('newCategoryViewPerm').value = 'view_all';
+    document.getElementById('newCategoryPostPerm').value = 'post_members';
+    loadCategoriesForParent();
+    document.getElementById('createCategoryModal').classList.add('active');
+}
+
+function hideCreateCategoryModal() {
+    document.getElementById('createCategoryModal').classList.remove('active');
+}
+
+async function loadCategoriesForParent() {
+    const select = document.getElementById('newCategoryParent');
+    select.innerHTML = '<option value="">None (Top Level)</option>';
+
+    const result = await api('GET', '/forum/categories');
+    if (result.ok && result.data.categories) {
+        for (const cat of result.data.categories) {
+            select.innerHTML += `<option value="${cat.id}">${escapeHtml(cat.name)}</option>`;
+        }
+    }
+}
+
+async function createCategory() {
+    const name = document.getElementById('newCategoryName').value.trim();
+    const description = document.getElementById('newCategoryDescription').value.trim();
+    const parentId = document.getElementById('newCategoryParent').value || null;
+    const viewPerm = document.getElementById('newCategoryViewPerm').value;
+    const postPerm = document.getElementById('newCategoryPostPerm').value;
+
+    if (!name) {
+        showToast('Category name is required', 'warning');
+        return;
+    }
+
+    const result = await api('POST', '/forum/categories', {
+        name,
+        description,
+        parent_id: parentId ? parseInt(parentId) : null,
+        view_permission: viewPerm,
+        post_permission: postPerm
+    });
+
+    if (result.ok) {
+        showToast('Category created successfully', 'success');
+        hideCreateCategoryModal();
+        loadCategories();
+    } else {
+        showToast(result.data?.message || 'Failed to create category', 'error');
+    }
+}
+
+async function deleteCategory(categoryId) {
+    if (!isPortalAdmin()) {
+        showToast('Admin access required', 'error');
+        return;
+    }
+
+    if (!confirm('Are you sure you want to delete this category? This cannot be undone.')) {
+        return;
+    }
+
+    const result = await api('DELETE', `/forum/categories/${categoryId}`);
+    if (result.ok) {
+        showToast('Category deleted successfully', 'success');
+        loadCategories();
+    } else {
+        showToast(result.data?.message || 'Failed to delete category', 'error');
+    }
+}
+
+function showEditCategoryModal(categoryId, name, description) {
+    if (!isPortalAdmin()) {
+        showToast('Admin access required', 'error');
+        return;
+    }
+    document.getElementById('editCategoryId').value = categoryId;
+    document.getElementById('editCategoryName').value = name;
+    document.getElementById('editCategoryDescription').value = description;
+    document.getElementById('editCategoryModal').classList.add('active');
+}
+
+function hideEditCategoryModal() {
+    document.getElementById('editCategoryModal').classList.remove('active');
+}
+
+async function editCategory() {
+    const categoryId = document.getElementById('editCategoryId').value;
+    const name = document.getElementById('editCategoryName').value.trim();
+    const description = document.getElementById('editCategoryDescription').value.trim();
+
+    if (!name) {
+        showToast('Category name is required', 'warning');
+        return;
+    }
+
+    const result = await api('PUT', `/forum/categories/${categoryId}`, {
+        name,
+        description
+    });
+
+    if (result.ok) {
+        showToast('Category updated successfully', 'success');
+        hideEditCategoryModal();
+        loadCategories();
+    } else {
+        showToast(result.data?.message || 'Failed to update category', 'error');
+    }
+}
+
+async function moveCategoryUp(categoryId) {
+    if (!isPortalAdmin()) {
+        showToast('Admin access required', 'error');
+        return;
+    }
+
+    const idx = cachedCategories.findIndex(c => c.id === categoryId);
+    if (idx <= 0) return;
+
+    // Swap positions
+    const positions = cachedCategories.map((cat, i) => ({
+        id: cat.id,
+        position: i === idx ? idx - 1 : (i === idx - 1 ? idx : i)
+    }));
+
+    const result = await api('POST', '/forum/categories/reorder', { positions });
+    if (result.ok) {
+        showToast('Category moved up', 'success');
+        loadCategories();
+    } else {
+        showToast(result.data?.message || 'Failed to move category', 'error');
+    }
+}
+
+async function moveCategoryDown(categoryId) {
+    if (!isPortalAdmin()) {
+        showToast('Admin access required', 'error');
+        return;
+    }
+
+    const idx = cachedCategories.findIndex(c => c.id === categoryId);
+    if (idx < 0 || idx >= cachedCategories.length - 1) return;
+
+    // Swap positions
+    const positions = cachedCategories.map((cat, i) => ({
+        id: cat.id,
+        position: i === idx ? idx + 1 : (i === idx + 1 ? idx : i)
+    }));
+
+    const result = await api('POST', '/forum/categories/reorder', { positions });
+    if (result.ok) {
+        showToast('Category moved down', 'success');
+        loadCategories();
+    } else {
+        showToast(result.data?.message || 'Failed to move category', 'error');
+    }
+}
+
+// ==================== NOTIFICATIONS ====================
+let notificationsPanelOpen = false;
+
+function toggleNotificationsPanel() {
+    const panel = document.getElementById('notificationsPanel');
+    notificationsPanelOpen = !notificationsPanelOpen;
+
+    if (notificationsPanelOpen) {
+        panel.style.display = '';
+        loadNotifications();
+        // Close when clicking outside
+        setTimeout(() => {
+            document.addEventListener('click', closeNotificationsPanelOnClickOutside);
+        }, 10);
+    } else {
+        panel.style.display = 'none';
+        document.removeEventListener('click', closeNotificationsPanelOnClickOutside);
+    }
+}
+
+function closeNotificationsPanelOnClickOutside(e) {
+    const panel = document.getElementById('notificationsPanel');
+    const bell = document.getElementById('notificationBell');
+    if (!panel.contains(e.target) && !bell.contains(e.target)) {
+        panel.style.display = 'none';
+        notificationsPanelOpen = false;
+        document.removeEventListener('click', closeNotificationsPanelOnClickOutside);
+    }
+}
+
+async function loadNotifications() {
+    const list = document.getElementById('notificationsList');
+    list.innerHTML = '<div class="notifications-empty"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+    const result = await api('GET', '/notifications?limit=20');
+
+    if (result.ok && result.data.notifications) {
+        const notifications = result.data.notifications;
+
+        if (notifications.length === 0) {
+            list.innerHTML = '<div class="notifications-empty">No notifications yet</div>';
+            return;
+        }
+
+        let html = '';
+        for (const notif of notifications) {
+            const iconClass = notif.type === 'mention' ? 'mention' : '';
+            const icon = notif.type === 'mention' ? 'fa-at' : 'fa-bell';
+            const unreadClass = notif.is_read ? '' : 'unread';
+
+            html += `
+                <div class="notification-item ${unreadClass}" onclick="openNotification(${notif.id}, '${escapeHtml(notif.link || '')}')">
+                    <div class="notification-icon ${iconClass}">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-message">${escapeHtml(notif.message)}</div>
+                        <div class="notification-time">${formatDate(notif.created_at)}</div>
+                    </div>
+                </div>
+            `;
+        }
+        list.innerHTML = html;
+    } else {
+        list.innerHTML = '<div class="notifications-empty">Failed to load notifications</div>';
+    }
+}
+
+async function loadUnreadNotificationCount() {
+    if (!currentUser) return;
+
+    const result = await api('GET', '/notifications/unread-count');
+
+    if (result.ok) {
+        const count = result.data.unread_count || 0;
+        const badge = document.getElementById('notificationBadge');
+
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.style.display = '';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+async function openNotification(notificationId, link) {
+    // Mark as read
+    await api('POST', `/notifications/${notificationId}/read`);
+
+    // Close panel
+    document.getElementById('notificationsPanel').style.display = 'none';
+    notificationsPanelOpen = false;
+
+    // Update badge
+    loadUnreadNotificationCount();
+
+    // Navigate to link
+    if (link) {
+        // Parse the link - e.g., /forum/thread/123
+        const threadMatch = link.match(/\/forum\/thread\/(\d+)/);
+        if (threadMatch) {
+            const threadId = parseInt(threadMatch[1]);
+            currentThreadId = threadId;
+            showPage('thread');
+            loadThread(threadId);
+        }
+    }
+}
+
+async function markAllNotificationsRead() {
+    const result = await api('POST', '/notifications/read-all');
+
+    if (result.ok) {
+        showToast('All notifications marked as read', 'success');
+        loadNotifications();
+        loadUnreadNotificationCount();
+    } else {
+        showToast('Failed to mark notifications as read', 'error');
+    }
+}
+
+// ==================== CHAT MODERATION ====================
+function toggleMutedUsersPanel() {
+    const panel = document.getElementById('mutedUsersPanel');
+    const toggle = document.getElementById('mutedUsersToggle');
+    if (panel.style.display === 'none') {
+        panel.style.display = '';
+        toggle.innerHTML = '<i class="fas fa-chevron-up"></i>';
+        loadMutedUsers();
+    } else {
+        panel.style.display = 'none';
+        toggle.innerHTML = '<i class="fas fa-chevron-down"></i>';
+    }
+}
+
+async function deleteChatMessage(messageId) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+
+    if (!confirm('Delete this message?')) {
+        return;
+    }
+
+    const result = await api('DELETE', `/chat/messages/${messageId}`);
+    if (result.ok) {
+        showToast('Message deleted', 'success');
+        refreshChat();
+    } else {
+        showToast(result.data?.message || 'Failed to delete message', 'error');
+    }
+}
+
+async function muteUser(participantKey, reason = '') {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+
+    const result = await api('POST', `/chat/participants/${participantKey}/mute`, { reason });
+    if (result.ok) {
+        showToast('User muted', 'success');
+    } else {
+        showToast(result.data?.message || 'Failed to mute user', 'error');
+    }
+}
+
+async function unmuteUser(participantKey) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+
+    const result = await api('DELETE', `/chat/participants/${participantKey}/mute`);
+    if (result.ok) {
+        showToast('User unmuted', 'success');
+        loadMutedUsers();
+    } else {
+        showToast(result.data?.message || 'Failed to unmute user', 'error');
+    }
+}
+
+async function loadMutedUsers() {
+    const container = document.getElementById('mutedUsersList');
+    if (!container) return;
+
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+
+    const result = await api('GET', '/chat/muted');
+    if (result.ok && result.data.muted) {
+        if (result.data.muted.length === 0) {
+            container.innerHTML = '<div class="empty-state"><p>No muted users</p></div>';
+            return;
+        }
+
+        let html = '';
+        for (const user of result.data.muted) {
+            html += `
+                <div class="muted-user-item">
+                    <span class="muted-user-name">${escapeHtml(user.label || user.username || user.key)}</span>
+                    <span class="muted-user-reason">${user.reason ? escapeHtml(user.reason) : 'No reason'}</span>
+                    <span class="muted-user-date">${formatDate(user.muted_at)}</span>
+                    <button class="btn btn-sm btn-danger" onclick="unmuteUser('${escapeHtml(user.key)}')">
+                        <i class="fas fa-user-check"></i> Unmute
+                    </button>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '<div class="empty-state"><p>Failed to load muted users</p></div>';
+    }
+}
+
+async function deleteUserMessages(participantKey) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+
+    if (!confirm('Delete all messages from this user?')) {
+        return;
+    }
+
+    const result = await api('DELETE', `/chat/participants/${participantKey}/messages`);
+    if (result.ok) {
+        showToast(`Deleted ${result.data.deleted_count} messages`, 'success');
+        refreshChat();
+    } else {
+        showToast(result.data?.message || 'Failed to delete messages', 'error');
+    }
+}
+
+function showMuteUserModal(userId, username) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+    document.getElementById('muteUserId').value = userId;
+    document.getElementById('muteUserName').textContent = username || 'User';
+    document.getElementById('muteUserReason').value = '';
+    document.getElementById('muteUserModal').classList.add('active');
+}
+
+function hideMuteUserModal() {
+    document.getElementById('muteUserModal').classList.remove('active');
+}
+
+async function confirmMuteUser() {
+    const userId = document.getElementById('muteUserId').value;
+    const reason = document.getElementById('muteUserReason').value.trim();
+
+    await muteUser(userId, reason);
+    hideMuteUserModal();
+}
+
+// ==================== TICKET MANAGEMENT ====================
+async function updateTicketPriority(ticketId, priority) {
+    if (!isPortalStaff()) {
+        showToast('Staff access required', 'error');
+        return;
+    }
+
+    const result = await api('PATCH', `/support/tickets/${ticketId}`, { priority });
+    if (result.ok) {
+        showToast('Priority updated', 'success');
+    } else {
+        showToast(result.data?.message || 'Failed to update priority', 'error');
+    }
+}
+
+async function updateTicketCategory(ticketId, category) {
+    if (!isPortalStaff()) {
+        showToast('Staff access required', 'error');
+        return;
+    }
+
+    const result = await api('PATCH', `/support/tickets/${ticketId}`, { category });
+    if (result.ok) {
+        showToast('Category updated', 'success');
+    } else {
+        showToast(result.data?.message || 'Failed to update category', 'error');
+    }
+}
+
+async function updateTicketStatus(ticketId, status) {
+    if (!isPortalStaff()) {
+        showToast('Staff access required', 'error');
+        return;
+    }
+
+    const result = await api('PATCH', `/support/tickets/${ticketId}`, { status });
+    if (result.ok) {
+        showToast('Status updated', 'success');
+        loadTicket(ticketId);
+    } else {
+        showToast(result.data?.message || 'Failed to update status', 'error');
+    }
+}
+
+async function reopenTicket(ticketId) {
+    if (!isPortalStaff()) {
+        showToast('Staff access required', 'error');
+        return;
+    }
+
+    const result = await api('POST', `/support/tickets/${ticketId}/reopen`);
+    if (result.ok) {
+        showToast('Ticket reopened', 'success');
+        loadTicket(ticketId);
+    } else {
+        showToast(result.data?.message || 'Failed to reopen ticket', 'error');
+    }
 }
 
 // ==================== ALERTS & TOASTS ====================
