@@ -22,6 +22,9 @@ let currentParentReplyAuthor = null;
 let subscriptionsCache = null; // Cache for subscriptions fetched from API
 let cachedCategories = []; // Cache for forum categories (for reordering)
 let oauthProviders = []; // OAuth providers enabled for this portal
+let threadWatcherInterval = null; // Interval for thread watcher heartbeat
+let badgeSystemEnabled = true; // Whether the badge system is enabled for this portal
+const WATCHER_HEARTBEAT_MS = 30000; // Send heartbeat every 30 seconds
 
 // ==================== SUBSCRIPTION CONFIGURATION ====================
 // Fallback config used when API fails to load subscriptions
@@ -91,6 +94,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Listen for hash changes
     window.addEventListener('hashchange', handleHashRoute);
+
+    // Clean up thread watcher interval when leaving page
+    // Note: Server automatically expires watchers after 5 minutes of inactivity
+    window.addEventListener('beforeunload', () => {
+        if (threadWatcherInterval) {
+            clearInterval(threadWatcherInterval);
+            threadWatcherInterval = null;
+        }
+    });
 });
 
 async function loadPortalInfo() {
@@ -283,6 +295,17 @@ function handleHashRoute() {
         case 'members':
             showPage('members', false);
             break;
+        case 'search':
+            if (id) {
+                const searchQuery = decodeURIComponent(id);
+                document.getElementById('globalSearchInput').value = searchQuery;
+                document.getElementById('searchClearBtn').style.display = '';
+                showPage('search', false);
+                performSearch();
+            } else {
+                showPage('forum', false);
+            }
+            break;
         case 'login':
             showPage('login', false);
             break;
@@ -294,6 +317,12 @@ function handleHashRoute() {
             break;
         case 'reset-password':
             showPage('reset-password', false);
+            break;
+        case 'reports':
+            showPage('reports', false);
+            break;
+        case 'badges':
+            showPage('badges', false);
             break;
         default:
             showPage('forum', false);
@@ -318,6 +347,11 @@ function showPage(page, updateUrl = true) {
     if (messagesRefreshInterval) {
         clearInterval(messagesRefreshInterval);
         messagesRefreshInterval = null;
+    }
+
+    // Stop watching thread if navigating away from thread page
+    if (page !== 'thread') {
+        stopWatchingThread();
     }
 
     // Hide all pages
@@ -394,6 +428,16 @@ function showPage(page, updateUrl = true) {
                 return;
             }
             loadProfile();
+            break;
+        case 'reports':
+            if (!currentUser || !isPortalModerator()) {
+                showPage('forum');
+                return;
+            }
+            loadReports();
+            break;
+        case 'badges':
+            loadAllBadges();
             break;
     }
 }
@@ -640,6 +684,15 @@ function updateUIForUser() {
         document.getElementById('navSupport').style.display = '';
     }
 
+    // Show reports tab for moderators and load pending count
+    if (isPortalModerator()) {
+        document.getElementById('navReports').style.display = '';
+        loadPendingReportsCount();
+    }
+
+    // Check badge system status and update visibility
+    checkBadgeSystemStatus();
+
     // Update header
     document.getElementById('headerUsername').textContent = currentUser.display_name || currentUser.username;
     const avatarEl = document.getElementById('headerAvatar');
@@ -659,6 +712,7 @@ function updateUIForGuest() {
     document.getElementById('navMessages').style.display = 'none';
     document.getElementById('notificationBell').style.display = 'none';
     document.getElementById('notificationsPanel').style.display = 'none';
+    document.getElementById('navReports').style.display = 'none';
 }
 
 // ==================== OAUTH ====================
@@ -908,17 +962,20 @@ async function unlinkOAuthAccount(provider) {
  * Load and display OAuth status in profile page
  */
 async function loadOAuthStatusForProfile() {
-    const container = document.getElementById('profileOAuthStatus');
-    if (!container) return;
+    const section = document.getElementById('profileOAuthStatus');
+    if (!section) return;
+
+    const cardBody = section.querySelector('.card-body');
+    if (!cardBody) return;
 
     const status = await getOAuthStatus();
 
     if (oauthProviders.length === 0 && status.links.length === 0) {
-        container.style.display = 'none';
+        section.style.display = 'none';
         return;
     }
 
-    container.style.display = 'block';
+    section.style.display = 'block';
 
     // Build linked accounts list
     const linkedProviders = new Set(status.links.map(l => l.provider));
@@ -973,7 +1030,7 @@ async function loadOAuthStatusForProfile() {
         html += '<p class="oauth-warning"><i class="fas fa-exclamation-triangle"></i> Set a password before unlinking your only OAuth account.</p>';
     }
 
-    container.innerHTML = html;
+    cardBody.innerHTML = html;
 }
 
 // ==================== FORUM - CATEGORIES ====================
@@ -1118,6 +1175,37 @@ async function loadRecentActivity() {
                         </div>
                     </div>
                 `;
+            } else if (activity.type === 'member_joined') {
+                const userId = activity.id;
+                const avatar = activity.avatar
+                    ? `<img src="${escapeHtml(activity.avatar)}" alt="Avatar" onerror="this.parentElement.innerHTML='${getInitials(activity.display_name)}'">`
+                    : getInitials(activity.display_name);
+                html += `
+                    <div class="activity-item" onclick="showUserCardById(${userId})">
+                        <div class="activity-icon member-icon"><i class="fas fa-user-plus"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">${escapeHtml(activity.display_name)} joined</div>
+                            <div class="activity-meta">
+                                <span class="activity-author">New member</span>
+                                <span class="activity-time">${timeAgo}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (activity.type === 'badge_awarded') {
+                const userId = activity.user_id;
+                html += `
+                    <div class="activity-item" onclick="showUserCardById(${userId})">
+                        <div class="activity-icon badge-icon"><i class="fas fa-award"></i></div>
+                        <div class="activity-content">
+                            <div class="activity-title">${escapeHtml(activity.display_name)} earned ${escapeHtml(activity.badge_name)}</div>
+                            <div class="activity-meta">
+                                <span class="activity-author">Badge awarded</span>
+                                <span class="activity-time">${timeAgo}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
         }
         html += '</div>';
@@ -1158,7 +1246,8 @@ async function loadCategoryThreads(categoryId) {
     const catResult = await api('GET', '/forum/categories');
     if (catResult.ok) {
         const categories = catResult.data.categories || [];
-        const category = categories.find(c => c.id === categoryId);
+        // Use == for comparison to handle string/number type differences
+        const category = categories.find(c => c.id == categoryId);
         if (category) {
             document.getElementById('categoryTitle').textContent = category.name;
             document.getElementById('categoryDescription').textContent = category.description || '';
@@ -1200,13 +1289,26 @@ async function loadCategoryThreads(categoryId) {
                 ? `<img src="${escapeHtml(authorAvatar)}" alt="Avatar" onerror="this.parentElement.textContent='${getInitials(authorName)}'">`
                 : getInitials(authorName);
 
+            const isPinned = thread.is_pinned;
+            const pinType = thread.pin_type || (isPinned ? 'pinned' : 'none');
+            const isAnnouncement = pinType === 'announcement';
+            const threadRowClass = isAnnouncement ? 'thread-row thread-announcement' : (isPinned ? 'thread-row thread-pinned' : 'thread-row');
+
+            let pinIndicator = '';
+            if (isAnnouncement) {
+                pinIndicator = '<span class="thread-pin-badge announcement"><i class="fas fa-bullhorn"></i> Announcement</span>';
+            } else if (isPinned) {
+                pinIndicator = '<span class="thread-pin-badge pinned"><i class="fas fa-thumbtack"></i> Pinned</span>';
+            }
+
             html += `
-                <div class="thread-row">
+                <div class="${threadRowClass}">
                     <div class="thread-icon" onclick="showUserCardById(${authorId}); event.stopPropagation();">
                         ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
                     </div>
                     <div class="thread-main">
                         <a class="thread-title-link" onclick="openThread(${thread.id})">${escapeHtml(thread.title)}</a>
+                        ${pinIndicator}
                         <div class="thread-meta">
                             by <a onclick="showUserCardById(${authorId}); event.stopPropagation();">${escapeHtml(authorName)}</a>
                             &bull; ${formatDate(thread.created_at)}
@@ -1280,6 +1382,123 @@ async function likeReply(threadId, replyId) {
     }
 }
 
+// Reaction types with their icons
+const REACTION_TYPES = {
+    'like': { icon: 'fa-thumbs-up', label: 'Like', emoji: '👍' },
+    'love': { icon: 'fa-heart', label: 'Love', emoji: '❤️' },
+    'helpful': { icon: 'fa-lightbulb', label: 'Helpful', emoji: '💡' },
+    'insightful': { icon: 'fa-brain', label: 'Insightful', emoji: '🧠' },
+    'funny': { icon: 'fa-face-laugh', label: 'Funny', emoji: '😂' }
+};
+
+function toggleReactionPicker(contentType, contentId, btn) {
+    // Close any existing picker
+    closeReactionPickers();
+
+    if (!currentUser) {
+        showToast('Please login to react', 'warning');
+        return;
+    }
+
+    // Create picker
+    const picker = document.createElement('div');
+    picker.className = 'reaction-picker';
+    picker.id = `reaction-picker-${contentType}-${contentId}`;
+
+    let html = '';
+    for (const [type, info] of Object.entries(REACTION_TYPES)) {
+        html += `<button class="reaction-option" data-reaction="${type}" title="${info.label}">
+            <span class="reaction-emoji">${info.emoji}</span>
+        </button>`;
+    }
+    picker.innerHTML = html;
+
+    // Position picker above the button
+    const rect = btn.getBoundingClientRect();
+    picker.style.position = 'fixed';
+    picker.style.bottom = (window.innerHeight - rect.top + 5) + 'px';
+    picker.style.left = rect.left + 'px';
+    picker.style.zIndex = '10000';
+
+    document.body.appendChild(picker);
+
+    // Add click handlers
+    picker.querySelectorAll('.reaction-option').forEach(opt => {
+        opt.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const reaction = opt.dataset.reaction;
+            await submitReaction(contentType, contentId, reaction);
+            closeReactionPickers();
+        });
+    });
+
+    // Close on outside click
+    setTimeout(() => {
+        document.addEventListener('click', closeReactionPickersHandler, { once: true });
+    }, 10);
+}
+
+function closeReactionPickersHandler(e) {
+    closeReactionPickers();
+}
+
+function closeReactionPickers() {
+    document.querySelectorAll('.reaction-picker').forEach(p => p.remove());
+}
+
+async function submitReaction(contentType, contentId, reactionType) {
+    let url;
+    if (contentType === 'thread') {
+        url = `/forum/threads/${contentId}/react`;
+    } else {
+        // contentId is "threadId:replyId"
+        const [threadId, replyId] = contentId.split(':');
+        url = `/forum/threads/${threadId}/replies/${replyId}/react`;
+    }
+
+    const result = await api('POST', url, { reaction_type: reactionType });
+    if (result.ok) {
+        // Reload thread to show updated reactions
+        loadThread(currentThreadId);
+    } else {
+        showToast(result.data?.message || 'Failed to react', 'error');
+    }
+}
+
+function renderReactions(reactions, userReaction, contentType, contentId) {
+    // Check if reactions object has any non-zero counts
+    let hasReactions = false;
+    if (reactions) {
+        for (const [type, count] of Object.entries(reactions)) {
+            if (count > 0) {
+                hasReactions = true;
+                break;
+            }
+        }
+    }
+
+    if (!hasReactions) {
+        return `<button class="reaction-btn" onclick="toggleReactionPicker('${contentType}', '${contentId}', this)">
+            <i class="far fa-smile"></i> React
+        </button>`;
+    }
+
+    let html = '<div class="reactions-display">';
+    for (const [type, count] of Object.entries(reactions)) {
+        if (count > 0 && REACTION_TYPES[type]) {
+            const isActive = userReaction === type ? ' active' : '';
+            html += `<span class="reaction-count${isActive}" onclick="submitReaction('${contentType}', '${contentId}', '${type}')" title="${REACTION_TYPES[type].label}">
+                ${REACTION_TYPES[type].emoji} ${count}
+            </span>`;
+        }
+    }
+    html += `<button class="reaction-btn add-reaction" onclick="toggleReactionPicker('${contentType}', '${contentId}', this)" title="Add Reaction">
+        <i class="fas fa-plus"></i>
+    </button>`;
+    html += '</div>';
+    return html;
+}
+
 async function loadThread(threadId) {
     // Clear any reply-to state from previous thread
     cancelReplyTo();
@@ -1300,7 +1519,11 @@ async function loadThread(threadId) {
             const catId = thread.category_id || thread.category?.id;
             const catName = thread.category_name || thread.category?.name || 'Category';
             document.getElementById('threadCategoryLink').textContent = catName;
-            document.getElementById('threadCategoryLink').onclick = () => openCategory(catId);
+            document.getElementById('threadCategoryLink').onclick = (e) => {
+                e.preventDefault();
+                openCategory(catId);
+                return false;
+            };
         }
 
         // Show reply section if logged in and thread is not locked
@@ -1317,6 +1540,9 @@ async function loadThread(threadId) {
 
         // Add moderation toolbar for moderators
         const isPinned = thread.is_pinned || thread.pinned;
+        const pinType = thread.pin_type || (isPinned ? 'pinned' : 'none');
+        const isAnnouncement = pinType === 'announcement';
+
         if (isPortalModerator()) {
             html += `
                 <div class="thread-mod-toolbar">
@@ -1324,9 +1550,16 @@ async function loadThread(threadId) {
                     <button class="mod-btn ${isLocked ? 'active' : ''}" onclick="toggleThreadLock(${threadId})" title="${isLocked ? 'Unlock' : 'Lock'} Thread">
                         <i class="fas fa-${isLocked ? 'unlock' : 'lock'}"></i> ${isLocked ? 'Unlock' : 'Lock'}
                     </button>
-                    <button class="mod-btn ${isPinned ? 'active' : ''}" onclick="toggleThreadPin(${threadId})" title="${isPinned ? 'Unpin' : 'Pin'} Thread">
-                        <i class="fas fa-thumbtack"></i> ${isPinned ? 'Unpin' : 'Pin'}
-                    </button>
+                    <div class="mod-btn-group">
+                        <button class="mod-btn ${isPinned ? 'active' : ''}" onclick="toggleThreadPin(${threadId})" title="${isPinned ? 'Unpin' : 'Pin'} Thread">
+                            <i class="fas fa-thumbtack"></i> ${isPinned ? 'Unpin' : 'Pin'}
+                        </button>
+                        <select class="mod-pin-select" onchange="setThreadPinType(${threadId}, this.value)" title="Pin Type">
+                            <option value="none" ${pinType === 'none' ? 'selected' : ''}>None</option>
+                            <option value="pinned" ${pinType === 'pinned' ? 'selected' : ''}>Pinned</option>
+                            <option value="announcement" ${pinType === 'announcement' ? 'selected' : ''}>Announcement</option>
+                        </select>
+                    </div>
                     <button class="mod-btn" onclick="showMoveThreadModal(${threadId})" title="Move Thread">
                         <i class="fas fa-arrows-alt"></i> Move
                     </button>
@@ -1346,8 +1579,14 @@ async function loadThread(threadId) {
             `;
         }
 
-        // Show pinned notice if thread is pinned
-        if (isPinned) {
+        // Show pinned/announcement notice if thread is pinned
+        if (isAnnouncement) {
+            html += `
+                <div class="thread-announcement-notice">
+                    <i class="fas fa-bullhorn"></i> <strong>Announcement</strong> - This is an important announcement from the staff.
+                </div>
+            `;
+        } else if (isPinned) {
             html += `
                 <div class="thread-pinned-notice">
                     <i class="fas fa-thumbtack"></i> This thread is pinned.
@@ -1379,13 +1618,16 @@ async function loadThread(threadId) {
         // Render main thread post
         const threadLikeCount = thread.like_count || 0;
         const threadLikedByUser = thread.liked_by_user || false;
+        const threadReactions = thread.reactions || {};
+        const threadUserReaction = thread.user_reaction || null;
+        const threadReactionsHtml = renderReactions(threadReactions, threadUserReaction, 'thread', threadId);
         html += `
             <div class="message">
                 <div class="message-user">
-                    <div class="message-avatar" onclick="showUserCardById(${threadAuthorId})">
+                    <div class="message-avatar" onclick="showUserCardById('${threadAuthorId}')">
                         ${typeof threadAvatar === 'string' && threadAvatar.startsWith('<img') ? threadAvatar : threadAvatar}
                     </div>
-                    <div class="message-username" onclick="showUserCardById(${threadAuthorId})">${escapeHtml(threadAuthorName)}</div>
+                    <div class="message-username" onclick="showUserCardById('${threadAuthorId}')">${escapeHtml(threadAuthorName)}</div>
                     <div class="message-role ${getRoleClass(threadAuthorRole)}">${escapeHtml(threadAuthorRole)}</div>
                 </div>
                 <div class="message-content">
@@ -1394,13 +1636,17 @@ async function loadThread(threadId) {
                     </div>
                     <div class="message-body">${parseBBCode(thread.content || thread.body || '')}</div>
                     <div class="message-footer">
-                        <button class="like-btn ${threadLikedByUser ? 'liked' : ''}" onclick="likeThread(${threadId})">
-                            <i class="fas fa-heart"></i> ${threadLikeCount}
-                        </button>
+                        ${threadReactionsHtml}
+                        ${currentUser ? `<button class="report-btn" onclick="showReportModal('thread', '${threadId}')" title="Report this thread"><i class="fas fa-flag"></i></button>` : ''}
                     </div>
                 </div>
             </div>
         `;
+
+        // Render poll if exists
+        if (thread.poll) {
+            html += renderPoll(thread.poll);
+        }
 
         // Render replies if any
         const replies = thread.replies || thread.posts || [];
@@ -1428,6 +1674,8 @@ async function loadThread(threadId) {
 
             const replyLikeCount = reply.like_count || 0;
             const replyLikedByUser = reply.liked_by_user || false;
+            const replyReactions = reply.reactions || {};
+            const replyUserReaction = reply.user_reaction || null;
 
             // Check if user can edit/delete this reply
             const isOwnReply = currentUser && authorId === `customer_${currentUser.id}`;
@@ -1440,7 +1688,7 @@ async function loadThread(threadId) {
                 const editedByName = reply.edited_by_name || 'Staff';
                 const editedAt = reply.updated_at ? formatDate(reply.updated_at) : '';
                 const editorId = reply.edited_by;
-                editedInfo = `<div class="reply-edited-info"><i class="fas fa-pencil-alt"></i> Edited by <span class="edited-by-link" onclick="showUserCardById('${editorId}')">${escapeHtml(editedByName)}</span>${editedAt ? ' on ' + editedAt : ''}</div>`;
+                editedInfo = `<div class="reply-edited-info" onclick="showEditHistory('reply', ${reply.id}, ${threadId})" style="cursor: pointer;" title="Click to view edit history"><i class="fas fa-pencil-alt"></i> Edited by <span class="edited-by-link" onclick="event.stopPropagation(); showUserCardById('${editorId}')">${escapeHtml(editedByName)}</span>${editedAt ? ' on ' + editedAt : ''} <i class="fas fa-history" style="margin-left: 4px; opacity: 0.6;"></i></div>`;
             }
 
             // Encode content for data attribute
@@ -1455,10 +1703,10 @@ async function loadThread(threadId) {
             html += `
                 <div class="message" data-reply-id="${reply.id}" data-reply-content="${encodedContent}" data-reply-author="${escapeHtml(authorName)}">
                     <div class="message-user">
-                        <div class="message-avatar" onclick="showUserCardById(${authorId})">
+                        <div class="message-avatar" onclick="showUserCardById('${authorId}')">
                             ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
                         </div>
-                        <div class="message-username" onclick="showUserCardById(${authorId})">${escapeHtml(authorName)}</div>
+                        <div class="message-username" onclick="showUserCardById('${authorId}')">${escapeHtml(authorName)}</div>
                         <div class="message-role ${getRoleClass(authorRole)}">${escapeHtml(authorRole)}</div>
                     </div>
                     <div class="message-content">
@@ -1475,11 +1723,10 @@ async function loadThread(threadId) {
                         <div class="message-body">${parseBBCode(reply.content || reply.body || '')}</div>
                         ${editedInfo}
                         <div class="message-footer">
-                            <button class="like-btn ${replyLikedByUser ? 'liked' : ''}" onclick="likeReply(${threadId}, ${reply.id})">
-                                <i class="fas fa-heart"></i> ${replyLikeCount}
-                            </button>
+                            ${renderReactions(replyReactions, replyUserReaction, 'reply', threadId + ':' + reply.id)}
                             ${currentUser ? `<button class="reply-to-btn" onclick="replyToReply(${reply.id}, '${escapeHtml(authorName).replace(/'/g, "\\'")}')"><i class="fas fa-reply"></i> Reply</button>` : ''}
                             ${currentUser ? `<button class="quote-btn" onclick="quoteReply(${reply.id})"><i class="fas fa-quote-right"></i> Quote</button>` : ''}
+                            ${currentUser ? `<button class="report-btn" onclick="showReportModal('reply', '${threadId}:${reply.id}')" title="Report this reply"><i class="fas fa-flag"></i></button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -1491,6 +1738,12 @@ async function loadThread(threadId) {
         document.querySelectorAll('.bb-spoiler').forEach(el => {
             el.addEventListener('click', () => el.classList.toggle('revealed'));
         });
+
+        // Start watching this thread
+        startWatchingThread(threadId);
+
+        // Highlight reported content if navigating from reports page
+        highlightReportedContent();
     } else {
         // Check for login/membership required errors
         const errorCode = result.data.error_code;
@@ -1503,6 +1756,134 @@ async function loadThread(threadId) {
         }
         container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Error</h3><p>' + escapeHtml(result.data.message || 'Failed to load thread.') + '</p></div>';
     }
+}
+
+// ==================== THREAD WATCHERS ====================
+
+/**
+ * Start watching a thread (sends heartbeat to server)
+ */
+async function startWatchingThread(threadId) {
+    // Stop any existing watcher
+    stopWatchingThread();
+
+    if (!currentUser || !threadId) {
+        // Still fetch watchers for display even if not logged in
+        await updateThreadWatchers(threadId);
+        return;
+    }
+
+    // Send initial heartbeat
+    await sendWatcherHeartbeat(threadId);
+
+    // Set up interval for periodic heartbeats
+    threadWatcherInterval = setInterval(() => {
+        sendWatcherHeartbeat(threadId);
+    }, WATCHER_HEARTBEAT_MS);
+}
+
+/**
+ * Stop watching the current thread
+ */
+async function stopWatchingThread() {
+    if (threadWatcherInterval) {
+        clearInterval(threadWatcherInterval);
+        threadWatcherInterval = null;
+    }
+
+    // Send unwatch request if logged in and was watching a thread
+    if (currentUser && currentThreadId) {
+        try {
+            await api('DELETE', `/forum/threads/${currentThreadId}/watch`);
+        } catch (e) {
+            // Ignore errors when unwatching
+        }
+    }
+
+    // Hide watchers display
+    const watchersContainer = document.getElementById('threadWatchers');
+    if (watchersContainer) {
+        watchersContainer.style.display = 'none';
+    }
+}
+
+/**
+ * Send a heartbeat to keep the user in the watchers list
+ */
+async function sendWatcherHeartbeat(threadId) {
+    if (!currentUser || !threadId) return;
+
+    try {
+        const result = await api('POST', `/forum/threads/${threadId}/watch`);
+        if (result.ok) {
+            renderThreadWatchers(result.data.watchers || []);
+        }
+    } catch (e) {
+        console.warn('Failed to send watcher heartbeat:', e);
+    }
+}
+
+/**
+ * Fetch and update thread watchers display (for non-logged in users or initial load)
+ */
+async function updateThreadWatchers(threadId) {
+    try {
+        const result = await api('GET', `/forum/threads/${threadId}/watchers`);
+        if (result.ok) {
+            renderThreadWatchers(result.data.watchers || []);
+        }
+    } catch (e) {
+        console.warn('Failed to fetch thread watchers:', e);
+    }
+}
+
+/**
+ * Render the thread watchers display
+ */
+function renderThreadWatchers(watchers) {
+    const container = document.getElementById('threadWatchers');
+    const countEl = document.getElementById('watchersCount');
+    const avatarsEl = document.getElementById('watchersAvatars');
+
+    if (!container || !countEl || !avatarsEl) return;
+
+    if (!watchers || watchers.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'flex';
+    countEl.textContent = watchers.length;
+
+    // Show up to 10 avatars, with a "+N" indicator for more
+    const maxDisplay = 10;
+    const displayWatchers = watchers.slice(0, maxDisplay);
+    const remaining = watchers.length - maxDisplay;
+
+    let html = '';
+    for (const watcher of displayWatchers) {
+        const name = (watcher.user_name && watcher.user_name.trim()) || 'Unknown';
+        const avatar = watcher.user_avatar && watcher.user_avatar.trim();
+        const initials = getInitials(name);
+        // Escape initials for use in HTML attribute (handle quotes and special chars)
+        const safeInitials = initials.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const displayName = escapeHtml(name);
+        const userId = watcher.user_id || '';
+
+        if (avatar) {
+            html += `<div class="watcher-avatar" title="${displayName}" onclick="showUserCardById('${userId}')">
+                <img src="${escapeHtml(avatar)}" alt="" onerror="this.style.display='none'; this.parentElement.innerHTML='${safeInitials}';">
+            </div>`;
+        } else {
+            html += `<div class="watcher-avatar" title="${displayName}" onclick="showUserCardById('${userId}')">${safeInitials}</div>`;
+        }
+    }
+
+    if (remaining > 0) {
+        html += `<div class="watchers-more">+${remaining}</div>`;
+    }
+
+    avatarsEl.innerHTML = html;
 }
 
 // ==================== CREATE THREAD ====================
@@ -1519,6 +1900,7 @@ function showCreateThreadModal() {
 
 function hideCreateThreadModal() {
     document.getElementById('createThreadModal').classList.remove('active');
+    resetPollForm();
 }
 
 async function createThread() {
@@ -1530,22 +1912,489 @@ async function createThread() {
         return;
     }
 
+    // Build request body
+    const requestBody = { title, content };
+
+    // Add poll data if enabled
+    const pollEnabled = document.getElementById('pollEnabled')?.checked;
+    if (pollEnabled) {
+        const pollQuestion = document.getElementById('pollQuestion')?.value.trim();
+        const pollOptionInputs = document.querySelectorAll('#pollOptionsContainer .poll-option-input');
+        const pollOptions = Array.from(pollOptionInputs)
+            .map(input => input.value.trim())
+            .filter(opt => opt.length > 0);
+        const allowMultiple = document.getElementById('pollAllowMultiple')?.checked || false;
+
+        if (pollQuestion && pollOptions.length >= 2) {
+            requestBody.poll = {
+                question: pollQuestion,
+                options: pollOptions,
+                allow_multiple: allowMultiple
+            };
+        } else if (pollQuestion || pollOptions.length > 0) {
+            showToast('Poll requires a question and at least 2 options', 'warning');
+            return;
+        }
+    }
+
     const btn = document.querySelector('#createThreadModal .btn-primary');
     setButtonLoading(btn, true);
 
-    const result = await api('POST', `/forum/categories/${currentCategoryId}/threads`, {
-        title,
-        content
-    });
+    const result = await api('POST', `/forum/categories/${currentCategoryId}/threads`, requestBody);
 
     setButtonLoading(btn, false, 'Create Thread');
 
     if (result.ok && result.data.thread) {
         hideCreateThreadModal();
+        resetPollForm();
         showToast('Thread created successfully!', 'success');
+
+        // Check for newly awarded badges
+        if (result.data.badges_awarded && result.data.badges_awarded.length > 0) {
+            showBadgeAwardNotification(result.data.badges_awarded);
+            // Update current user's badges
+            if (currentUser) {
+                currentUser.badges = currentUser.badges || [];
+                currentUser.badges.push(...result.data.badges_awarded);
+            }
+        }
+
         openThread(result.data.thread.id);
     } else {
         showToast(result.data.message || 'Failed to create thread', 'error');
+    }
+}
+
+// ==================== POLL FUNCTIONS ====================
+function togglePollSection() {
+    const pollEnabled = document.getElementById('pollEnabled').checked;
+    const pollFields = document.getElementById('pollFields');
+    if (pollFields) {
+        pollFields.style.display = pollEnabled ? 'block' : 'none';
+    }
+}
+
+function addPollOption() {
+    const container = document.getElementById('pollOptionsContainer');
+    const optionCount = container.querySelectorAll('.poll-option-row').length;
+    if (optionCount >= 10) {
+        showToast('Maximum 10 options allowed', 'warning');
+        return;
+    }
+    const newRow = document.createElement('div');
+    newRow.className = 'poll-option-row';
+    newRow.innerHTML = `
+        <input type="text" class="form-input poll-option-input" placeholder="Option ${optionCount + 1}">
+        <button type="button" class="poll-option-remove" onclick="removePollOption(this)" title="Remove option"><i class="fas fa-times"></i></button>
+    `;
+    container.appendChild(newRow);
+}
+
+function removePollOption(btn) {
+    const container = document.getElementById('pollOptionsContainer');
+    const optionCount = container.querySelectorAll('.poll-option-row').length;
+    if (optionCount <= 2) {
+        showToast('Poll requires at least 2 options', 'warning');
+        return;
+    }
+    btn.closest('.poll-option-row').remove();
+}
+
+function resetPollForm() {
+    const pollEnabled = document.getElementById('pollEnabled');
+    if (pollEnabled) pollEnabled.checked = false;
+    const pollFields = document.getElementById('pollFields');
+    if (pollFields) pollFields.style.display = 'none';
+    const pollQuestion = document.getElementById('pollQuestion');
+    if (pollQuestion) pollQuestion.value = '';
+    const pollAllowMultiple = document.getElementById('pollAllowMultiple');
+    if (pollAllowMultiple) pollAllowMultiple.checked = false;
+    const container = document.getElementById('pollOptionsContainer');
+    if (container) {
+        container.innerHTML = `
+            <div class="poll-option-row">
+                <input type="text" class="form-input poll-option-input" placeholder="Option 1">
+                <button type="button" class="poll-option-remove" onclick="removePollOption(this)" title="Remove option"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="poll-option-row">
+                <input type="text" class="form-input poll-option-input" placeholder="Option 2">
+                <button type="button" class="poll-option-remove" onclick="removePollOption(this)" title="Remove option"><i class="fas fa-times"></i></button>
+            </div>
+        `;
+    }
+}
+
+function renderPoll(poll) {
+    if (!poll) return '';
+
+    const hasVoted = poll.has_voted;
+    const totalVotes = poll.total_votes || 0;
+    const allowMultiple = poll.allow_multiple;
+    const userVotes = poll.user_votes || [];
+
+    let optionsHtml = '';
+    for (const option of poll.options) {
+        const isSelected = userVotes.includes(option.index);
+        const percentage = option.percentage || 0;
+        const voteCount = option.votes || 0;
+
+        if (hasVoted || !currentUser) {
+            // Show results view
+            optionsHtml += `
+                <div class="poll-option poll-option-result ${isSelected ? 'poll-option-selected' : ''}">
+                    <div class="poll-option-bar" style="width: ${percentage}%"></div>
+                    <div class="poll-option-content">
+                        <span class="poll-option-text">${escapeHtml(option.text)}</span>
+                        <span class="poll-option-stats">${voteCount} vote${voteCount !== 1 ? 's' : ''} (${percentage}%)</span>
+                    </div>
+                    ${isSelected ? '<i class="fas fa-check poll-option-check"></i>' : ''}
+                </div>
+            `;
+        } else {
+            // Show voting view
+            const inputType = allowMultiple ? 'checkbox' : 'radio';
+            optionsHtml += `
+                <label class="poll-option poll-option-vote">
+                    <input type="${inputType}" name="pollVote" value="${option.index}" class="poll-vote-input">
+                    <span class="poll-option-text">${escapeHtml(option.text)}</span>
+                </label>
+            `;
+        }
+    }
+
+    const canVote = currentUser && !hasVoted;
+
+    return `
+        <div class="poll-container" data-thread-id="${currentThreadId}">
+            <div class="poll-header">
+                <i class="fas fa-poll"></i>
+                <span class="poll-question">${escapeHtml(poll.question)}</span>
+            </div>
+            <div class="poll-options">
+                ${optionsHtml}
+            </div>
+            <div class="poll-footer">
+                <span class="poll-total">${totalVotes} total vote${totalVotes !== 1 ? 's' : ''}</span>
+                ${allowMultiple ? '<span class="poll-multi-hint">Multiple selections allowed</span>' : ''}
+                ${canVote ? '<button class="btn btn-primary btn-sm poll-vote-btn" onclick="submitPollVote()"><i class="fas fa-vote-yea"></i> Vote</button>' : ''}
+            </div>
+        </div>
+    `;
+}
+
+async function submitPollVote() {
+    const pollContainer = document.querySelector('.poll-container');
+    if (!pollContainer) return;
+
+    const threadId = pollContainer.dataset.threadId || currentThreadId;
+    const selectedInputs = pollContainer.querySelectorAll('.poll-vote-input:checked');
+
+    if (selectedInputs.length === 0) {
+        showToast('Please select an option', 'warning');
+        return;
+    }
+
+    const options = Array.from(selectedInputs).map(input => parseInt(input.value));
+
+    const voteBtn = pollContainer.querySelector('.poll-vote-btn');
+    if (voteBtn) setButtonLoading(voteBtn, true);
+
+    const result = await api('POST', `/forum/threads/${threadId}/poll/vote`, { options });
+
+    if (voteBtn) setButtonLoading(voteBtn, false, '<i class="fas fa-vote-yea"></i> Vote');
+
+    if (result.ok) {
+        showToast('Vote recorded!', 'success');
+        // Refresh the thread to show updated poll
+        loadThread(parseInt(threadId));
+    } else {
+        showToast(result.data?.message || 'Failed to vote', 'error');
+    }
+}
+
+// ==================== REPORT FUNCTIONS ====================
+function showReportModal(contentType, contentId) {
+    if (!currentUser) {
+        showToast('Please login to report content', 'warning');
+        return;
+    }
+    document.getElementById('reportContentType').value = contentType;
+    document.getElementById('reportContentId').value = contentId;
+    document.getElementById('reportReason').value = '';
+    document.getElementById('reportDetails').value = '';
+    document.getElementById('reportAlert').innerHTML = '';
+    document.getElementById('reportModal').classList.add('active');
+}
+
+function hideReportModal() {
+    document.getElementById('reportModal').classList.remove('active');
+}
+
+async function submitReport() {
+    const contentType = document.getElementById('reportContentType').value;
+    const contentId = document.getElementById('reportContentId').value;
+    const reason = document.getElementById('reportReason').value;
+    const details = document.getElementById('reportDetails').value.trim();
+
+    if (!reason) {
+        showToast('Please select a reason for your report', 'warning');
+        return;
+    }
+
+    const btn = document.querySelector('#reportModal .btn-danger');
+    setButtonLoading(btn, true);
+
+    const result = await api('POST', '/reports', {
+        content_type: contentType,
+        content_id: contentId,
+        reason: reason,
+        details: details
+    });
+
+    setButtonLoading(btn, false, '<i class="fas fa-flag"></i> Submit Report');
+
+    if (result.ok) {
+        hideReportModal();
+        showToast('Report submitted. Thank you for helping keep our community safe.', 'success');
+    } else {
+        showToast(result.data?.message || 'Failed to submit report', 'error');
+    }
+}
+
+// ==================== REPORTS MANAGEMENT (Moderators) ====================
+let currentReportsFilter = 'pending';
+
+async function loadPendingReportsCount() {
+    if (!currentUser || !isPortalModerator()) return;
+
+    try {
+        const result = await api('GET', '/reports?status=pending&limit=1');
+        if (result.ok) {
+            // The API returns reports array, we need to get the count
+            // Make another call to get count or use a dedicated endpoint
+            const countResult = await api('GET', '/reports?status=pending');
+            if (countResult.ok) {
+                const count = countResult.data.reports?.length || 0;
+                const badge = document.getElementById('pendingReportsBadge');
+                if (badge) {
+                    badge.textContent = count;
+                    badge.style.display = count > 0 ? '' : 'none';
+                }
+                // Also update the count on the reports page if visible
+                const pageCount = document.getElementById('pendingReportsCount');
+                if (pageCount) {
+                    pageCount.textContent = count;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn('Failed to load pending reports count:', e);
+    }
+}
+
+async function loadReports(status = 'pending') {
+    currentReportsFilter = status;
+    const container = document.getElementById('reportsList');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading reports...</div>';
+
+    // Update filter buttons
+    document.querySelectorAll('.report-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.status === status);
+    });
+
+    const url = status ? `/reports?status=${status}` : '/reports';
+    const result = await api('GET', url);
+
+    if (result.ok) {
+        const reports = result.data.reports || [];
+
+        // Update pending count
+        if (status === 'pending' || status === '') {
+            const pendingCount = status === 'pending' ? reports.length : reports.filter(r => r.status === 'pending').length;
+            document.getElementById('pendingReportsCount').textContent = pendingCount;
+        }
+
+        if (reports.length === 0) {
+            container.innerHTML = `
+                <div class="reports-empty">
+                    <i class="fas fa-check-circle"></i>
+                    <p>No ${status || ''} reports</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        for (const report of reports) {
+            html += renderReportItem(report);
+        }
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = `<div class="reports-empty"><i class="fas fa-exclamation-triangle"></i><p>Failed to load reports</p></div>`;
+    }
+}
+
+function filterReports(status) {
+    loadReports(status);
+}
+
+function renderReportItem(report) {
+    const reasonLabels = {
+        'spam': 'Spam or Advertising',
+        'harassment': 'Harassment or Bullying',
+        'inappropriate': 'Inappropriate Content',
+        'misinformation': 'Misinformation',
+        'other': 'Other'
+    };
+
+    const statusClasses = {
+        'pending': 'status-pending',
+        'reviewed': 'status-reviewed',
+        'resolved': 'status-resolved',
+        'dismissed': 'status-dismissed'
+    };
+
+    const contentTypeIcons = {
+        'thread': 'fa-comments',
+        'reply': 'fa-reply',
+        'chat': 'fa-message',
+        'user': 'fa-user'
+    };
+
+    const reporterName = report.reporter_name || 'Unknown';
+    const reasonLabel = reasonLabels[report.reason] || report.reason;
+    const statusClass = statusClasses[report.status] || '';
+    const contentIcon = contentTypeIcons[report.content_type] || 'fa-file';
+
+    // Format date safely
+    const dateDisplay = report.created_at ? formatDate(report.created_at) : '-';
+
+    // Parse content_id for replies (format: "threadId:replyId")
+    let displayContentId = report.content_id;
+    let viewLink = '';
+    if (report.content_type === 'thread') {
+        viewLink = `<a href="#" class="report-view-link" onclick="viewReportedThread('${report.content_id}'); return false;"><i class="fas fa-external-link-alt"></i> View</a>`;
+    } else if (report.content_type === 'reply' && report.content_id.includes(':')) {
+        const [threadId, replyId] = report.content_id.split(':');
+        displayContentId = `Reply #${replyId} in Thread #${threadId}`;
+        viewLink = `<a href="#" class="report-view-link" onclick="viewReportedReply('${threadId}', '${replyId}'); return false;"><i class="fas fa-external-link-alt"></i> View</a>`;
+    }
+
+    return `
+        <div class="report-item" data-report-id="${report.id}">
+            <div class="report-header">
+                <div class="report-meta">
+                    <span class="report-type"><i class="fas ${contentIcon}"></i> ${report.content_type}</span>
+                    <span class="report-reason">${escapeHtml(reasonLabel)}</span>
+                    <span class="report-status ${statusClass}">${report.status}</span>
+                </div>
+                <div class="report-date">${dateDisplay}</div>
+            </div>
+            <div class="report-body">
+                <div class="report-reporter">
+                    <strong>Reported by:</strong> ${escapeHtml(reporterName)}
+                </div>
+                <div class="report-content-id">
+                    <strong>Content:</strong> ${escapeHtml(displayContentId)}
+                    ${viewLink}
+                </div>
+                ${report.details ? `<div class="report-details"><strong>Details:</strong> ${escapeHtml(report.details)}</div>` : ''}
+                ${report.resolution_note ? `<div class="report-resolution"><strong>Resolution:</strong> ${escapeHtml(report.resolution_note)}</div>` : ''}
+            </div>
+            ${report.status === 'pending' || report.status === 'reviewed' ? `
+            <div class="report-actions">
+                <button class="btn btn-sm btn-secondary" onclick="updateReportStatus(${report.id}, 'reviewed')">
+                    <i class="fas fa-eye"></i> Mark Reviewed
+                </button>
+                <button class="btn btn-sm btn-success" onclick="showResolveReportModal(${report.id})">
+                    <i class="fas fa-check"></i> Resolve
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="showDismissReportModal(${report.id})">
+                    <i class="fas fa-times"></i> Dismiss
+                </button>
+            </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+let pendingHighlight = null; // {type: 'thread'|'reply', id: string}
+
+function reportUserFromCard() {
+    if (!currentUserCardUser) {
+        showToast('User data not available', 'error');
+        return;
+    }
+    hideUserCardModal();
+    showReportModal('user', currentUserCardUser.id);
+}
+
+function viewReportedThread(threadId) {
+    pendingHighlight = { type: 'thread', id: threadId };
+    window.location.hash = `#thread/${threadId}`;
+}
+
+function viewReportedReply(threadId, replyId) {
+    pendingHighlight = { type: 'reply', id: replyId };
+    window.location.hash = `#thread/${threadId}`;
+}
+
+function highlightReportedContent() {
+    if (!pendingHighlight) return;
+
+    setTimeout(() => {
+        let element = null;
+
+        if (pendingHighlight.type === 'thread') {
+            // Highlight the first message (main thread post)
+            element = document.querySelector('#postList .message');
+        } else if (pendingHighlight.type === 'reply') {
+            // Find the reply by data-reply-id attribute
+            element = document.querySelector(`#postList .message[data-reply-id="${pendingHighlight.id}"]`);
+        }
+
+        if (element) {
+            // Scroll to element
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Add highlight animation
+            element.classList.add('highlight-reported');
+
+            // Remove highlight after animation
+            setTimeout(() => {
+                element.classList.remove('highlight-reported');
+            }, 3000);
+        }
+
+        pendingHighlight = null;
+    }, 300); // Wait for content to render
+}
+
+async function updateReportStatus(reportId, status, resolutionNote = '') {
+    const result = await api('PUT', `/reports/${reportId}`, {
+        status: status,
+        resolution_note: resolutionNote
+    });
+
+    if (result.ok) {
+        showToast('Report updated', 'success');
+        loadReports(currentReportsFilter);
+    } else {
+        showToast(result.data?.message || 'Failed to update report', 'error');
+    }
+}
+
+function showResolveReportModal(reportId) {
+    const note = prompt('Enter resolution note (optional):');
+    if (note !== null) {
+        updateReportStatus(reportId, 'resolved', note);
+    }
+}
+
+function showDismissReportModal(reportId) {
+    const note = prompt('Enter reason for dismissal (optional):');
+    if (note !== null) {
+        updateReportStatus(reportId, 'dismissed', note);
     }
 }
 
@@ -1575,6 +2424,17 @@ async function postReply() {
         document.getElementById('replyContent').value = '';
         cancelReplyTo();  // Clear the reply-to state
         showToast('Reply posted!', 'success');
+
+        // Check for newly awarded badges
+        if (result.data.badges_awarded && result.data.badges_awarded.length > 0) {
+            showBadgeAwardNotification(result.data.badges_awarded);
+            // Update current user's badges
+            if (currentUser) {
+                currentUser.badges = currentUser.badges || [];
+                currentUser.badges.push(...result.data.badges_awarded);
+            }
+        }
+
         loadThread(currentThreadId);
     } else {
         showToast(result.data.message || 'Failed to post reply', 'error');
@@ -1667,6 +2527,14 @@ async function refreshChat() {
                 </div>
             ` : '';
 
+            // Report button for logged-in users (not own messages)
+            const isOwnMessage = currentUser && senderId === currentUser.id;
+            const reportBtn = currentUser && !isOwnMessage ? `
+                <button class="chat-report-btn" onclick="showReportModal('chat', '${msg.id}')" title="Report Message">
+                    <i class="fas fa-flag"></i>
+                </button>
+            ` : '';
+
             html += `
                 <div class="chat-message ${mutedClass}">
                     <div class="chat-avatar" onclick="showUserCardById(${senderId})">
@@ -1678,6 +2546,7 @@ async function refreshChat() {
                             ${isMuted ? '<span class="chat-muted-badge"><i class="fas fa-volume-mute"></i></span>' : ''}
                             <span class="chat-time">${formatTime(msg.created_at)}</span>
                             ${modActions}
+                            ${reportBtn}
                         </div>
                         <div class="chat-text">${escapeHtml(msg.content || msg.message)}</div>
                     </div>
@@ -2217,10 +3086,17 @@ async function closeTicket() {
 async function loadProfile() {
     if (!currentUser) return;
 
-    // Refresh user data
+    // Refresh user data from profile endpoint (includes badges/reputation)
     const result = await api('GET', '/profile');
-    if (result.ok && result.data.customer) {
-        currentUser = result.data.customer;
+    if (result.ok && result.data.profile) {
+        // Merge profile data into currentUser
+        Object.assign(currentUser, result.data.profile);
+
+        // Update badge system enabled state from profile response
+        if (result.data.profile.badge_system_enabled !== undefined) {
+            badgeSystemEnabled = result.data.profile.badge_system_enabled;
+            updateBadgeVisibility();
+        }
     }
 
     // Update profile display
@@ -2236,8 +3112,14 @@ async function loadProfile() {
     document.getElementById('profileRole').textContent = currentUser.role || 'Member';
     document.getElementById('profilePosts').textContent = currentUser.post_count || 0;
     document.getElementById('profileThreads').textContent = currentUser.thread_count || 0;
-    document.getElementById('profileJoined').textContent = formatDate(currentUser.created_at);
+    document.getElementById('profileReputation').textContent = badgeSystemEnabled ? (currentUser.reputation || 0) : 0;
+    document.getElementById('profileJoined').textContent = formatDate(currentUser.created_at || currentUser.join_date);
     document.getElementById('profileBio').textContent = currentUser.bio || 'No bio set.';
+
+    // Load badges (only if badge system is enabled)
+    if (badgeSystemEnabled) {
+        loadProfileBadges();
+    }
 
     // Load subscriptions
     loadSubscriptions();
@@ -2250,6 +3132,408 @@ async function loadProfile() {
 
     // Load OAuth status
     loadOAuthStatusForProfile();
+
+    // Load blocked users
+    loadBlockedUsers();
+}
+
+// ==================== BADGES ====================
+
+/**
+ * Render badges as HTML
+ * @param {Array} badges - Array of badge objects
+ * @param {boolean} compact - If true, render in compact mode (for user card)
+ * @returns {string} HTML string
+ */
+function renderBadges(badges, compact = false) {
+    if (!badges || !Array.isArray(badges) || badges.length === 0) {
+        return compact ? '' : '<div class="badges-empty">No badges earned yet</div>';
+    }
+
+    let html = '';
+    for (const badge of badges) {
+        const icon = badge.icon || 'fa-award';
+        const color = badge.color || '#8b5cf6';
+        const name = escapeHtml(badge.name || 'Badge');
+        const description = escapeHtml(badge.description || '');
+        const awardedAt = badge.awarded_at ? formatDate(badge.awarded_at) : '';
+
+        if (compact) {
+            html += `
+                <div class="badge-item badge-compact" style="--badge-color: ${color}" title="${name}: ${description}">
+                    <i class="fas ${icon}"></i>
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="badge-item" style="--badge-color: ${color}">
+                    <div class="badge-icon">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="badge-info">
+                        <div class="badge-name">${name}</div>
+                        <div class="badge-description">${description}</div>
+                        ${awardedAt ? `<div class="badge-date">Earned ${awardedAt}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+    }
+    return html;
+}
+
+/**
+ * Load and display badges on the profile page
+ */
+function loadProfileBadges() {
+    const container = document.getElementById('profileBadgesList');
+    if (!container) return;
+
+    const badges = currentUser.badges || [];
+    container.innerHTML = renderBadges(badges, false);
+}
+
+/**
+ * Show a special notification when badges are awarded
+ */
+function showBadgeAwardNotification(badges) {
+    if (!badges || badges.length === 0) return;
+
+    for (const badge of badges) {
+        const icon = badge.icon || 'fa-award';
+        const color = badge.color || '#8b5cf6';
+        const name = badge.name || 'Badge';
+
+        // Create a special badge toast
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-badge';
+        toast.innerHTML = `
+            <div class="toast-badge-icon" style="background: ${color}">
+                <i class="fas ${icon}"></i>
+            </div>
+            <div class="toast-badge-content">
+                <div class="toast-badge-title">Badge Earned!</div>
+                <div class="toast-badge-name">${escapeHtml(name)}</div>
+            </div>
+        `;
+        document.body.appendChild(toast);
+
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // Remove after delay
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    }
+}
+
+/**
+ * Load all available badges for the badges page
+ */
+async function loadAllBadges() {
+    const container = document.getElementById('allBadgesList');
+    if (!container) return;
+
+    container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading badges...</div>';
+
+    const result = await api('GET', '/badges');
+
+    if (result.ok && result.data.badges) {
+        // Check if badge system is enabled
+        badgeSystemEnabled = result.data.badge_system_enabled !== false;
+        updateBadgeVisibility();
+
+        if (!badgeSystemEnabled) {
+            container.innerHTML = '<div class="badges-empty"><i class="fas fa-award"></i><p>Badge system is currently disabled</p></div>';
+            return;
+        }
+
+        const badges = result.data.badges;
+
+        if (badges.length === 0) {
+            container.innerHTML = '<div class="badges-empty"><i class="fas fa-award"></i><p>No badges available yet</p></div>';
+            return;
+        }
+
+        let html = '';
+        for (const badge of badges) {
+            const icon = badge.icon || 'fa-award';
+            const color = badge.color || '#8b5cf6';
+            const name = escapeHtml(badge.name || 'Badge');
+            const description = escapeHtml(badge.description || '');
+            const criteria = escapeHtml(badge.criteria || '');
+
+            // Check if current user has this badge
+            const userHasBadge = currentUser?.badges?.some(b => b.id === badge.id || b.name === badge.name);
+
+            html += `
+                <div class="all-badge-item ${userHasBadge ? 'badge-earned' : 'badge-locked'}" style="--badge-color: ${color}">
+                    <div class="all-badge-icon">
+                        <i class="fas ${icon}"></i>
+                        ${userHasBadge ? '<span class="badge-checkmark"><i class="fas fa-check"></i></span>' : '<span class="badge-lock"><i class="fas fa-lock"></i></span>'}
+                    </div>
+                    <div class="all-badge-info">
+                        <div class="all-badge-name">${name}</div>
+                        <div class="all-badge-description">${description}</div>
+                        ${criteria ? `<div class="all-badge-criteria"><i class="fas fa-info-circle"></i> ${criteria}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '<div class="badges-empty"><i class="fas fa-exclamation-triangle"></i><p>Failed to load badges</p></div>';
+    }
+}
+
+/**
+ * Update visibility of badge-related UI elements based on badge system state
+ */
+function updateBadgeVisibility() {
+    // Hide/show badges nav tab
+    const badgesNavTab = document.querySelector('.nav-tab[data-page="badges"]');
+    if (badgesNavTab) {
+        badgesNavTab.style.display = badgeSystemEnabled ? '' : 'none';
+    }
+
+    // Hide/show profile badges section
+    const profileBadgesSection = document.getElementById('profileBadgesSection');
+    if (profileBadgesSection) {
+        profileBadgesSection.style.display = badgeSystemEnabled ? '' : 'none';
+    }
+
+    // Hide/show user card badges
+    const userCardBadges = document.getElementById('userCardBadges');
+    if (userCardBadges) {
+        userCardBadges.style.display = badgeSystemEnabled ? '' : 'none';
+    }
+}
+
+/**
+ * Check if badge system is enabled for this portal and update UI accordingly
+ */
+async function checkBadgeSystemStatus() {
+    const result = await api('GET', '/badges');
+    if (result.ok) {
+        badgeSystemEnabled = result.data.badge_system_enabled !== false;
+        updateBadgeVisibility();
+    }
+}
+
+// ==================== GLOBAL SEARCH ====================
+let searchDebounceTimer = null;
+let lastSearchQuery = '';
+let lastSearchResults = null;
+
+/**
+ * Handle search input with debounce
+ */
+function onSearchInput() {
+    const input = document.getElementById('globalSearchInput');
+    const clearBtn = document.getElementById('searchClearBtn');
+    const query = input.value.trim();
+
+    // Show/hide clear button
+    clearBtn.style.display = query.length > 0 ? '' : 'none';
+
+    // Debounce search
+    clearTimeout(searchDebounceTimer);
+    if (query.length >= 2) {
+        searchDebounceTimer = setTimeout(() => {
+            performSearch();
+        }, 300);
+    }
+}
+
+/**
+ * Clear search input and go back
+ */
+function clearSearch() {
+    const input = document.getElementById('globalSearchInput');
+    const clearBtn = document.getElementById('searchClearBtn');
+    input.value = '';
+    clearBtn.style.display = 'none';
+    lastSearchQuery = '';
+    lastSearchResults = null;
+    showPage('forum');
+}
+
+/**
+ * Perform global search
+ */
+async function performSearch() {
+    const input = document.getElementById('globalSearchInput');
+    const query = input.value.trim();
+
+    if (query.length < 2) {
+        showToast('Please enter at least 2 characters to search', 'warning');
+        return;
+    }
+
+    if (query === lastSearchQuery && lastSearchResults) {
+        // Use cached results
+        showPage('search', false);
+        return;
+    }
+
+    lastSearchQuery = query;
+
+    // Show search page with loading state
+    showPage('search', false);
+    updateHash(`search/${encodeURIComponent(query)}`);
+
+    document.getElementById('searchResultsSubtitle').textContent = `Searching for "${query}"...`;
+    document.getElementById('searchResults').innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
+
+    const result = await api('GET', `/search?q=${encodeURIComponent(query)}&type=all&limit=20`);
+
+    if (result.ok && result.data.results) {
+        lastSearchResults = result.data.results;
+        renderSearchResults(result.data.results);
+    } else {
+        document.getElementById('searchResults').innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Search Failed</h3>
+                <p>${escapeHtml(result.data.message || 'An error occurred while searching')}</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Render search results
+ */
+function renderSearchResults(results, filterType = 'all') {
+    const container = document.getElementById('searchResults');
+    const subtitle = document.getElementById('searchResultsSubtitle');
+
+    const threads = results.threads || [];
+    const posts = results.posts || [];
+    const users = results.users || [];
+
+    // Update counts in filter buttons
+    document.getElementById('searchThreadsCount').textContent = threads.length > 0 ? `(${threads.length})` : '';
+    document.getElementById('searchPostsCount').textContent = posts.length > 0 ? `(${posts.length})` : '';
+    document.getElementById('searchUsersCount').textContent = users.length > 0 ? `(${users.length})` : '';
+
+    const totalCount = threads.length + posts.length + users.length;
+    subtitle.textContent = `Found ${totalCount} result${totalCount !== 1 ? 's' : ''} for "${results.query}"`;
+
+    if (totalCount === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <h3>No Results Found</h3>
+                <p>Try different keywords or check your spelling</p>
+            </div>
+        `;
+        return;
+    }
+
+    let html = '';
+
+    // Filter results based on type
+    const showThreads = filterType === 'all' || filterType === 'threads';
+    const showPosts = filterType === 'all' || filterType === 'posts';
+    const showUsers = filterType === 'all' || filterType === 'users';
+
+    // Render users
+    if (showUsers && users.length > 0) {
+        html += '<div class="search-section"><h3 class="search-section-title"><i class="fas fa-users"></i> Users</h3>';
+        for (const user of users) {
+            const avatar = user.profile_picture
+                ? `<img src="${escapeHtml(user.profile_picture)}" alt="Avatar" onerror="this.parentElement.textContent='${getInitials(user.username)}'">`
+                : getInitials(user.display_name || user.username);
+
+            html += `
+                <div class="search-result-item search-result-user" onclick="showUserCardById(${user.id})">
+                    <div class="search-result-avatar">
+                        ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
+                    </div>
+                    <div class="search-result-content">
+                        <div class="search-result-title">${escapeHtml(user.display_name || user.username)}</div>
+                        <div class="search-result-meta">@${escapeHtml(user.username)} &bull; ${escapeHtml(user.role || 'Member')}</div>
+                    </div>
+                </div>
+            `;
+        }
+        html += '</div>';
+    }
+
+    // Render threads
+    if (showThreads && threads.length > 0) {
+        html += '<div class="search-section"><h3 class="search-section-title"><i class="fas fa-comment-alt"></i> Threads</h3>';
+        for (const thread of threads) {
+            html += `
+                <div class="search-result-item search-result-thread" onclick="openThread(${thread.id})">
+                    <div class="search-result-icon"><i class="fas fa-comment-alt"></i></div>
+                    <div class="search-result-content">
+                        <div class="search-result-title">${escapeHtml(thread.title)}</div>
+                        <div class="search-result-snippet">${highlightSearchTerm(escapeHtml(thread.snippet), lastSearchQuery)}</div>
+                        <div class="search-result-meta">
+                            by ${escapeHtml(thread.author_name)} &bull; ${formatTimeAgo(thread.created_at)} &bull; ${thread.replies_count || 0} replies
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        html += '</div>';
+    }
+
+    // Render posts
+    if (showPosts && posts.length > 0) {
+        html += '<div class="search-section"><h3 class="search-section-title"><i class="fas fa-reply"></i> Posts</h3>';
+        for (const post of posts) {
+            html += `
+                <div class="search-result-item search-result-post" onclick="openThread(${post.thread_id})">
+                    <div class="search-result-icon"><i class="fas fa-reply"></i></div>
+                    <div class="search-result-content">
+                        <div class="search-result-title">Re: ${escapeHtml(post.thread_title)}</div>
+                        <div class="search-result-snippet">${highlightSearchTerm(escapeHtml(post.snippet), lastSearchQuery)}</div>
+                        <div class="search-result-meta">
+                            by ${escapeHtml(post.author_name)} &bull; ${formatTimeAgo(post.created_at)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        html += '</div>';
+    }
+
+    container.innerHTML = html;
+}
+
+/**
+ * Filter search results by type
+ */
+function filterSearchResults(type) {
+    // Update active state of filter buttons
+    document.querySelectorAll('.search-filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+    });
+
+    if (lastSearchResults) {
+        renderSearchResults(lastSearchResults, type);
+    }
+}
+
+/**
+ * Highlight search term in text
+ */
+function highlightSearchTerm(text, term) {
+    if (!term) return text;
+    const regex = new RegExp(`(${escapeRegExp(term)})`, 'gi');
+    return text.replace(regex, '<mark class="search-highlight">$1</mark>');
+}
+
+/**
+ * Escape special regex characters
+ */
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 async function loadSubscriptions() {
@@ -2496,7 +3780,17 @@ function showUserCardById(userId) {
 }
 
 async function fetchAndShowUserCard(userId) {
-    const result = await api('GET', `/users/${userId}`);
+    // Extract numeric ID if in format "customer_123"
+    const numericId = userId.toString().replace('customer_', '');
+
+    // Try the /users/ endpoint first (works with numeric IDs)
+    let result = await api('GET', `/users/${numericId}`);
+
+    // Fallback to /profile/ endpoint if /users/ fails
+    if (!result.ok) {
+        result = await api('GET', `/profile/${userId}`);
+    }
+
     if (result.ok && result.data.profile) {
         const profile = result.data.profile;
         usersCache[userId] = {
@@ -2505,7 +3799,9 @@ async function fetchAndShowUserCard(userId) {
             display_name: profile.display_name || profile.username || '',
             avatar: profile.avatar || profile.profile_picture || '',
             role: profile.role || '',
-            bio: profile.bio || ''
+            bio: profile.bio || '',
+            badges: profile.badges || [],
+            reputation: profile.reputation || 0
         };
         showUserCard(usersCache[userId], result.data.friendship_status);
     } else {
@@ -2534,7 +3830,9 @@ async function showUserCardByUsername(username) {
             display_name: profile.display_name || profile.username || '',
             avatar: profile.avatar || profile.profile_picture || '',
             role: profile.role || '',
-            bio: profile.bio || ''
+            bio: profile.bio || '',
+            badges: profile.badges || [],
+            reputation: profile.reputation || 0
         };
         showUserCard(usersCache[userId], result.data.friendship_status);
     } else {
@@ -2560,6 +3858,24 @@ function showUserCard(user, friendshipStatus) {
     document.getElementById('userCardName').textContent = user.display_name || user.username;
     document.getElementById('userCardUsername').textContent = '@' + user.username;
     document.getElementById('userCardRole').textContent = user.role || 'Member';
+
+    // Display badges in user card (only if badge system is enabled)
+    const badgesContainer = document.getElementById('userCardBadges');
+    if (badgesContainer) {
+        if (!badgeSystemEnabled) {
+            badgesContainer.innerHTML = '';
+            badgesContainer.style.display = 'none';
+        } else {
+            const badges = user.badges || [];
+            if (badges.length > 0) {
+                badgesContainer.innerHTML = renderBadges(badges, true);
+                badgesContainer.style.display = '';
+            } else {
+                badgesContainer.innerHTML = '';
+                badgesContainer.style.display = 'none';
+            }
+        }
+    }
 
     if (user.bio) {
         document.getElementById('userCardBio').textContent = user.bio;
@@ -2592,9 +3908,20 @@ function showUserCard(user, friendshipStatus) {
         friendBtn.className = 'btn btn-secondary btn-sm';
     }
 
+    // Update block button state
+    const blockBtn = document.getElementById('userCardBlockBtn');
+    if (blockBtn) {
+        if (isSelf || !currentUser) {
+            blockBtn.style.display = 'none';
+        } else {
+            blockBtn.style.display = '';
+            updateBlockButtonState();
+        }
+    }
+
     document.getElementById('userCardModal').classList.add('active');
 
-    // Fetch full profile for friendship status if not provided
+    // Fetch full profile for friendship status and block status if not provided
     if (!friendshipStatus && !isSelf && currentUser) {
         fetchUserFriendshipStatus(user.id);
     }
@@ -2602,24 +3929,33 @@ function showUserCard(user, friendshipStatus) {
 
 async function fetchUserFriendshipStatus(userId) {
     const result = await api('GET', `/users/${userId}`);
-    if (result.ok && result.data.friendship_status) {
-        const friendBtn = document.getElementById('userCardFriendBtn');
-        const status = result.data.friendship_status;
+    if (result.ok) {
+        // Update friendship status
+        if (result.data.friendship_status) {
+            const friendBtn = document.getElementById('userCardFriendBtn');
+            const status = result.data.friendship_status;
 
-        friendBtn.disabled = false;
-        if (status === 'friends') {
-            friendBtn.innerHTML = '<i class="fas fa-user-minus"></i> Remove Friend';
-            friendBtn.className = 'btn btn-danger btn-sm';
-        } else if (status === 'request_received') {
-            friendBtn.innerHTML = '<i class="fas fa-check"></i> Accept Request';
-            friendBtn.className = 'btn btn-success btn-sm';
-        } else if (status === 'request_sent') {
-            friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
-            friendBtn.className = 'btn btn-secondary btn-sm';
-            friendBtn.disabled = true;
-        } else {
-            friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
-            friendBtn.className = 'btn btn-secondary btn-sm';
+            friendBtn.disabled = false;
+            if (status === 'friends') {
+                friendBtn.innerHTML = '<i class="fas fa-user-minus"></i> Remove Friend';
+                friendBtn.className = 'btn btn-danger btn-sm';
+            } else if (status === 'request_received') {
+                friendBtn.innerHTML = '<i class="fas fa-check"></i> Accept Request';
+                friendBtn.className = 'btn btn-success btn-sm';
+            } else if (status === 'request_sent') {
+                friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
+                friendBtn.className = 'btn btn-secondary btn-sm';
+                friendBtn.disabled = true;
+            } else {
+                friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
+                friendBtn.className = 'btn btn-secondary btn-sm';
+            }
+        }
+
+        // Update block status
+        if (currentUserCardUser && result.data.is_blocked !== undefined) {
+            currentUserCardUser.is_blocked = result.data.is_blocked;
+            updateBlockButtonState();
         }
     }
 }
@@ -2691,6 +4027,181 @@ async function toggleFriendFromCard() {
 }
 
 let messageRecipient = null;
+
+// ==================== USER BLOCKING ====================
+
+/**
+ * Toggle block status from user card modal
+ */
+async function toggleBlockFromCard() {
+    if (!currentUser) {
+        showPage('login');
+        return;
+    }
+
+    if (!currentUserCardUser) return;
+
+    const blockBtn = document.getElementById('userCardBlockBtn');
+    const originalHtml = blockBtn.innerHTML;
+    blockBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    blockBtn.disabled = true;
+
+    const isCurrentlyBlocked = currentUserCardUser.is_blocked;
+    const action = isCurrentlyBlocked ? 'unblock' : 'block';
+
+    const result = await api('POST', '/users/block', {
+        user_id: currentUserCardUser.id,
+        action: action
+    });
+
+    if (result.ok) {
+        currentUserCardUser.is_blocked = !isCurrentlyBlocked;
+        updateBlockButtonState();
+        showToast(result.data.message || (action === 'block' ? 'User blocked' : 'User unblocked'), 'success');
+
+        // Refresh blocked users list on profile page if visible
+        if (document.getElementById('page-profile').classList.contains('active')) {
+            loadBlockedUsers();
+        }
+    } else {
+        blockBtn.innerHTML = originalHtml;
+        blockBtn.disabled = false;
+        showToast(result.data?.message || 'Failed to ' + action + ' user', 'error');
+    }
+}
+
+/**
+ * Update the block button text/style based on current block status
+ */
+function updateBlockButtonState() {
+    const blockBtn = document.getElementById('userCardBlockBtn');
+    const messageBtn = document.getElementById('userCardMessageBtn');
+
+    if (!blockBtn || !currentUserCardUser) return;
+
+    const isBlocked = currentUserCardUser.is_blocked;
+
+    if (isBlocked) {
+        blockBtn.innerHTML = '<i class="fas fa-ban"></i> Unblock';
+        blockBtn.className = 'btn btn-warning btn-sm';
+        // Disable message button if user is blocked
+        if (messageBtn) {
+            messageBtn.disabled = true;
+            messageBtn.title = 'You have blocked this user';
+        }
+    } else {
+        blockBtn.innerHTML = '<i class="fas fa-ban"></i> Block';
+        blockBtn.className = 'btn btn-secondary btn-sm';
+        if (messageBtn) {
+            messageBtn.disabled = false;
+            messageBtn.title = '';
+        }
+    }
+
+    blockBtn.disabled = false;
+}
+
+/**
+ * Block a user by ID (used from various places)
+ */
+async function blockUser(userId) {
+    if (!currentUser) {
+        showToast('Please login to block users', 'warning');
+        return false;
+    }
+
+    const result = await api('POST', '/users/block', {
+        user_id: userId,
+        action: 'block'
+    });
+
+    if (result.ok) {
+        showToast('User blocked', 'success');
+        return true;
+    } else {
+        showToast(result.data?.message || 'Failed to block user', 'error');
+        return false;
+    }
+}
+
+/**
+ * Unblock a user by ID
+ */
+async function unblockUser(userId) {
+    if (!currentUser) {
+        showToast('Please login to unblock users', 'warning');
+        return false;
+    }
+
+    const result = await api('POST', '/users/block', {
+        user_id: userId,
+        action: 'unblock'
+    });
+
+    if (result.ok) {
+        showToast('User unblocked', 'success');
+        return true;
+    } else {
+        showToast(result.data?.message || 'Failed to unblock user', 'error');
+        return false;
+    }
+}
+
+/**
+ * Load blocked users list for profile page
+ */
+async function loadBlockedUsers() {
+    const container = document.getElementById('blockedUsersList');
+    if (!container) return;
+
+    container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+    const result = await api('GET', '/users/blocked');
+
+    if (result.ok) {
+        const blockedUsers = result.data.blocked_users || [];
+
+        if (blockedUsers.length === 0) {
+            container.innerHTML = '<div class="empty-state-small"><i class="fas fa-check-circle"></i><p>No blocked users</p></div>';
+            return;
+        }
+
+        let html = '';
+        for (const user of blockedUsers) {
+            const avatar = user.profile_picture
+                ? `<img src="${escapeHtml(user.profile_picture)}" alt="Avatar">`
+                : getInitials(user.display_name || user.username);
+
+            html += `
+                <div class="blocked-user-item">
+                    <div class="blocked-user-avatar">
+                        ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
+                    </div>
+                    <div class="blocked-user-info">
+                        <div class="blocked-user-name">${escapeHtml(user.display_name || user.username)}</div>
+                        <div class="blocked-user-username">@${escapeHtml(user.username)}</div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="unblockUserFromList(${user.id})">
+                        <i class="fas fa-unlock"></i> Unblock
+                    </button>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '<div class="empty-state-small"><i class="fas fa-exclamation-circle"></i><p>Failed to load blocked users</p></div>';
+    }
+}
+
+/**
+ * Unblock user from the blocked users list
+ */
+async function unblockUserFromList(userId) {
+    const success = await unblockUser(userId);
+    if (success) {
+        loadBlockedUsers();
+    }
+}
 
 function startConversationWithUser() {
     if (!currentUser) {
@@ -3114,8 +4625,12 @@ function escapeHtml(text) {
 }
 
 function getInitials(name) {
-    if (!name) return 'U';
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    if (!name || typeof name !== 'string') return 'U';
+    // Remove non-letter characters and get first letters of words
+    const cleaned = name.trim().replace(/[^a-zA-Z\s]/g, '');
+    if (!cleaned) return 'U';
+    const initials = cleaned.split(/\s+/).filter(n => n.length > 0).map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    return initials || 'U';
 }
 
 function getRoleClass(role) {
@@ -3130,6 +4645,8 @@ function getRoleClass(role) {
 function formatDate(dateStr) {
     if (!dateStr) return '-';
     const date = new Date(dateStr);
+    // Check for invalid date
+    if (isNaN(date.getTime())) return '-';
     const now = new Date();
     const diff = now - date;
 
@@ -3194,6 +4711,21 @@ async function toggleThreadPin(threadId) {
         loadThread(threadId);
     } else {
         showToast(result.data?.message || 'Failed to toggle pin', 'error');
+    }
+}
+
+async function setThreadPinType(threadId, pinType) {
+    if (!isPortalModerator()) {
+        showToast('Moderator access required', 'error');
+        return;
+    }
+
+    const result = await api('POST', `/forum/threads/${threadId}/pin`, { pin_type: pinType });
+    if (result.ok) {
+        showToast(result.data.message || `Thread ${pinType === 'none' ? 'unpinned' : 'set as ' + pinType}`, 'success');
+        loadThread(threadId);
+    } else {
+        showToast(result.data?.message || 'Failed to update pin type', 'error');
     }
 }
 
@@ -3319,6 +4851,59 @@ async function saveEditedReply() {
     } else {
         showToast(result.data?.message || 'Failed to update reply', 'error');
     }
+}
+
+// Edit History Functions
+async function showEditHistory(contentType, contentId, threadId = null) {
+    const modal = document.getElementById('editHistoryModal');
+    const container = document.getElementById('editHistoryContent');
+    if (!modal || !container) return;
+
+    container.innerHTML = '<div class="loading"><div class="spinner"></div> Loading history...</div>';
+    modal.classList.add('active');
+
+    let url;
+    if (contentType === 'thread') {
+        url = `/forum/threads/${contentId}/history`;
+    } else {
+        url = `/forum/threads/${threadId}/replies/${contentId}/history`;
+    }
+
+    const result = await api('GET', url);
+
+    if (result.ok && result.data.history) {
+        const history = result.data.history;
+
+        if (history.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><h3>No Edit History</h3><p>This post has not been edited.</p></div>';
+            return;
+        }
+
+        let html = '<div class="edit-history-list">';
+        for (const entry of history) {
+            const editDate = formatDate(entry.edited_at);
+            html += `
+                <div class="edit-history-item">
+                    <div class="edit-history-header">
+                        <span class="edit-history-date">${editDate}</span>
+                        <span class="edit-history-editor">by ${escapeHtml(entry.edited_by_name || 'Unknown')}</span>
+                    </div>
+                    ${entry.previous_title ? `<div class="edit-history-title"><strong>Previous Title:</strong> ${escapeHtml(entry.previous_title)}</div>` : ''}
+                    <div class="edit-history-content">${escapeHtml(entry.previous_content).substring(0, 500)}${entry.previous_content.length > 500 ? '...' : ''}</div>
+                    ${entry.edit_reason ? `<div class="edit-history-reason"><i class="fas fa-info-circle"></i> ${escapeHtml(entry.edit_reason)}</div>` : ''}
+                </div>
+            `;
+        }
+        html += '</div>';
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Error</h3><p>Failed to load edit history.</p></div>';
+    }
+}
+
+function hideEditHistoryModal() {
+    const modal = document.getElementById('editHistoryModal');
+    if (modal) modal.classList.remove('active');
 }
 
 async function deleteReplyMod(threadId, replyId) {

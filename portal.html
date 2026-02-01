@@ -11,7 +11,7 @@
 </head>
 <body>
     <!-- API Configuration -->
-  <input type="hidden" id="apiUrl" value="https://proudlyauthentication.com/">
+	<input type="hidden" id="apiUrl" value="https://proudlyauthentication.com/">
     <input type="hidden" id="portalKey" value="pk_A7kqO9xACqQhpI3nzNlh8c6boI8gUUIn">
 
     <!-- Header -->
@@ -102,6 +102,24 @@
                         <i class="fas fa-users"></i>
                         <span>Members</span>
                     </a>
+                    <a class="nav-tab" data-page="badges">
+                        <i class="fas fa-award"></i>
+                        <span>Badges</span>
+                    </a>
+                    <a class="nav-tab" data-page="reports" id="navReports" style="display: none;">
+                        <i class="fas fa-flag"></i>
+                        <span>Reports</span>
+                        <span class="nav-badge" id="pendingReportsBadge" style="display: none;">0</span>
+                    </a>
+                </div>
+                <div class="nav-search">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="globalSearchInput" placeholder="Search..." oninput="onSearchInput()" onkeypress="if(event.key==='Enter')performSearch()">
+                        <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -275,6 +293,36 @@
             </div>
         </div>
 
+        <!-- SEARCH RESULTS PAGE -->
+        <div class="page-view" id="page-search">
+            <div class="page-title">
+                <h1><i class="fas fa-search"></i> Search Results</h1>
+                <p id="searchResultsSubtitle">Searching...</p>
+            </div>
+
+            <div class="search-filters" style="margin-bottom: 20px;">
+                <button class="search-filter-btn active" data-type="all" onclick="filterSearchResults('all')">All</button>
+                <button class="search-filter-btn" data-type="threads" onclick="filterSearchResults('threads')">
+                    <i class="fas fa-comment-alt"></i> Threads <span id="searchThreadsCount" class="filter-count"></span>
+                </button>
+                <button class="search-filter-btn" data-type="posts" onclick="filterSearchResults('posts')">
+                    <i class="fas fa-reply"></i> Posts <span id="searchPostsCount" class="filter-count"></span>
+                </button>
+                <button class="search-filter-btn" data-type="users" onclick="filterSearchResults('users')">
+                    <i class="fas fa-user"></i> Users <span id="searchUsersCount" class="filter-count"></span>
+                </button>
+            </div>
+
+            <div class="content-card">
+                <div id="searchResults">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Searching...
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- FORUM PAGE (Categories) -->
         <div class="page-view active" id="page-forum">
             <div class="page-title">
@@ -353,6 +401,15 @@
                 <button class="btn btn-secondary btn-sm" onclick="copyLinkToClipboard('thread/' + currentThreadId)" title="Copy link">
                     <i class="fas fa-link"></i> Copy Link
                 </button>
+            </div>
+
+            <!-- Thread Watchers -->
+            <div class="thread-watchers" id="threadWatchers" style="display: none;">
+                <div class="watchers-label">
+                    <i class="fas fa-eye"></i>
+                    <span id="watchersCount">0</span> watching
+                </div>
+                <div class="watchers-avatars" id="watchersAvatars"></div>
             </div>
 
             <div class="content-card" style="margin-bottom: 24px;">
@@ -578,6 +635,61 @@
             </div>
         </div>
 
+        <!-- BADGES PAGE -->
+        <div class="page-view" id="page-badges">
+            <div class="page-title">
+                <h1><i class="fas fa-award"></i> Badges</h1>
+                <p>Earn badges by participating in the community</p>
+            </div>
+
+            <div class="content-card">
+                <div id="allBadgesList" class="all-badges-grid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading badges...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTS PAGE (Moderators Only) -->
+        <div class="page-view" id="page-reports">
+            <div class="page-title">
+                <h1><i class="fas fa-flag"></i> Content Reports</h1>
+                <p>Review and manage user-submitted reports</p>
+            </div>
+
+            <div class="content-card" style="margin-bottom: 16px; padding: 16px 20px;">
+                <div class="reports-filters">
+                    <button class="report-filter-btn active" data-status="pending" onclick="filterReports('pending')">
+                        <i class="fas fa-clock"></i> Pending
+                        <span class="report-count" id="pendingReportsCount">0</span>
+                    </button>
+                    <button class="report-filter-btn" data-status="reviewed" onclick="filterReports('reviewed')">
+                        <i class="fas fa-eye"></i> Reviewed
+                    </button>
+                    <button class="report-filter-btn" data-status="resolved" onclick="filterReports('resolved')">
+                        <i class="fas fa-check-circle"></i> Resolved
+                    </button>
+                    <button class="report-filter-btn" data-status="dismissed" onclick="filterReports('dismissed')">
+                        <i class="fas fa-times-circle"></i> Dismissed
+                    </button>
+                    <button class="report-filter-btn" data-status="" onclick="filterReports('')">
+                        <i class="fas fa-list"></i> All
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div id="reportsList" class="reports-list">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Loading reports...
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- PROFILE PAGE -->
         <div class="page-view" id="page-profile">
             <div class="profile-header" id="profileHeader">
@@ -596,9 +708,25 @@
                             <div class="profile-stat-label">Threads</div>
                         </div>
                         <div class="profile-stat">
+                            <div class="profile-stat-value" id="profileReputation">0</div>
+                            <div class="profile-stat-label">Reputation</div>
+                        </div>
+                        <div class="profile-stat">
                             <div class="profile-stat-value" id="profileJoined">-</div>
                             <div class="profile-stat-label">Joined</div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badges Section -->
+            <div class="content-card profile-section" id="profileBadgesSection">
+                <div class="card-header">
+                    <h2><i class="fas fa-award"></i> Badges</h2>
+                </div>
+                <div class="card-body">
+                    <div id="profileBadgesList" class="badges-grid">
+                        <div class="badges-empty">No badges earned yet</div>
                     </div>
                 </div>
             </div>
@@ -689,6 +817,21 @@
                     <!-- OAuth status is loaded dynamically by loadOAuthStatusForProfile() -->
                 </div>
             </div>
+
+            <!-- Blocked Users Section -->
+            <div class="content-card profile-section" id="blockedUsersSection">
+                <div class="card-header">
+                    <h2><i class="fas fa-ban"></i> Blocked Users</h2>
+                </div>
+                <div class="card-body">
+                    <div id="blockedUsersList" class="blocked-users-list">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading blocked users...
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </main>
@@ -727,6 +870,45 @@
                         <button type="button" class="bbcode-btn" onclick="insertBBCodeColor('newThreadContent')" title="Text Color"><i class="fas fa-palette"></i></button>
                     </div>
                     <textarea class="form-input" id="newThreadContent" rows="8" placeholder="Write your message..."></textarea>
+                </div>
+
+                <!-- Poll Section -->
+                <div class="form-row poll-section">
+                    <div class="poll-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="pollEnabled" onchange="togglePollSection()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="poll-toggle-label"><i class="fas fa-poll"></i> Add a Poll</span>
+                    </div>
+                    <div id="pollFields" style="display: none;">
+                        <div class="form-row">
+                            <label>Poll Question</label>
+                            <input type="text" class="form-input" id="pollQuestion" placeholder="Ask your question...">
+                        </div>
+                        <div class="form-row">
+                            <label>Options (at least 2)</label>
+                            <div id="pollOptionsContainer">
+                                <div class="poll-option-row">
+                                    <input type="text" class="form-input poll-option-input" placeholder="Option 1">
+                                    <button type="button" class="poll-option-remove" onclick="removePollOption(this)" title="Remove option"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="poll-option-row">
+                                    <input type="text" class="form-input poll-option-input" placeholder="Option 2">
+                                    <button type="button" class="poll-option-remove" onclick="removePollOption(this)" title="Remove option"><i class="fas fa-times"></i></button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="addPollOption()" id="addPollOptionBtn">
+                                <i class="fas fa-plus"></i> Add Option
+                            </button>
+                        </div>
+                        <div class="form-row poll-settings">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="pollAllowMultiple">
+                                <span>Allow multiple selections</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -774,6 +956,45 @@
         </div>
     </div>
 
+    <!-- Report Modal -->
+    <div class="modal-overlay" id="reportModal">
+        <div class="modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-flag"></i> Report Content</h2>
+                <button class="modal-close" onclick="hideReportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="reportAlert"></div>
+                <p style="color: var(--muted-text); font-size: 0.875rem; margin-bottom: 16px;">
+                    Help us keep the community safe by reporting inappropriate content.
+                </p>
+                <input type="hidden" id="reportContentType">
+                <input type="hidden" id="reportContentId">
+                <div class="form-row">
+                    <label>Reason for Report</label>
+                    <select class="form-input" id="reportReason">
+                        <option value="">Select a reason...</option>
+                        <option value="spam">Spam or Advertising</option>
+                        <option value="harassment">Harassment or Bullying</option>
+                        <option value="inappropriate">Inappropriate Content</option>
+                        <option value="misinformation">Misinformation</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Additional Details (optional)</label>
+                    <textarea class="form-input" id="reportDetails" rows="4" placeholder="Provide more context about why you're reporting this content..." maxlength="1000"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideReportModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="submitReport()">
+                    <i class="fas fa-flag"></i> Submit Report
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Redeem Key Modal -->
     <div class="modal-overlay" id="redeemKeyModal">
         <div class="modal" style="max-width: 420px;">
@@ -811,7 +1032,8 @@
                 <div id="userCardAvatar" style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 28px; margin: 0 auto 16px; overflow: hidden;"></div>
                 <h3 id="userCardName" style="margin: 0 0 4px; font-size: 1.25rem;"></h3>
                 <div id="userCardUsername" style="color: var(--muted-text); font-size: 0.875rem; margin-bottom: 8px;"></div>
-                <div id="userCardRole" style="display: inline-block; background: var(--success); color: white; padding: 3px 12px; border-radius: 100px; font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; margin-bottom: 16px;"></div>
+                <div id="userCardRole" style="display: inline-block; background: var(--success); color: white; padding: 3px 12px; border-radius: 100px; font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; margin-bottom: 12px;"></div>
+                <div id="userCardBadges" class="user-card-badges" style="margin-bottom: 16px;"></div>
                 <div id="userCardBio" style="color: var(--muted-text); font-size: 0.875rem; margin-bottom: 20px; display: none;"></div>
                 <div id="userCardActions" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                     <button class="btn btn-primary btn-sm" id="userCardMessageBtn" onclick="startConversationWithUser()">
@@ -819,6 +1041,12 @@
                     </button>
                     <button class="btn btn-secondary btn-sm" id="userCardFriendBtn" onclick="toggleFriendFromCard()">
                         <i class="fas fa-user-plus"></i> Add Friend
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="userCardBlockBtn" onclick="toggleBlockFromCard()" title="Block User">
+                        <i class="fas fa-ban"></i> Block
+                    </button>
+                    <button class="btn btn-danger btn-sm" id="userCardReportBtn" onclick="reportUserFromCard()" title="Report User">
+                        <i class="fas fa-flag"></i>
                     </button>
                 </div>
                 <div id="userCardSelfNote" style="display: none; color: var(--muted-text); font-size: 0.8125rem; margin-top: 12px;">
@@ -1064,6 +1292,25 @@
                 <button class="btn btn-primary" onclick="saveEditedReply()">
                     <i class="fas fa-save"></i> Save Changes
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit History Modal -->
+    <div class="modal-overlay" id="editHistoryModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2><i class="fas fa-history"></i> Edit History</h2>
+                <button class="modal-close" onclick="hideEditHistoryModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="editHistoryContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading history...
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideEditHistoryModal()">Close</button>
             </div>
         </div>
     </div>
