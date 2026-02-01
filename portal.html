@@ -526,8 +526,8 @@
             <div class="content-card">
                 <div class="card-header">
                     <h2>
-                        <div class="conversation-avatar" id="convHeaderAvatar" style="width: 32px; height: 32px; font-size: 12px;"></div>
-                        <span id="convHeaderName">Conversation</span>
+                        <div class="conversation-avatar" id="convHeaderAvatar" style="width: 32px; height: 32px; font-size: 12px; cursor: pointer;" onclick="openConvParticipantProfile()" title="View Profile"></div>
+                        <span id="convHeaderName" style="cursor: pointer;" onclick="openConvParticipantProfile()" title="View Profile">Conversation</span>
                     </h2>
                 </div>
                 <div id="conversationMessages" style="height: 400px; overflow-y: auto; padding: 20px;">
@@ -1340,6 +1340,30 @@
                 <button class="btn btn-secondary" onclick="closeOAuthLinkModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="confirmOAuthLink()">
                     <i class="fas fa-link"></i> Link Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Dialog Modal (for custom prompts/confirms) -->
+    <div class="modal-overlay" id="dialogModal">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2 id="dialogTitle"><i class="fas fa-question-circle" id="dialogIcon"></i> <span id="dialogTitleText">Confirm</span></h2>
+                <button class="modal-close" onclick="closeDialog(false)">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="dialogMessage" style="color: var(--light-text); font-size: 0.95rem; margin-bottom: 16px; line-height: 1.5;"></p>
+                <div id="dialogInputContainer" class="form-row" style="display: none;">
+                    <label id="dialogInputLabel"></label>
+                    <input type="text" class="form-input" id="dialogInput" onkeypress="if(event.key==='Enter')closeDialog(true)">
+                </div>
+                <div id="dialogOptionsContainer" style="display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="dialogCancelBtn" onclick="closeDialog(false)">Cancel</button>
+                <button class="btn btn-primary" id="dialogConfirmBtn" onclick="closeDialog(true)">
+                    <i class="fas fa-check" id="dialogConfirmIcon"></i> <span id="dialogConfirmText">Confirm</span>
                 </button>
             </div>
         </div>

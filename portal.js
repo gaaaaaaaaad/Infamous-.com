@@ -26,6 +26,155 @@ let threadWatcherInterval = null; // Interval for thread watcher heartbeat
 let badgeSystemEnabled = true; // Whether the badge system is enabled for this portal
 const WATCHER_HEARTBEAT_MS = 30000; // Send heartbeat every 30 seconds
 
+// ==================== CUSTOM DIALOG SYSTEM ====================
+// Replaces native browser prompt() and confirm() with styled modals
+let dialogResolve = null;
+
+/**
+ * Show a custom confirm dialog
+ * @param {string} message - The confirmation message
+ * @param {Object} options - Optional configuration
+ * @returns {Promise<boolean>} - True if confirmed, false if cancelled
+ */
+async function showConfirm(message, options = {}) {
+    return new Promise((resolve) => {
+        dialogResolve = resolve;
+
+        const {
+            title = 'Confirm',
+            icon = 'fa-question-circle',
+            confirmText = 'Confirm',
+            confirmIcon = 'fa-check',
+            cancelText = 'Cancel',
+            danger = false
+        } = options;
+
+        document.getElementById('dialogTitleText').textContent = title;
+        document.getElementById('dialogIcon').className = `fas ${icon}`;
+        document.getElementById('dialogMessage').textContent = message;
+        document.getElementById('dialogInputContainer').style.display = 'none';
+        document.getElementById('dialogOptionsContainer').style.display = 'none';
+        document.getElementById('dialogConfirmText').textContent = confirmText;
+        document.getElementById('dialogConfirmIcon').className = `fas ${confirmIcon}`;
+        document.getElementById('dialogCancelBtn').textContent = cancelText;
+
+        const confirmBtn = document.getElementById('dialogConfirmBtn');
+        confirmBtn.className = danger ? 'btn btn-danger' : 'btn btn-primary';
+
+        document.getElementById('dialogModal').classList.add('active');
+        document.getElementById('dialogCancelBtn').focus();
+    });
+}
+
+/**
+ * Show a custom prompt dialog
+ * @param {string} message - The prompt message
+ * @param {Object} options - Optional configuration
+ * @returns {Promise<string|null>} - The input value or null if cancelled
+ */
+async function showPrompt(message, options = {}) {
+    return new Promise((resolve) => {
+        dialogResolve = resolve;
+
+        const {
+            title = 'Input',
+            icon = 'fa-edit',
+            label = '',
+            placeholder = '',
+            defaultValue = '',
+            confirmText = 'Submit',
+            confirmIcon = 'fa-check',
+            cancelText = 'Cancel'
+        } = options;
+
+        document.getElementById('dialogTitleText').textContent = title;
+        document.getElementById('dialogIcon').className = `fas ${icon}`;
+        document.getElementById('dialogMessage').textContent = message;
+        document.getElementById('dialogInputContainer').style.display = 'block';
+        document.getElementById('dialogOptionsContainer').style.display = 'none';
+        document.getElementById('dialogInputLabel').textContent = label;
+
+        const input = document.getElementById('dialogInput');
+        input.placeholder = placeholder;
+        input.value = defaultValue;
+
+        document.getElementById('dialogConfirmText').textContent = confirmText;
+        document.getElementById('dialogConfirmIcon').className = `fas ${confirmIcon}`;
+        document.getElementById('dialogCancelBtn').textContent = cancelText;
+        document.getElementById('dialogConfirmBtn').className = 'btn btn-primary';
+
+        document.getElementById('dialogModal').classList.add('active');
+        setTimeout(() => input.focus(), 100);
+    });
+}
+
+/**
+ * Show a custom choice dialog with multiple options
+ * @param {string} message - The prompt message
+ * @param {Array} choices - Array of {value, label} objects
+ * @param {Object} options - Optional configuration
+ * @returns {Promise<string|null>} - The selected value or null if cancelled
+ */
+async function showChoice(message, choices, options = {}) {
+    return new Promise((resolve) => {
+        dialogResolve = resolve;
+
+        const {
+            title = 'Choose Option',
+            icon = 'fa-list',
+            defaultValue = '',
+            cancelText = 'Cancel'
+        } = options;
+
+        document.getElementById('dialogTitleText').textContent = title;
+        document.getElementById('dialogIcon').className = `fas ${icon}`;
+        document.getElementById('dialogMessage').textContent = message;
+        document.getElementById('dialogInputContainer').style.display = 'none';
+
+        const container = document.getElementById('dialogOptionsContainer');
+        container.style.display = 'block';
+        container.innerHTML = choices.map((choice, idx) => `
+            <button class="btn btn-secondary choice-option" style="width: 100%; margin-bottom: 8px; text-align: left; padding: 12px 16px;"
+                    onclick="selectChoice('${escapeHtml(choice.value || choice)}')" data-value="${escapeHtml(choice.value || choice)}">
+                ${escapeHtml(choice.label || choice)}
+            </button>
+        `).join('');
+
+        // Hide the confirm button for choice dialogs
+        document.getElementById('dialogConfirmBtn').style.display = 'none';
+        document.getElementById('dialogCancelBtn').textContent = cancelText;
+
+        document.getElementById('dialogModal').classList.add('active');
+    });
+}
+
+function selectChoice(value) {
+    document.getElementById('dialogConfirmBtn').style.display = '';
+    closeDialog(true, value);
+}
+
+function closeDialog(confirmed, choiceValue = null) {
+    document.getElementById('dialogModal').classList.remove('active');
+    document.getElementById('dialogConfirmBtn').style.display = '';
+
+    if (dialogResolve) {
+        const input = document.getElementById('dialogInput');
+        const inputContainer = document.getElementById('dialogInputContainer');
+
+        if (choiceValue !== null) {
+            // Choice dialog
+            dialogResolve(confirmed ? choiceValue : null);
+        } else if (inputContainer.style.display !== 'none') {
+            // Prompt dialog
+            dialogResolve(confirmed ? input.value : null);
+        } else {
+            // Confirm dialog
+            dialogResolve(confirmed);
+        }
+        dialogResolve = null;
+    }
+}
+
 // ==================== SUBSCRIPTION CONFIGURATION ====================
 // Fallback config used when API fails to load subscriptions
 // Subscriptions are now fetched from the /subscriptions API endpoint
@@ -776,12 +925,16 @@ function startOAuth(provider, action) {
 }
 
 /**
- * Handle OAuth callback by processing URL query parameters
+ * Handle OAuth callback by processing URL hash parameters
  * Called on page load to handle oauth_session, oauth_error, oauth_link_required
  * @returns {boolean} True if OAuth callback was handled
  */
 async function handleOAuthCallback() {
-    const urlParams = new URLSearchParams(window.location.search);
+    // Read from hash fragment (e.g., #oauth_session=xxx)
+    const hash = window.location.hash.substring(1); // Remove the '#'
+    if (!hash) return false;
+
+    const urlParams = new URLSearchParams(hash);
 
     // Check for OAuth session token (successful OAuth login)
     const oauthSession = urlParams.get('oauth_session');
@@ -814,6 +967,10 @@ async function handleOAuthCallback() {
     if (oauthSuccess) {
         cleanOAuthParams();
         showToast(decodeURIComponent(oauthSuccess), 'success');
+        // Refresh session to update UI (user was already logged in, just linked account)
+        if (sessionToken) {
+            await validateSession();
+        }
         return true;
     }
 
@@ -835,18 +992,13 @@ async function handleOAuthCallback() {
 }
 
 /**
- * Clean OAuth-related query parameters from URL
+ * Clean OAuth-related hash parameters from URL
  */
 function cleanOAuthParams() {
+    // Remove the hash fragment entirely for a clean URL
     const url = new URL(window.location.href);
-    url.searchParams.delete('oauth_session');
-    url.searchParams.delete('oauth_error');
-    url.searchParams.delete('oauth_success');
-    url.searchParams.delete('oauth_link_required');
-    url.searchParams.delete('link_token');
-    url.searchParams.delete('provider');
-    url.searchParams.delete('email');
-    window.history.replaceState({}, document.title, url.toString());
+    url.hash = '';
+    window.history.replaceState({}, document.title, url.pathname + url.search);
 }
 
 /**
@@ -941,9 +1093,14 @@ function linkOAuthAccount(provider) {
  * @param {string} provider - Provider name to unlink
  */
 async function unlinkOAuthAccount(provider) {
-    if (!confirm(`Are you sure you want to unlink your ${provider} account?`)) {
-        return;
-    }
+    const confirmed = await showConfirm(`Are you sure you want to unlink your ${provider} account? You will no longer be able to log in using ${provider}.`, {
+        title: 'Unlink Account',
+        icon: 'fa-unlink',
+        confirmText: 'Unlink',
+        confirmIcon: 'fa-unlink',
+        danger: true
+    });
+    if (!confirmed) return;
 
     const result = await api('POST', '/auth/oauth/unlink', { provider });
 
@@ -1303,14 +1460,14 @@ async function loadCategoryThreads(categoryId) {
 
             html += `
                 <div class="${threadRowClass}">
-                    <div class="thread-icon" onclick="showUserCardById(${authorId}); event.stopPropagation();">
+                    <div class="thread-icon" onclick="showUserCardById('${authorId}'); event.stopPropagation();" style="cursor: pointer;" title="View Profile">
                         ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
                     </div>
                     <div class="thread-main">
                         <a class="thread-title-link" onclick="openThread(${thread.id})">${escapeHtml(thread.title)}</a>
                         ${pinIndicator}
                         <div class="thread-meta">
-                            by <a onclick="showUserCardById(${authorId}); event.stopPropagation();">${escapeHtml(authorName)}</a>
+                            by <a onclick="showUserCardById('${authorId}'); event.stopPropagation();" style="cursor: pointer;">${escapeHtml(authorName)}</a>
                             &bull; ${formatDate(thread.created_at)}
                         </div>
                     </div>
@@ -1326,7 +1483,7 @@ async function loadCategoryThreads(categoryId) {
                     </div>
                     <div class="thread-latest">
                         ${thread.last_post ? `
-                            <a onclick="showUserCardById(${thread.last_post.author_id || thread.last_post.author?.id})">${escapeHtml(thread.last_post.author_name || thread.last_post.author?.display_name || thread.last_post.author?.username || 'Unknown')}</a><br>
+                            <a onclick="showUserCardById('${thread.last_post.author_id || thread.last_post.author?.id}')" style="cursor: pointer;">${escapeHtml(thread.last_post.author_name || thread.last_post.author?.display_name || thread.last_post.author?.username || 'Unknown')}</a><br>
                             ${formatDate(thread.last_post.created_at)}
                         ` : '-'}
                     </div>
@@ -1624,10 +1781,10 @@ async function loadThread(threadId) {
         html += `
             <div class="message">
                 <div class="message-user">
-                    <div class="message-avatar" onclick="showUserCardById('${threadAuthorId}')">
+                    <div class="message-avatar" onclick="showUserCardById('${threadAuthorId}')" style="cursor: pointer;" title="View Profile">
                         ${typeof threadAvatar === 'string' && threadAvatar.startsWith('<img') ? threadAvatar : threadAvatar}
                     </div>
-                    <div class="message-username" onclick="showUserCardById('${threadAuthorId}')">${escapeHtml(threadAuthorName)}</div>
+                    <div class="message-username" onclick="showUserCardById('${threadAuthorId}')" style="cursor: pointer;" title="View Profile">${escapeHtml(threadAuthorName)}</div>
                     <div class="message-role ${getRoleClass(threadAuthorRole)}">${escapeHtml(threadAuthorRole)}</div>
                 </div>
                 <div class="message-content">
@@ -1703,10 +1860,10 @@ async function loadThread(threadId) {
             html += `
                 <div class="message" data-reply-id="${reply.id}" data-reply-content="${encodedContent}" data-reply-author="${escapeHtml(authorName)}">
                     <div class="message-user">
-                        <div class="message-avatar" onclick="showUserCardById('${authorId}')">
+                        <div class="message-avatar" onclick="showUserCardById('${authorId}')" style="cursor: pointer;" title="View Profile">
                             ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
                         </div>
-                        <div class="message-username" onclick="showUserCardById('${authorId}')">${escapeHtml(authorName)}</div>
+                        <div class="message-username" onclick="showUserCardById('${authorId}')" style="cursor: pointer;" title="View Profile">${escapeHtml(authorName)}</div>
                         <div class="message-role ${getRoleClass(authorRole)}">${escapeHtml(authorRole)}</div>
                     </div>
                     <div class="message-content">
@@ -2384,15 +2541,29 @@ async function updateReportStatus(reportId, status, resolutionNote = '') {
     }
 }
 
-function showResolveReportModal(reportId) {
-    const note = prompt('Enter resolution note (optional):');
+async function showResolveReportModal(reportId) {
+    const note = await showPrompt('Add any notes about how this was resolved.', {
+        title: 'Resolve Report',
+        icon: 'fa-check-circle',
+        label: 'Resolution Note (optional)',
+        placeholder: 'e.g., Warned the user, removed content...',
+        confirmText: 'Resolve',
+        confirmIcon: 'fa-check'
+    });
     if (note !== null) {
         updateReportStatus(reportId, 'resolved', note);
     }
 }
 
-function showDismissReportModal(reportId) {
-    const note = prompt('Enter reason for dismissal (optional):');
+async function showDismissReportModal(reportId) {
+    const note = await showPrompt('Explain why this report is being dismissed.', {
+        title: 'Dismiss Report',
+        icon: 'fa-times-circle',
+        label: 'Reason (optional)',
+        placeholder: 'e.g., Not a violation, false report...',
+        confirmText: 'Dismiss',
+        confirmIcon: 'fa-times'
+    });
     if (note !== null) {
         updateReportStatus(reportId, 'dismissed', note);
     }
@@ -2628,7 +2799,7 @@ async function loadConversations() {
 
             html += `
                 <div class="conversation-item ${conv.unread_count > 0 ? 'unread' : ''}" onclick="openConversation('${escapeHtml(convId)}', ${JSON.stringify(participant).replace(/"/g, '&quot;')})">
-                    <div class="conversation-avatar">
+                    <div class="conversation-avatar" onclick="event.stopPropagation(); showUserCardById(${participant.id})" style="cursor: pointer;" title="View Profile">
                         ${typeof avatar === 'string' && avatar.startsWith('<img') ? avatar : avatar}
                     </div>
                     <div class="conversation-main">
@@ -2663,6 +2834,12 @@ function openConversation(conversationId, participant) {
     updateHash(`conversation/${conversationId}`);
     showPage('conversation', false);
     loadConversation(conversationId);
+}
+
+function openConvParticipantProfile() {
+    if (currentConvParticipant && currentConvParticipant.id) {
+        showUserCardById(currentConvParticipant.id);
+    }
 }
 
 async function loadConversation(conversationId) {
@@ -3070,7 +3247,13 @@ async function replyToTicket() {
 }
 
 async function closeTicket() {
-    if (!confirm('Are you sure you want to close this ticket?')) return;
+    const confirmed = await showConfirm('Are you sure you want to close this ticket? This will mark it as resolved.', {
+        title: 'Close Ticket',
+        icon: 'fa-ticket-alt',
+        confirmText: 'Close Ticket',
+        confirmIcon: 'fa-check'
+    });
+    if (!confirmed) return;
 
     const result = await api('POST', `/support/tickets/${currentTicketId}/close`);
 
@@ -3608,23 +3791,23 @@ async function loadHwidState() {
         if (hwidPolicy && hwidPolicy.enabled) {
             document.getElementById('hwidSection').style.display = '';
 
-            // Status
+            // Status with cooldown time remaining
             const status = hwidState ? hwidState.status : 'unknown';
             let statusText = status;
-            if (status === 'locked') statusText = 'Locked';
-            else if (status === 'unlocked') statusText = 'Unlocked';
-            else if (status === 'cooldown') statusText = 'On Cooldown';
+            if (status === 'eligible') {
+                statusText = 'Ready to Reset';
+            } else if (status === 'cooldown') {
+                const remaining = hwidState.cooldown_remaining_seconds || 0;
+                statusText = `Cooldown (${formatDuration(remaining)} remaining)`;
+            } else if (status === 'disabled') {
+                statusText = 'Disabled';
+            }
             document.getElementById('currentHwid').textContent = statusText;
 
-            // Resets
+            // Resets used count
             if (hwidState) {
-                const used = hwidState.resets_used || 0;
-                const max = hwidPolicy.max_resets;
-                if (max === null || max === undefined) {
-                    document.getElementById('hwidResets').textContent = `${used} (unlimited)`;
-                } else {
-                    document.getElementById('hwidResets').textContent = `${used} / ${max}`;
-                }
+                const used = hwidState.manual_reset_count || 0;
+                document.getElementById('hwidResets').textContent = used.toString();
             }
 
             // Show/hide reset button based on can_reset
@@ -3634,6 +3817,26 @@ async function loadHwidState() {
             document.getElementById('hwidSection').style.display = 'none';
         }
     }
+}
+
+/**
+ * Format seconds into a human-readable duration (e.g., "2h 30m", "45m", "30s")
+ */
+function formatDuration(seconds) {
+    if (seconds <= 0) return '0s';
+
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    const parts = [];
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+    if (secs > 0 && days === 0 && hours === 0) parts.push(`${secs}s`);
+
+    return parts.join(' ') || '0s';
 }
 
 async function loadFriends() {
@@ -3658,12 +3861,12 @@ async function loadFriends() {
             const sender = request.sender || {};
             requestsHtml += `
                 <div class="friend-request">
-                    <div class="friend-request-avatar">
+                    <div class="friend-request-avatar" style="cursor: pointer;" onclick="showUserCardById(${sender.id})">
                         ${sender.profile_picture
                             ? `<img src="${escapeHtml(sender.profile_picture)}" alt="Avatar">`
                             : getInitials(sender.display_name || sender.username)}
                     </div>
-                    <div class="friend-request-info">
+                    <div class="friend-request-info" style="cursor: pointer;" onclick="showUserCardById(${sender.id})">
                         <div class="friend-request-name">${escapeHtml(sender.display_name || sender.username)}</div>
                         <div class="friend-request-time">${formatDate(request.created_at)}</div>
                     </div>
@@ -3693,14 +3896,19 @@ async function loadFriends() {
             const recipientId = recipient.id || request.recipient_id;
             sentHtml += `
                 <div class="friend-request">
-                    <div class="friend-request-avatar">
+                    <div class="friend-request-avatar" style="cursor: pointer;" onclick="showUserCardById(${recipientId})">
                         ${recipient.profile_picture
                             ? `<img src="${escapeHtml(recipient.profile_picture)}" alt="Avatar">`
                             : getInitials(recipient.display_name || recipient.username)}
                     </div>
-                    <div class="friend-request-info">
+                    <div class="friend-request-info" style="cursor: pointer;" onclick="showUserCardById(${recipientId})">
                         <div class="friend-request-name">${escapeHtml(recipient.display_name || recipient.username)}</div>
                         <div class="friend-request-time" style="color: var(--warning);">Pending</div>
+                    </div>
+                    <div class="friend-request-actions">
+                        <button class="btn btn-danger btn-sm" onclick="cancelFriendRequest(${recipientId})" title="Cancel Request">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -3768,15 +3976,26 @@ async function declineFriendRequest(userId, btn) {
     }
 }
 
+async function cancelFriendRequest(userId, btn) {
+    if (!btn) btn = event?.target?.closest('button');
+    if (btn) setButtonLoading(btn, true);
+
+    const result = await api('POST', '/friends/cancel', { user_id: userId });
+
+    if (btn) setButtonLoading(btn, false, '<i class="fas fa-times"></i>');
+
+    if (result.ok) {
+        showToast('Friend request canceled', 'info');
+        loadFriends();
+    } else {
+        showToast(result.data.message || 'Failed to cancel request', 'error');
+    }
+}
+
 // ==================== USER CARD ====================
 function showUserCardById(userId) {
-    const user = usersCache[userId];
-    if (user) {
-        showUserCard(user);
-    } else {
-        // Fetch user data if not in cache
-        fetchAndShowUserCard(userId);
-    }
+    // Always fetch fresh data to get current friendship status
+    fetchAndShowUserCard(userId);
 }
 
 async function fetchAndShowUserCard(userId) {
@@ -3900,9 +4119,8 @@ function showUserCard(user, friendshipStatus) {
         friendBtn.innerHTML = '<i class="fas fa-check"></i> Accept Request';
         friendBtn.className = 'btn btn-success btn-sm';
     } else if (friendshipStatus === 'request_sent') {
-        friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
-        friendBtn.className = 'btn btn-secondary btn-sm';
-        friendBtn.disabled = true;
+        friendBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Request';
+        friendBtn.className = 'btn btn-warning btn-sm';
     } else {
         friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
         friendBtn.className = 'btn btn-secondary btn-sm';
@@ -3943,9 +4161,8 @@ async function fetchUserFriendshipStatus(userId) {
                 friendBtn.innerHTML = '<i class="fas fa-check"></i> Accept Request';
                 friendBtn.className = 'btn btn-success btn-sm';
             } else if (status === 'request_sent') {
-                friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
-                friendBtn.className = 'btn btn-secondary btn-sm';
-                friendBtn.disabled = true;
+                friendBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Request';
+                friendBtn.className = 'btn btn-warning btn-sm';
             } else {
                 friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
                 friendBtn.className = 'btn btn-secondary btn-sm';
@@ -3976,6 +4193,7 @@ async function toggleFriendFromCard() {
     const friendBtn = document.getElementById('userCardFriendBtn');
     const isFriend = friendBtn.innerHTML.includes('Remove Friend');
     const isAcceptRequest = friendBtn.innerHTML.includes('Accept Request');
+    const isCancelRequest = friendBtn.innerHTML.includes('Cancel Request');
     const originalHtml = friendBtn.innerHTML;
 
     friendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -4009,13 +4227,27 @@ async function toggleFriendFromCard() {
             friendBtn.disabled = false;
             showToast(result.data.message || 'Failed to accept request', 'error');
         }
+    } else if (isCancelRequest) {
+        const result = await api('POST', '/friends/cancel', { user_id: currentUserCardUser.id });
+        if (result.ok) {
+            showToast('Friend request canceled', 'info');
+            friendBtn.innerHTML = '<i class="fas fa-user-plus"></i> Add Friend';
+            friendBtn.className = 'btn btn-secondary btn-sm';
+            friendBtn.disabled = false;
+            // Refresh friends list on profile page
+            loadFriends();
+        } else {
+            friendBtn.innerHTML = originalHtml;
+            friendBtn.disabled = false;
+            showToast(result.data.message || 'Failed to cancel request', 'error');
+        }
     } else {
         const result = await api('POST', '/friends/request', { user_id: currentUserCardUser.id });
         if (result.ok) {
             showToast('Friend request sent!', 'success');
-            friendBtn.innerHTML = '<i class="fas fa-clock"></i> Request Pending';
-            friendBtn.className = 'btn btn-secondary btn-sm';
-            friendBtn.disabled = true;
+            friendBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Request';
+            friendBtn.className = 'btn btn-warning btn-sm';
+            friendBtn.disabled = false;
             // Refresh friends list on profile page
             loadFriends();
         } else {
@@ -4358,9 +4590,13 @@ async function saveBio() {
 
 // ==================== HWID ====================
 async function resetHwid() {
-    if (!confirm('Are you sure you want to reset your HWID? This will allow you to login from a different device.')) {
-        return;
-    }
+    const confirmed = await showConfirm('This will reset your hardware ID, allowing you to log in from a different device.', {
+        title: 'Reset HWID',
+        icon: 'fa-desktop',
+        confirmText: 'Reset HWID',
+        confirmIcon: 'fa-sync'
+    });
+    if (!confirmed) return;
 
     const btn = document.getElementById('resetHwidBtn');
     setButtonLoading(btn, true);
@@ -4439,8 +4675,15 @@ function insertBBCode(textareaId, tag) {
     textarea.setSelectionRange(start + newText.length, start + newText.length);
 }
 
-function insertBBCodeUrl(textareaId) {
-    const url = prompt('Enter URL:');
+async function insertBBCodeUrl(textareaId) {
+    const url = await showPrompt('Enter the URL you want to link to.', {
+        title: 'Insert Link',
+        icon: 'fa-link',
+        label: 'URL',
+        placeholder: 'https://example.com',
+        confirmText: 'Insert',
+        confirmIcon: 'fa-plus'
+    });
     if (url) {
         const textarea = document.getElementById(textareaId);
         const start = textarea.selectionStart;
@@ -4453,8 +4696,15 @@ function insertBBCodeUrl(textareaId) {
     }
 }
 
-function insertBBCodeImg(textareaId) {
-    const url = prompt('Enter image URL:');
+async function insertBBCodeImg(textareaId) {
+    const url = await showPrompt('Enter the image URL to embed.', {
+        title: 'Insert Image',
+        icon: 'fa-image',
+        label: 'Image URL',
+        placeholder: 'https://example.com/image.png',
+        confirmText: 'Insert',
+        confirmIcon: 'fa-plus'
+    });
     if (url) {
         const textarea = document.getElementById(textareaId);
         const start = textarea.selectionStart;
@@ -4466,17 +4716,20 @@ function insertBBCodeImg(textareaId) {
     }
 }
 
-function insertBBCodeSize(textareaId) {
-    const sizeChoice = prompt('Choose size:\n1. sm (Small)\n2. md (Medium)\n3. lg (Large)\n4. xl (Extra Large)\n5. xxl (Huge)\n\nEnter size name or number:', 'lg');
+async function insertBBCodeSize(textareaId) {
+    const sizeChoice = await showChoice('Select the text size:', [
+        { value: 'sm', label: 'Small' },
+        { value: 'md', label: 'Medium' },
+        { value: 'lg', label: 'Large' },
+        { value: 'xl', label: 'Extra Large' },
+        { value: 'xxl', label: 'Huge' }
+    ], {
+        title: 'Text Size',
+        icon: 'fa-text-height'
+    });
     if (!sizeChoice) return;
 
-    let size = sizeChoice.trim().toLowerCase();
-    if (size === '1') size = 'sm';
-    else if (size === '2') size = 'md';
-    else if (size === '3') size = 'lg';
-    else if (size === '4') size = 'xl';
-    else if (size === '5') size = 'xxl';
-    size = size.split(' ')[0];
+    const size = sizeChoice;
 
     const textarea = document.getElementById(textareaId);
     const start = textarea.selectionStart;
@@ -4489,8 +4742,16 @@ function insertBBCodeSize(textareaId) {
     textarea.focus();
 }
 
-function insertBBCodeColor(textareaId) {
-    const colorChoice = prompt('Enter color name or hex code:\n\nExamples: red, blue, green, orange, purple, #ff0000, #3b82f6', 'red');
+async function insertBBCodeColor(textareaId) {
+    const colorChoice = await showPrompt('Enter a color name or hex code.', {
+        title: 'Text Color',
+        icon: 'fa-palette',
+        label: 'Color',
+        placeholder: 'red, blue, #ff0000, #3b82f6',
+        defaultValue: 'red',
+        confirmText: 'Apply',
+        confirmIcon: 'fa-check'
+    });
     if (!colorChoice) return;
 
     const color = colorChoice.trim();
@@ -4788,9 +5049,15 @@ async function deleteThreadMod(threadId) {
         showToast('Moderator access required', 'error');
         return;
     }
-    if (!confirm('Are you sure you want to delete this thread? This cannot be undone.')) {
-        return;
-    }
+    const confirmed = await showConfirm('Are you sure you want to delete this thread? All replies will also be deleted. This cannot be undone.', {
+        title: 'Delete Thread',
+        icon: 'fa-trash-alt',
+        confirmText: 'Delete Thread',
+        confirmIcon: 'fa-trash',
+        danger: true
+    });
+    if (!confirmed) return;
+
     const result = await api('DELETE', `/forum/threads/${threadId}`);
     if (result.ok) {
         showToast('Thread deleted', 'success');
@@ -4907,9 +5174,14 @@ function hideEditHistoryModal() {
 }
 
 async function deleteReplyMod(threadId, replyId) {
-    if (!confirm('Are you sure you want to delete this reply? This cannot be undone.')) {
-        return;
-    }
+    const confirmed = await showConfirm('Are you sure you want to delete this reply? This cannot be undone.', {
+        title: 'Delete Reply',
+        icon: 'fa-trash-alt',
+        confirmText: 'Delete Reply',
+        confirmIcon: 'fa-trash',
+        danger: true
+    });
+    if (!confirmed) return;
 
     const result = await api('DELETE', `/forum/threads/${threadId}/replies/${replyId}`);
     if (result.ok) {
@@ -5065,9 +5337,14 @@ async function deleteCategory(categoryId) {
         return;
     }
 
-    if (!confirm('Are you sure you want to delete this category? This cannot be undone.')) {
-        return;
-    }
+    const confirmed = await showConfirm('Are you sure you want to delete this category? All threads within it will also be deleted. This cannot be undone.', {
+        title: 'Delete Category',
+        icon: 'fa-folder-minus',
+        confirmText: 'Delete Category',
+        confirmIcon: 'fa-trash',
+        danger: true
+    });
+    if (!confirmed) return;
 
     const result = await api('DELETE', `/forum/categories/${categoryId}`);
     if (result.ok) {
@@ -5307,9 +5584,14 @@ async function deleteChatMessage(messageId) {
         return;
     }
 
-    if (!confirm('Delete this message?')) {
-        return;
-    }
+    const confirmed = await showConfirm('Are you sure you want to delete this message?', {
+        title: 'Delete Message',
+        icon: 'fa-trash-alt',
+        confirmText: 'Delete',
+        confirmIcon: 'fa-trash',
+        danger: true
+    });
+    if (!confirmed) return;
 
     const result = await api('DELETE', `/chat/messages/${messageId}`);
     if (result.ok) {
@@ -5387,9 +5669,14 @@ async function deleteUserMessages(participantKey) {
         return;
     }
 
-    if (!confirm('Delete all messages from this user?')) {
-        return;
-    }
+    const confirmed = await showConfirm('Are you sure you want to delete all messages from this user? This cannot be undone.', {
+        title: 'Delete All Messages',
+        icon: 'fa-trash-alt',
+        confirmText: 'Delete All',
+        confirmIcon: 'fa-trash',
+        danger: true
+    });
+    if (!confirmed) return;
 
     const result = await api('DELETE', `/chat/participants/${participantKey}/messages`);
     if (result.ok) {

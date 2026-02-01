@@ -873,12 +873,13 @@ a:hover {
 }
 
 .thread-meta a {
-    color: var(--muted-text);
+    color: var(--primary);
     font-weight: 500;
 }
 
 .thread-meta a:hover {
     color: var(--primary-light);
+    text-decoration: underline;
 }
 
 .thread-stats {
@@ -2183,6 +2184,26 @@ select.form-input {
     padding: 16px 24px;
     border-top: 1px solid var(--border-color);
     background: rgba(255, 255, 255, 0.01);
+}
+
+/* Dialog choice options */
+.choice-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 14px 18px !important;
+    font-size: 0.95rem;
+    transition: all var(--transition-fast);
+}
+
+.choice-option:hover {
+    background: var(--primary) !important;
+    color: white !important;
+    transform: translateX(4px);
+}
+
+.choice-option:last-child {
+    margin-bottom: 0 !important;
 }
 
 /* ==================== ALERTS ==================== */
